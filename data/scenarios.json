@@ -1,0 +1,334 @@
+{
+  "scenarios": [
+    {
+      "id": "LEAKY_SINK_QTE_01",
+      "title": "Leaky Sink in Unit 7C",
+      "involvedNPCs": ["NPC_TENANT_MR_JOHNSON"],
+      "startNode": "SINK_NODE_01",
+      "nodes": [
+        {
+          "nodeId": "SINK_NODE_01",
+          "text": "Mr. Johnson from Unit 7C calls. 'Hi, there's a bit of a leaky faucet in my kitchen. It's not major, but it's been dripping for a day or two. Can someone take a look when you have a moment?'",
+          "image": "characters/tenant_neutral_johnson.png",
+          "location_image": "locations/office.png",
+          "choices": [
+            {
+              "text": "Tell him you'll send someone over today.",
+              "effects": {
+                "managerStress": 1,
+                "relationship_NPC_TENANT_MR_JOHNSON": 1
+              },
+              "nextNode": "SINK_NODE_02_INSPECT"
+            },
+            {
+              "text": "Ask him if he can wait until tomorrow's scheduled maintenance rounds.",
+              "effects": {
+                "managerStress": -1,
+                "relationship_NPC_TENANT_MR_JOHNSON": -1
+              },
+              "nextNode": "SINK_NODE_02_DELAY"
+            },
+            {
+              "text": "Suggest he try tightening it himself first.",
+              "effects": {
+                "relationship_NPC_TENANT_MR_JOHNSON": -2
+              },
+              "nextNode": "SINK_NODE_02_SELFHELP"
+            }
+          ]
+        },
+        {
+          "nodeId": "SINK_NODE_02_INSPECT",
+          "text": "You head to Unit 7C. Mr. Johnson greets you. The faucet is indeed dripping steadily. 'Thanks for coming so quickly,' he says.",
+          "image": "characters/tenant_neutral_johnson.png",
+          "location_image": "locations/unit_7c_kitchen.png",
+          "choices": [
+            {
+              "text": "Attempt to fix it yourself (QTE).",
+              "nextNode": "SINK_QTE_TRIGGER"
+            },
+            {
+              "text": "Promise to send a professional plumber later.",
+              "effects": {
+                "financialHealth": -50, 
+                "managerStress": 1,
+                "relationship_NPC_TENANT_MR_JOHNSON": 0 
+              },
+              "nextNode": "SINK_NODE_PLUMBER_CALLED"
+            }
+          ]
+        },
+        {
+          "nodeId": "SINK_NODE_02_DELAY",
+          "text": "Mr. Johnson sounds a bit disappointed but agrees to wait. 'Alright, I guess. Hopefully, it doesn't get worse.'",
+          "image": "characters/tenant_slightly_annoyed_johnson.png",
+          "location_image": "locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -2
+          },
+          "endsScenario": true,
+          "endText": "Scenario Ended: Mr. Johnson will wait. You've saved immediate effort but slightly lowered his satisfaction."
+        },
+        {
+          "nodeId": "SINK_NODE_02_SELFHELP",
+          "text": "Mr. Johnson sounds hesitant. 'Uh, I'm not really good with tools. I'd rather not make it worse.' He doesn't sound pleased.",
+          "image": "characters/tenant_annoyed_johnson.png",
+          "location_image": "locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -5
+          },
+          "choices": [
+            {
+                "text": "Insist he tries or waits for a fee.",
+                 "effects": {
+                    "tenantSatisfaction": -10,
+                    "relationship_NPC_TENANT_MR_JOHNSON": -3
+                },
+                "nextNode": "SINK_NODE_SELFHELP_FAIL"
+            },
+            {
+                "text": "Apologize and say you'll inspect it now.",
+                 "effects": {
+                    "tenantSatisfaction": 2,
+                    "relationship_NPC_TENANT_MR_JOHNSON": 1
+                },
+                "nextNode": "SINK_NODE_02_INSPECT"
+            }
+          ]
+        },
+        {
+            "nodeId": "SINK_NODE_SELFHELP_FAIL",
+            "text": "Mr. Johnson is clearly unhappy. 'Fine. I'll just let it drip then.' This will likely lead to a worse report later.",
+            "image": "characters/tenant_angry_johnson.png",
+            "location_image": "locations/office.png",
+            "effects": {
+                "buildingCondition": -2 // Water waste and potential damage
+            },
+            "endsScenario": true,
+            "endText": "Scenario Ended: Mr. Johnson is upset. The leak continues."
+        },
+        {
+          "nodeId": "SINK_QTE_TRIGGER",
+          "text": "You decide to try fixing the leaky faucet yourself. It looks like a worn-out washer. This might save some money if you can do it.",
+          "image": "locations/unit_7c_kitchen_sink_leaking.png",
+          "qte": {
+            "type": "StopTheMovingBar",
+            "instructionText": "Try to tighten the valve just right. Click 'Stop Bar' when the moving bar is in the green zone!",
+            "image": "ui/qte_valve_interface_placeholder.png",
+            "parameters": {
+              "targetZoneStart": 35,
+              "targetZoneEnd": 65,
+              "barSpeed": 40, 
+              "attempts": 1
+            },
+            "successEffects": {
+              "buildingCondition": 1,
+              "relationship_NPC_TENANT_MR_JOHNSON": 2,
+              "managerStress": -2,
+              "financialHealth": 20 
+            },
+            "failureEffects": {
+              "buildingCondition": -1,
+              "relationship_NPC_TENANT_MR_JOHNSON": -1,
+              "managerStress": 3
+            },
+            "successNextNode": "SINK_REPAIR_SUCCESS_NODE",
+            "failureNextNode": "SINK_REPAIR_FAILED_NODE"
+          }
+        },
+        {
+          "nodeId": "SINK_REPAIR_SUCCESS_NODE",
+          "text": "Success! You tightened it perfectly, and the leak has stopped. Mr. Johnson is impressed. 'Great job! Thanks a lot!'",
+          "image": "characters/tenant_happy_johnson.png",
+          "location_image": "locations/unit_7c_kitchen_sink_fixed.png",
+          "endsScenario": true,
+          "endText": "Scenario Ended: You successfully fixed the sink and saved some money. Mr. Johnson is happy."
+        },
+        {
+          "nodeId": "SINK_REPAIR_FAILED_NODE",
+          "text": "Oops! You either over-tightened it or didn't get it right. The leak persists. Mr. Johnson looks a bit concerned.",
+          "image": "characters/tenant_annoyed_johnson.png",
+          "location_image": "locations/unit_7c_kitchen_sink_still_leaking.png",
+          "choices": [
+            {
+              "text": "Apologize and call a professional plumber.",
+              "effects": { "financialHealth": -75, "managerStress": 2, "relationship_NPC_TENANT_MR_JOHNSON": 0 },
+              "nextNode": "SINK_NODE_PLUMBER_CALLED"
+            },
+            {
+              "text": "Say you'll come back with better tools later.",
+              "effects": { "tenantSatisfaction": -3, "relationship_NPC_TENANT_MR_JOHNSON": -1 },
+              "nextNode": "SINK_NODE_DELAY_FIX_POST_FAIL"
+            }
+          ]
+        },
+        {
+          "nodeId": "SINK_NODE_PLUMBER_CALLED",
+          "text": "You call a professional plumber. They fix the sink later that day. It costs a bit, but the problem is solved.",
+          "image": "characters/vendor_plumber.png",
+          "location_image": "locations/unit_7c_kitchen_sink_fixed.png",
+          "endsScenario": true,
+          "endText": "Scenario Ended: The plumber fixed the sink. Mr. Johnson is satisfied, though it cost some money."
+        },
+        {
+          "nodeId": "SINK_NODE_DELAY_FIX_POST_FAIL",
+          "text": "Mr. Johnson doesn't look thrilled. 'Oh, okay. So it's still dripping then?'",
+          "image": "characters/tenant_annoyed_johnson.png",
+          "location_image": "locations/unit_7c_kitchen_sink_still_leaking.png",
+          "effects": {
+              "buildingCondition": -1 // Ongoing leak
+          },
+          "endsScenario": true,
+          "endText": "Scenario Ended: You failed to fix the sink and have delayed a proper repair. Mr. Johnson is not happy."
+        }
+      ]
+    },
+    {
+      "id": "NOISE_COMPLAINT_01",
+      "title": "Noise Complaint - Unit 10A",
+      "involvedNPCs": ["NPC_MRS_DAVIS", "NPC_TENANT_10A"],
+      "startNode": "NODE_01",
+      "nodes": [
+        {
+          "nodeId": "NODE_01",
+          "text": "You are in your office. The phone rings. It's Mrs. Davis from Unit 10B. 'The new tenants in 10A are playing loud music again! It's shaking my walls! You have to do something!' Her voice is sharp with annoyance.",
+          "image": "characters/tenant_angry_davis.png",
+          "location_image": "locations/office.png",
+          "choices": [
+            {
+              "text": "Promise to talk to Unit 10A immediately.",
+              "effects": {
+                "tenantSatisfaction": 5,
+                "managerStress": 2,
+                "relationship_NPC_MRS_DAVIS": 1
+              },
+              "nextNode": "NODE_02A"
+            },
+            {
+              "text": "Tell her you'll look into it when you have time.",
+              "effects": {
+                "tenantSatisfaction": -10,
+                "managerStress": -1,
+                "relationship_NPC_MRS_DAVIS": -2
+              },
+              "nextNode": "NODE_02B"
+            },
+            {
+              "text": "Advise her to talk to them herself first.",
+              "effects": {
+                "tenantSatisfaction": -5,
+                "managerStress": 0,
+                "relationship_NPC_MRS_DAVIS": -1
+              },
+              "nextNode": "NODE_02C"
+            }
+          ]
+        },
+        {
+          "nodeId": "NODE_02A",
+          "text": "You go to Unit 10A and speak with the tenants (they identify as 'NPC_TENANT_10A'). They are apologetic and agree to turn down the music. Mrs. Davis calls back later, sounding much calmer, to thank you.",
+          "image": "characters/tenant_neutral_10a.png",
+          "location_image": "locations/unit_hallway.png",
+          "effects": {
+            "tenantSatisfaction": 10,
+            "managerStress": -1,
+            "relationship_NPC_MRS_DAVIS": 2,
+            "relationship_NPC_TENANT_10A": 1 
+          },
+          "endsScenario": true,
+          "endText": "Scenario Ended: The noise issue is resolved for now. Mrs. Davis is pleased with your prompt action."
+        },
+        {
+          "nodeId": "NODE_02B",
+          "text": "Hours later, Mrs. Davis calls back, absolutely furious. 'The music never stopped! I'm going to report you to the owner for negligence! This is unacceptable!' The call ends abruptly.",
+          "image": "characters/tenant_furious_davis.png",
+          "location_image": "locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -15,
+            "managerStress": 10,
+            "relationship_NPC_MRS_DAVIS": -3
+          },
+          "choices": [
+            {
+              "text": "Quickly go to Unit 10A now and address the music.",
+              "effects": {
+                "tenantSatisfaction": -5, 
+                "managerStress": 5,
+                "relationship_NPC_MRS_DAVIS": 1 
+              },
+              "nextNode": "NODE_03A"
+            },
+            {
+              "text": "Decide to issue a formal lease violation warning to 10A without visiting.",
+              "effects": {
+                "tenantSatisfaction": -10,
+                "managerStress": 3,
+                "relationship_NPC_TENANT_10A": -2
+              },
+              "nextNode": "NODE_03B"
+            }
+          ]
+        },
+        {
+          "nodeId": "NODE_02C",
+          "text": "Mrs. Davis calls back a short while later. 'I tried talking to them, and they were rude to me! Now the music is even louder! You need to handle this!' She sounds more upset than before.",
+          "image": "characters/tenant_very_angry_davis.png",
+          "location_image": "locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -10,
+            "managerStress": 5,
+            "relationship_NPC_MRS_DAVIS": -1
+          },
+          "choices": [
+            {
+              "text": "Apologize and head to Unit 10A immediately.",
+              "effects": {
+                "tenantSatisfaction": 5,
+                "managerStress": 2,
+                "relationship_NPC_MRS_DAVIS": 1
+              },
+              "nextNode": "NODE_02A" 
+            },
+            {
+              "text": "Explain you'll send a written notice to Unit 10A.",
+              "effects": {
+                "tenantSatisfaction": -5,
+                "managerStress": 1,
+                "relationship_NPC_TENANT_10A": -1
+              },
+              "nextNode": "NODE_03B"
+            }
+          ]
+        },
+        {
+          "nodeId": "NODE_03A",
+          "text": "You rush to Unit 10A. They are surprised to see you, claiming they weren't playing music loudly for long. They turn it off. It's hard to know who to believe, but the noise is stopped.",
+          "image": "characters/tenant_skeptical_10a.png",
+          "location_image": "locations/unit_hallway.png",
+          "effects": {
+            "tenantSatisfaction": 0, 
+            "managerStress": 2,
+            "relationship_NPC_TENANT_10A": -1
+          },
+          "endsScenario": true,
+          "endText": "Scenario Ended: The immediate noise issue is resolved, but the situation remains tense and unclear."
+        },
+        {
+          "nodeId": "NODE_03B",
+          "text": "You draft and send a formal lease violation notice to Unit 10A. You inform Mrs. Davis. She seems partially mollified but skeptical it will work long-term.",
+          "image": "characters/tenant_skeptical_davis.png",
+          "location_image": "locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -2,
+            "managerStress": 1,
+            "relationship_NPC_TENANT_10A": -2,
+            "relationship_NPC_MRS_DAVIS": 1 
+          },
+          "endsScenario": true,
+          "endText": "Scenario Ended: A formal notice has been issued. The long-term effectiveness is uncertain."
+        }
+      ]
+    }
+  ]
+}
+```

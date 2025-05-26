@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Management Game</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <header id="metrics-display">
+            <p>Tenant Satisfaction: <span id="tenantSatisfaction">70</span>%</p>
+            <p>Manager Stress: <span id="managerStress">10</span>%</p>
+            <p>Building Condition: <span id="buildingCondition">80</span>%</p>
+            <p>Financial Health: $<span id="financialHealth">5000</span></p>
+        </header>
+
+        <section id="npc-relationship-display" style="display:none;">
+            <p>Relationship with <span id="npc-name">NPC</span>: <span id="npc-relationship-score">0</span></p>
+        </section>
+
+        <main id="scenario-area">
+            <div id="image-container">
+                <img id="scenario-image" src="assets/images/placeholder.png" alt="Scenario Image">
+                <img id="location-image" src="assets/images/placeholder_location.png" alt="Location Image">
+            </div>
+            <div id="text-area">
+                <p id="scenario-text">Welcome to the Property Management Game!</p>
+            </div>
+
+            <!-- QTE Container -->
+            <div id="qte-container" style="display:none;">
+                <p id="qte-instruction-text">QTE Instructions Here</p>
+                <div id="qte-track">
+                    <div id="qte-target-zone"></div>
+                    <div id="qte-moving-bar"></div>
+                </div>
+                <button id="qte-action-button">Stop Bar</button>
+            </div>
+
+            <div id="choices-area">
+                <!-- Choices will be populated by JavaScript -->
+            </div>
+            <div id="scenario-feedback">
+                <p id="feedback-text"></p>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
