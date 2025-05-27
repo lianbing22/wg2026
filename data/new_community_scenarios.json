@@ -1,0 +1,523 @@
+{
+  "scenarios": [
+    {
+      "id": "COMMUNITY_EVENT_ORGANIZATION",
+      "title": "社区活动策划-中秋节庆典",
+      "involvedNPCs": ["NPC_COMMUNITY_LEADER_CHEN", "NPC_ELDERLY_LIU", "NPC_YOUNG_FAMILY_WU"],
+      "startNode": "FESTIVAL_PLANNING_START",
+      "nodes": [
+        {
+          "nodeId": "FESTIVAL_PLANNING_START",
+          "text": "随着中秋节临近，社区委员会主席陈女士前来讨论组织一场社区庆典的可能性。"我们想在中秋节举办一个活动，增强社区凝聚力。作为物业管理方，你们愿意提供支持吗？"",
+          "image": "assets/images/characters/community_leader_chen.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "热情支持并提供场地和基本设施",
+              "effects": {
+                "financialHealth": -50,
+                "tenantSatisfaction": 5,
+                "relationship_NPC_COMMUNITY_LEADER_CHEN": 3
+              },
+              "nextNode": "ENTHUSIASTIC_SUPPORT"
+            },
+            {
+              "text": "同意适度支持，但需要居民分担部分费用",
+              "effects": {
+                "financialHealth": -20,
+                "tenantSatisfaction": 2,
+                "relationship_NPC_COMMUNITY_LEADER_CHEN": 1
+              },
+              "nextNode": "MODERATE_SUPPORT"
+            },
+            {
+              "text": "拒绝支持，表示这不在物业服务范围内",
+              "effects": {
+                "tenantSatisfaction": -5,
+                "relationship_NPC_COMMUNITY_LEADER_CHEN": -3
+              },
+              "nextNode": "REJECT_SUPPORT"
+            }
+          ]
+        },
+        {
+          "nodeId": "ENTHUSIASTIC_SUPPORT",
+          "text": "陈女士面露喜色："太好了！有了物业的全力支持，我们可以策划一个很棒的活动。"你们开始讨论活动的具体内容和预算分配。",
+          "image": "assets/images/characters/community_leader_chen_happy.png",
+          "location_image": "assets/images/locations/office_meeting.png",
+          "storyFlags": {
+            "set": ["COMMUNITY_EVENT_SUPPORTED", "PROPERTY_REPUTATION_IMPROVED"]
+          },
+          "choices": [
+            {
+              "text": "组织资源分配会议（资源分配迷你游戏）",
+              "nextNode": "RESOURCE_ALLOCATION_GAME"
+            },
+            {
+              "text": "建议邀请知名表演者增加活动吸引力",
+              "effects": {
+                "financialHealth": -100,
+                "tenantSatisfaction": 10
+              },
+              "nextNode": "INVITE_PERFORMERS"
+            }
+          ]
+        },
+        {
+          "nodeId": "RESOURCE_ALLOCATION_GAME",
+          "text": "你需要在有限的预算内分配资源，确保活动成功举办。每个方面都很重要，但你必须做出权衡。",
+          "image": "assets/images/locations/planning_board.png",
+          "resourceAllocationGame": {
+            "type": "ResourceAllocation",
+            "instructionText": "在总预算500元内分配资源到各个类别。每个类别至少需要50元。",
+            "totalBudget": 500,
+            "categories": [
+              {
+                "name": "食物与饮料",
+                "minValue": 50,
+                "maxValue": 250,
+                "impactFactor": {
+                  "tenantSatisfaction": 0.05,
+                  "communityEngagement": 0.03
+                }
+              },
+              {
+                "name": "装饰与氛围",
+                "minValue": 50,
+                "maxValue": 200,
+                "impactFactor": {
+                  "tenantSatisfaction": 0.03,
+                  "communityEngagement": 0.04,
+                  "propertyReputation": 0.02
+                }
+              },
+              {
+                "name": "活动与游戏",
+                "minValue": 50,
+                "maxValue": 200,
+                "impactFactor": {
+                  "tenantSatisfaction": 0.04,
+                  "communityEngagement": 0.05,
+                  "childrenHappiness": 0.06
+                }
+              },
+              {
+                "name": "安全与后勤",
+                "minValue": 50,
+                "maxValue": 150,
+                "impactFactor": {
+                  "tenantSatisfaction": 0.02,
+                  "propertyReputation": 0.04,
+                  "riskReduction": 0.08
+                }
+              }
+            ],
+            "successNextNode": "RESOURCE_ALLOCATION_SUCCESS",
+            "failureNextNode": "RESOURCE_ALLOCATION_FAILURE"
+          }
+        },
+        {
+          "nodeId": "RESOURCE_ALLOCATION_SUCCESS",
+          "text": "你巧妙地分配了资源，确保每个方面都得到适当关注。陈女士对你的规划能力印象深刻："看来我们找对了合作伙伴，这个活动一定会很成功！"",
+          "image": "assets/images/characters/community_leader_chen_impressed.png",
+          "location_image": "assets/images/locations/office_planning.png",
+          "effects": {
+            "managerReputation": 5,
+            "relationship_NPC_COMMUNITY_LEADER_CHEN": 2
+          },
+          "nextNode": "EVENT_PREPARATION"
+        },
+        {
+          "nodeId": "RESOURCE_ALLOCATION_FAILURE",
+          "text": "你的资源分配似乎不够平衡，某些方面得到了过多关注，而其他方面则被忽视。陈女士看起来有些担忧："我们可能需要重新考虑这个计划，确保活动能够顺利进行。"",
+          "image": "assets/images/characters/community_leader_chen_concerned.png",
+          "location_image": "assets/images/locations/office_planning.png",
+          "effects": {
+            "managerReputation": -2
+          },
+          "nextNode": "EVENT_PREPARATION_CHALLENGE"
+        },
+        {
+          "nodeId": "MODERATE_SUPPORT",
+          "text": "陈女士理解你的立场："这是合理的。我们可以向居民收取少量参与费用，分担部分成本。"你们开始讨论如何在有限预算内最大化活动效果。",
+          "image": "assets/images/characters/community_leader_chen_neutral.png",
+          "location_image": "assets/images/locations/office.png",
+          "storyFlags": {
+            "set": ["COMMUNITY_EVENT_PARTIALLY_SUPPORTED"]
+          },
+          "choices": [
+            {
+              "text": "提议组织志愿者团队减少人力成本",
+              "effects": {
+                "communityEngagement": 5,
+                "managerStress": 2
+              },
+              "nextNode": "ORGANIZE_VOLUNTEERS"
+            },
+            {
+              "text": "建议简化活动规模，专注于几个核心环节",
+              "effects": {
+                "financialHealth": -10,
+                "tenantSatisfaction": 3
+              },
+              "nextNode": "SIMPLIFIED_EVENT"
+            }
+          ]
+        },
+        {
+          "nodeId": "REJECT_SUPPORT",
+          "text": "陈女士明显失望："这太遗憾了。我们本希望这能成为增强社区凝聚力的好机会。"她转身离开，但你注意到她在门口与几位租户交谈，他们看向你的眼神中带着不满。",
+          "image": "assets/images/characters/community_leader_chen_disappointed.png",
+          "location_image": "assets/images/locations/office.png",
+          "storyFlags": {
+            "set": ["COMMUNITY_EVENT_REJECTED", "TENANT_TRUST_DAMAGED"]
+          },
+          "effects": {
+            "tenantSatisfaction": -8,
+            "communityEngagement": -5
+          },
+          "choices": [
+            {
+              "text": "重新考虑，提出小规模支持方案",
+              "effects": {
+                "relationship_NPC_COMMUNITY_LEADER_CHEN": 1,
+                "financialHealth": -15
+              },
+              "nextNode": "RECONSIDER_SUPPORT"
+            },
+            {
+              "text": "坚持决定，专注于核心物业服务",
+              "effects": {
+                "managerStress": -2,
+                "relationship_NPC_COMMUNITY_LEADER_CHEN": -2
+              },
+              "nextNode": "STAND_BY_DECISION"
+            }
+          ]
+        },
+        {
+          "nodeId": "EVENT_PREPARATION",
+          "text": "在接下来的两周里，你与社区委员会紧密合作，准备中秋节活动。刘奶奶主动提出帮忙制作传统月饼，而吴家的孩子们则兴奋地准备了一个文化表演。",
+          "image": "assets/images/characters/tenant_happy_elderly.png",
+          "location_image": "assets/images/locations/community_hall_preparation.png",
+          "effects": {
+            "tenantSatisfaction": 3,
+            "relationship_NPC_ELDERLY_LIU": 2,
+            "relationship_NPC_YOUNG_FAMILY_WU": 2
+          },
+          "choices": [
+            {
+              "text": "亲自参与最后的准备工作",
+              "effects": {
+                "managerStress": 3,
+                "tenantSatisfaction": 2
+              },
+              "nextNode": "MANAGER_PARTICIPATION"
+            },
+            {
+              "text": "委派物业团队协助，自己监督",
+              "effects": {
+                "staffSatisfaction": -1,
+                "managerStress": 1
+              },
+              "nextNode": "DELEGATE_PREPARATION"
+            }
+          ]
+        },
+        {
+          "nodeId": "EVENT_PREPARATION_CHALLENGE",
+          "text": "准备工作面临一些挑战，你需要重新调整计划。吴家的孩子们期待着表演节目，而刘奶奶则担心可能没有足够的座位给老年居民。",
+          "image": "assets/images/characters/young_family_wu.png",
+          "location_image": "assets/images/locations/community_hall_challenge.png",
+          "choices": [
+            {
+              "text": "组织时间管理挑战（迷你游戏）",
+              "nextNode": "TIME_MANAGEMENT_GAME"
+            },
+            {
+              "text": "投入额外资金解决问题",
+              "effects": {
+                "financialHealth": -50,
+                "tenantSatisfaction": 4,
+                "managerStress": -1
+              },
+              "nextNode": "EXTRA_FUNDING_SOLUTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "TIME_MANAGEMENT_GAME",
+          "text": "活动前最后一天，出现了多个需要紧急处理的问题。你需要在有限的时间内优先解决最重要的事项。",
+          "image": "assets/images/locations/manager_desk_busy.png",
+          "timeManagementGame": {
+            "type": "TimeManagement",
+            "instructionText": "你有8小时工作时间，需要处理以下任务。拖动任务到时间轴上安排顺序。",
+            "totalTimeAvailable": 8,
+            "tasks": [
+              {
+                "id": "SEATING_ARRANGEMENT",
+                "name": "解决老年人座位问题",
+                "timeRequired": 2,
+                "priority": "high",
+                "impactFactor": {
+                  "relationship_NPC_ELDERLY_LIU": 3,
+                  "seniorTenantSatisfaction": 5
+                }
+              },
+              {
+                "id": "CHILDREN_PERFORMANCE",
+                "name": "协助儿童表演准备",
+                "timeRequired": 2,
+                "priority": "medium",
+                "impactFactor": {
+                  "relationship_NPC_YOUNG_FAMILY_WU": 3,
+                  "familyTenantSatisfaction": 4
+                }
+              },
+              {
+                "id": "DECORATION_COMPLETION",
+                "name": "完成场地装饰",
+                "timeRequired": 3,
+                "priority": "medium",
+                "impactFactor": {
+                  "eventAtmosphere": 4,
+                  "propertyReputation": 2
+                }
+              },
+              {
+                "id": "FOOD_VENDOR_ISSUE",
+                "name": "解决食品供应商问题",
+                "timeRequired": 2,
+                "priority": "high",
+                "impactFactor": {
+                  "eventSuccess": 5,
+                  "tenantSatisfaction": 3
+                }
+              },
+              {
+                "id": "SAFETY_CHECK",
+                "name": "最终安全检查",
+                "timeRequired": 1,
+                "priority": "critical",
+                "impactFactor": {
+                  "riskReduction": 6,
+                  "propertyReputation": 3
+                }
+              }
+            ],
+            "successNextNode": "TIME_MANAGEMENT_SUCCESS",
+            "failureNextNode": "TIME_MANAGEMENT_FAILURE"
+          }
+        },
+        {
+          "nodeId": "TIME_MANAGEMENT_SUCCESS",
+          "text": "通过巧妙的时间安排，你成功处理了所有关键问题。安全检查顺利完成，老年人有了舒适的座位区，儿童表演得到了充分准备，场地装饰也很出色。活动前的所有障碍都被清除了。",
+          "image": "assets/images/characters/manager_satisfied.png",
+          "location_image": "assets/images/locations/community_hall_ready.png",
+          "effects": {
+            "managerReputation": 5,
+            "tenantSatisfaction": 5,
+            "managerStress": -2
+          },
+          "nextNode": "EVENT_DAY"
+        },
+        {
+          "nodeId": "TIME_MANAGEMENT_FAILURE",
+          "text": "尽管你尽了最大努力，但时间安排不够合理，导致某些重要任务没有完成。安全检查仓促进行，座位安排不尽如人意，一些装饰也没能按计划完成。",
+          "image": "assets/images/characters/manager_stressed.png",
+          "location_image": "assets/images/locations/community_hall_incomplete.png",
+          "effects": {
+            "managerReputation": -3,
+            "tenantSatisfaction": -2,
+            "managerStress": 5
+          },
+          "nextNode": "EVENT_DAY_CHALLENGES"
+        },
+        {
+          "nodeId": "EVENT_DAY",
+          "text": "中秋节活动当天，社区大厅充满欢声笑语。刘奶奶的传统月饼大受欢迎，吴家孩子们的表演赢得了热烈掌声。陈女士向你走来，脸上带着满意的笑容："这次活动非常成功，多亏了你的支持！"",
+          "image": "assets/images/characters/community_gathering.png",
+          "location_image": "assets/images/locations/community_hall_festival.png",
+          "storyFlags": {
+            "set": ["SUCCESSFUL_COMMUNITY_EVENT", "COMMUNITY_BONDS_STRENGTHENED"]
+          },
+          "effects": {
+            "tenantSatisfaction": 10,
+            "propertyReputation": 5,
+            "relationship_NPC_COMMUNITY_LEADER_CHEN": 3,
+            "communityEngagement": 8
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你成功组织了一场社区中秋节活动，增强了社区凝聚力，提高了物业声誉。"
+        },
+        {
+          "nodeId": "EVENT_DAY_CHALLENGES",
+          "text": "中秋节活动如期举行，但过程中出现了一些小问题。座位安排混乱导致一些老年居民抱怨，装饰不完整影响了整体氛围。尽管如此，刘奶奶的月饼和吴家孩子们的表演仍然为活动挽回了一些声誉。",
+          "image": "assets/images/characters/community_gathering_issues.png",
+          "location_image": "assets/images/locations/community_hall_festival_issues.png",
+          "storyFlags": {
+            "set": ["CHALLENGING_COMMUNITY_EVENT", "MANAGEMENT_SKILLS_QUESTIONED"]
+          },
+          "effects": {
+            "tenantSatisfaction": 3,
+            "propertyReputation": -1,
+            "relationship_NPC_COMMUNITY_LEADER_CHEN": 1,
+            "communityEngagement": 4
+          },
+          "endsScenario": true,
+          "endText": "场景结束：活动虽然成功举办，但出现了一些管理问题，未能充分实现预期效果。"
+        },
+        {
+          "nodeId": "INVITE_PERFORMERS",
+          "text": "你联系了一位知名的传统音乐表演者参加活动。虽然费用不菲，但这一决定引起了社区居民的极大兴趣，许多人提前表示会参加活动。",
+          "image": "assets/images/characters/performer_traditional.png",
+          "location_image": "assets/images/locations/office_call.png",
+          "effects": {
+            "communityEngagement": 10,
+            "relationship_NPC_COMMUNITY_LEADER_CHEN": 3
+          },
+          "nextNode": "EVENT_PREPARATION"
+        },
+        {
+          "nodeId": "ORGANIZE_VOLUNTEERS",
+          "text": "你组织了一个社区志愿者团队帮助筹备活动。刘奶奶主动提出负责食物准备，而吴先生则愿意协调儿童活动。这种参与不仅节省了成本，还增强了社区参与感。",
+          "image": "assets/images/characters/community_volunteers.png",
+          "location_image": "assets/images/locations/community_meeting.png",
+          "effects": {
+            "financialHealth": 20,
+            "communityEngagement": 8,
+            "relationship_NPC_ELDERLY_LIU": 2,
+            "relationship_NPC_YOUNG_FAMILY_WU": 3
+          },
+          "nextNode": "EVENT_PREPARATION"
+        },
+        {
+          "nodeId": "SIMPLIFIED_EVENT",
+          "text": "你建议将活动规模简化，专注于月饼品尝、灯笼制作和一个小型文化表演。陈女士同意这个务实的方案："质量比数量更重要，让我们确保做好这几个环节。"",
+          "image": "assets/images/characters/community_leader_chen_agreement.png",
+          "location_image": "assets/images/locations/office_planning.png",
+          "effects": {
+            "financialHealth": 10,
+            "managerStress": -2
+          },
+          "nextNode": "EVENT_PREPARATION"
+        },
+        {
+          "nodeId": "RECONSIDER_SUPPORT",
+          "text": "看到居民们的反应，你重新考虑了决定，联系陈女士提出愿意提供有限支持。"我们可以提供场地和基本设施，但无法承担额外费用。"陈女士对你改变主意表示感谢，尽管她的热情已经减弱。",
+          "image": "assets/images/characters/community_leader_chen_neutral.png",
+          "location_image": "assets/images/locations/hallway_conversation.png",
+          "storyFlags": {
+            "set": ["COMMUNITY_EVENT_RECONSIDERED"],
+            "unset": ["COMMUNITY_EVENT_REJECTED"]
+          },
+          "nextNode": "SIMPLIFIED_EVENT"
+        },
+        {
+          "nodeId": "STAND_BY_DECISION",
+          "text": "你坚持原来的决定，专注于提供核心物业服务。在接下来的几周里，你注意到社区居民自行组织了一个小型中秋活动，但参与度不高，气氛也不如预期。一些居民在走廊里遇到你时会投来失望的目光。",
+          "image": "assets/images/characters/tenants_disappointed.png",
+          "location_image": "assets/images/locations/small_gathering.png",
+          "storyFlags": {
+            "set": ["COMMUNITY_INITIATIVE_DECLINED", "MANAGEMENT_APPROACH_QUESTIONED"]
+          },
+          "effects": {
+            "communityEngagement": -10,
+            "tenantRetentionRisk": 5
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你选择不支持社区活动，专注于核心物业服务，但这损害了社区凝聚力和居民满意度。"
+        },
+        {
+          "nodeId": "MANAGER_PARTICIPATION",
+          "text": "你亲自参与活动的最后准备工作，从悬挂灯笼到布置桌椅，事事亲力亲为。居民们看到物业经理如此投入，都表示赞赏。刘奶奶特意为你准备了一个特制月饼："谢谢你对社区的付出。"",
+          "image": "assets/images/characters/tenant_happy_elderly.png",
+          "location_image": "assets/images/locations/manager_helping.png",
+          "effects": {
+            "relationship_NPC_ELDERLY_LIU": 3,
+            "tenantSatisfaction": 5,
+            "managerReputation": 3
+          },
+          "nextNode": "EVENT_DAY"
+        },
+        {
+          "nodeId": "DELEGATE_PREPARATION",
+          "text": "你委派物业团队协助准备工作，自己则负责监督和协调。团队成员虽然完成了任务，但有些人抱怨额外工作没有报酬。不过，活动准备工作总体上进展顺利。",
+          "image": "assets/images/characters/property_staff_working.png",
+          "location_image": "assets/images/locations/community_hall_preparation.png",
+          "effects": {
+            "staffSatisfaction": -2,
+            "managerStress": -1
+          },
+          "nextNode": "EVENT_DAY"
+        },
+        {
+          "nodeId": "EXTRA_FUNDING_SOLUTION",
+          "text": "你决定投入额外资金解决准备过程中的问题。额外租用了舒适座椅给老年居民，聘请了一位协调员帮助吴家的孩子们排练表演，并升级了场地装饰。这些措施虽然花费不少，但确保了活动能顺利进行。",
+          "image": "assets/images/characters/vendors_delivering.png",
+          "location_image": "assets/images/locations/upgraded_venue.png",
+          "effects": {
+            "relationship_NPC_ELDERLY_LIU": 3,
+            "relationship_NPC_YOUNG_FAMILY_WU": 3,
+            "propertyReputation": 2
+          },
+          "nextNode": "EVENT_DAY"
+        }
+      ]
+    }
+  ],
+  "npcs": [
+    {
+      "id": "NPC_COMMUNITY_LEADER_CHEN",
+      "name": "陈女士",
+      "role": "社区委员会主席",
+      "personality": "热情但务实",
+      "background": "退休教师，现任社区委员会主席，组织过多次成功的社区活动",
+      "interests": ["社区建设", "传统文化", "教育"]
+    },
+    {
+      "id": "NPC_YOUNG_FAMILY_WU",
+      "name": "吴家",
+      "role": "年轻家庭",
+      "personality": "活跃、参与度高",
+      "background": "一对年轻夫妇和两个学龄前儿童，搬来两年",
+      "interests": ["儿童活动", "社区安全", "教育资源"]
+    }
+  ],
+  "systems": {
+    "buildingDegradationSystem": {
+      "components": [
+        {
+          "id": "COMMUNITY_HALL",
+          "name": "社区大厅",
+          "condition": 90,
+          "degradationRate": 0.5,
+          "breakdownThreshold": 30,
+          "repairCost": {
+            "base": 500,
+            "perDegradationPoint": 20
+          }
+        },
+        {
+          "id": "PUBLIC_GARDEN",
+          "name": "公共花园",
+          "condition": 85,
+          "degradationRate": 1.0,
+          "breakdownThreshold": 40,
+          "repairCost": {
+            "base": 300,
+            "perDegradationPoint": 15
+          }
+        }
+      ]
+    },
+    "storyFlagSystem": {
+      "persistentFlags": {
+        "COMMUNITY_EVENT_SUPPORTED": false,
+        "PROPERTY_REPUTATION_IMPROVED": false,
+        "COMMUNITY_BONDS_STRENGTHENED": false,
+        "MANAGEMENT_APPROACH_QUESTIONED": false
+      }
+    }
+  }
+} 

@@ -1,0 +1,428 @@
+{
+  "storyFlagSystem": {
+    "flagCategories": [
+      {
+        "id": "PLAYER_DECISIONS",
+        "name": "玩家决策",
+        "description": "记录玩家在关键决策点的选择",
+        "isPersistent": true
+      },
+      {
+        "id": "RELATIONSHIP_STATUS",
+        "name": "关系状态",
+        "description": "记录与NPC和组织的关系状态",
+        "isPersistent": true
+      },
+      {
+        "id": "PROPERTY_STATUS",
+        "name": "物业状态",
+        "description": "记录物业状况的关键里程碑和事件",
+        "isPersistent": true
+      },
+      {
+        "id": "REPUTATION",
+        "name": "声誉",
+        "description": "记录玩家在不同群体中的声誉",
+        "isPersistent": true
+      },
+      {
+        "id": "SCENARIO_SPECIFIC",
+        "name": "场景特定",
+        "description": "特定场景内的临时标志",
+        "isPersistent": false
+      },
+      {
+        "id": "ACHIEVEMENTS",
+        "name": "成就",
+        "description": "记录玩家达成的特殊成就",
+        "isPersistent": true
+      }
+    ],
+    "globalFlags": {
+      "COMMUNITY_FOCUSED": {
+        "category": "PLAYER_DECISIONS",
+        "description": "玩家倾向于支持社区活动和居民需求",
+        "value": false,
+        "requiredEvents": ["COMMUNITY_EVENT_SUPPORTED", "TENANT_EMERGENCY_HELPED"],
+        "counterFlags": ["PROFIT_FOCUSED"]
+      },
+      "PROFIT_FOCUSED": {
+        "category": "PLAYER_DECISIONS",
+        "description": "玩家倾向于财务效益和成本控制",
+        "value": false,
+        "requiredEvents": ["COST_CUTTING_IMPLEMENTED", "RENT_INCREASED"],
+        "counterFlags": ["COMMUNITY_FOCUSED"]
+      },
+      "INNOVATIVE_MANAGER": {
+        "category": "PLAYER_DECISIONS",
+        "description": "玩家倾向于采用新技术和创新方法",
+        "value": false,
+        "requiredEvents": ["SMART_BUILDING_UPGRADE", "RENEWABLE_ENERGY_ADOPTED"],
+        "counterFlags": ["TRADITIONAL_MANAGER"]
+      },
+      "TRADITIONAL_MANAGER": {
+        "category": "PLAYER_DECISIONS",
+        "description": "玩家倾向于传统管理方法和经验",
+        "value": false,
+        "requiredEvents": ["MODERN_PROPOSAL_REJECTED", "EXPERIENCED_STAFF_HIRED"],
+        "counterFlags": ["INNOVATIVE_MANAGER"]
+      },
+      "TENANT_CHAMPION": {
+        "category": "REPUTATION",
+        "description": "租户视玩家为他们利益的拥护者",
+        "value": false,
+        "requiredEvents": ["MULTIPLE_TENANT_BENEFITS", "TENANT_COUNCIL_SUPPORTED"],
+        "threshold": 75,
+        "benefits": {
+          "tenantSatisfaction": 10,
+          "tenantRetention": 15,
+          "rentCollectionRate": 5
+        }
+      },
+      "INDUSTRY_RESPECTED": {
+        "category": "REPUTATION",
+        "description": "在物业管理行业中享有声誉",
+        "value": false,
+        "requiredEvents": ["AWARD_RECEIVED", "INDUSTRY_STANDARD_IMPLEMENTED"],
+        "threshold": 80,
+        "benefits": {
+          "staffApplicationQuality": 20,
+          "vendorDiscounts": 10,
+          "loanInterestReduction": 0.5
+        }
+      },
+      "COMMUNITY_PILLAR": {
+        "category": "REPUTATION",
+        "description": "被视为社区的重要支持者",
+        "value": false,
+        "requiredEvents": ["MULTIPLE_COMMUNITY_EVENTS", "LOCAL_CHARITY_SUPPORTED"],
+        "threshold": 70,
+        "benefits": {
+          "localGovernmentRelations": 15,
+          "communitySupport": 20,
+          "tenantSatisfaction": 5
+        }
+      },
+      "MODEL_PROPERTY": {
+        "category": "PROPERTY_STATUS",
+        "description": "物业被视为该地区的标杆",
+        "value": false,
+        "requiredEvents": ["HIGH_OCCUPANCY_SUSTAINED", "MULTIPLE_UPGRADES_COMPLETED"],
+        "threshold": 85,
+        "benefits": {
+          "propertyValue": 15,
+          "rentalPremium": 10,
+          "applicantQuality": 20
+        }
+      }
+    },
+    "scenarioFlags": {
+      "COMMUNITY_EVENT_ORGANIZATION": {
+        "COMMUNITY_EVENT_SUPPORTED": {
+          "category": "PLAYER_DECISIONS",
+          "description": "玩家全力支持社区活动",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "increment": ["COMMUNITY_FOCUSED"]
+            }
+          }
+        },
+        "COMMUNITY_EVENT_PARTIALLY_SUPPORTED": {
+          "category": "PLAYER_DECISIONS",
+          "description": "玩家提供了有限支持给社区活动",
+          "value": false
+        },
+        "COMMUNITY_EVENT_REJECTED": {
+          "category": "PLAYER_DECISIONS",
+          "description": "玩家拒绝支持社区活动",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "increment": ["PROFIT_FOCUSED"]
+            }
+          }
+        },
+        "SUCCESSFUL_COMMUNITY_EVENT": {
+          "category": "SCENARIO_SPECIFIC",
+          "description": "社区活动成功举办",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["COMMUNITY_PILLAR", 15]
+            },
+            "unlockedScenarios": ["COMMUNITY_FESTIVAL_SEQUEL"]
+          }
+        },
+        "CHALLENGING_COMMUNITY_EVENT": {
+          "category": "SCENARIO_SPECIFIC",
+          "description": "社区活动举办但有挑战",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["COMMUNITY_PILLAR", 5]
+            }
+          }
+        },
+        "MANAGEMENT_SKILLS_QUESTIONED": {
+          "category": "REPUTATION",
+          "description": "物业管理能力受到质疑",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["INDUSTRY_RESPECTED", -10]
+            }
+          }
+        }
+      },
+      "MAINTENANCE_EMERGENCY": {
+        "RAPID_RESPONSE": {
+          "category": "PLAYER_DECISIONS",
+          "description": "玩家迅速响应紧急维修",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["TENANT_CHAMPION", 10]
+            }
+          }
+        },
+        "DELAYED_RESPONSE": {
+          "category": "PLAYER_DECISIONS",
+          "description": "玩家延迟响应紧急维修",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["TENANT_CHAMPION", -15]
+            }
+          }
+        },
+        "PREVENTIVE_MEASURES_IMPLEMENTED": {
+          "category": "PROPERTY_STATUS",
+          "description": "实施了预防性维护措施",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["MODEL_PROPERTY", 10]
+            }
+          }
+        },
+        "SYSTEM_FAILURE_PUBLICIZED": {
+          "category": "REPUTATION",
+          "description": "系统故障被公开报道",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["MODEL_PROPERTY", -20],
+              "progress": ["INDUSTRY_RESPECTED", -15]
+            }
+          }
+        }
+      },
+      "STAFF_MANAGEMENT_CRISIS": {
+        "STAFF_DEMANDS_MET": {
+          "category": "PLAYER_DECISIONS",
+          "description": "满足员工要求",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "increment": ["COMMUNITY_FOCUSED"]
+            }
+          }
+        },
+        "STAFF_DEMANDS_NEGOTIATED": {
+          "category": "PLAYER_DECISIONS",
+          "description": "与员工达成折中方案",
+          "value": false
+        },
+        "STAFF_DEMANDS_REJECTED": {
+          "category": "PLAYER_DECISIONS",
+          "description": "拒绝员工要求",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "increment": ["PROFIT_FOCUSED"]
+            }
+          }
+        },
+        "STAFF_TURNOVER_HIGH": {
+          "category": "PROPERTY_STATUS",
+          "description": "员工流动率高",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["MODEL_PROPERTY", -10]
+            }
+          }
+        },
+        "WORKFORCE_STABILITY_ACHIEVED": {
+          "category": "PROPERTY_STATUS",
+          "description": "实现了劳动力稳定",
+          "value": false,
+          "effects": {
+            "globalFlags": {
+              "progress": ["MODEL_PROPERTY", 10],
+              "progress": ["INDUSTRY_RESPECTED", 5]
+            }
+          }
+        }
+      }
+    },
+    "flagProgressionThresholds": {
+      "minor": 25,
+      "moderate": 50,
+      "major": 75,
+      "complete": 100
+    },
+    "effectTriggers": {
+      "dialogueChanges": {
+        "NPC_COMMUNITY_LEADER_CHEN": {
+          "triggerFlags": {
+            "COMMUNITY_EVENT_SUPPORTED": {
+              "additionalResponses": [
+                "感谢你上次对社区活动的支持，那真的为我们带来了很大帮助。",
+                "我注意到居民们对物业的评价提高了，这都是因为你对社区的贡献。"
+              ]
+            },
+            "COMMUNITY_EVENT_REJECTED": {
+              "additionalResponses": [
+                "我理解管理物业有很多考虑因素，但社区活动对建立居民关系真的很重要。",
+                "希望下次我们提出活动计划时，你能重新考虑支持我们。"
+              ]
+            }
+          }
+        },
+        "NPC_ELDERLY_LIU": {
+          "triggerFlags": {
+            "SUCCESSFUL_COMMUNITY_EVENT": {
+              "additionalResponses": [
+                "上次的中秋活动真是太棒了，我已经很久没有见到社区这么热闹了。",
+                "你知道吗？那天晚上我认识了几位新邻居，现在我们经常一起喝茶聊天。"
+              ]
+            }
+          }
+        }
+      },
+      "scenarioUnlocks": {
+        "COMMUNITY_FESTIVAL_SEQUEL": {
+          "requiredFlags": ["SUCCESSFUL_COMMUNITY_EVENT"],
+          "scenarioId": "SEASONAL_FESTIVAL_PLANNING"
+        },
+        "BUILDING_UPGRADE_PROJECT": {
+          "requiredFlags": ["MODEL_PROPERTY"],
+          "scenarioId": "MAJOR_RENOVATION_DECISION"
+        },
+        "TENANT_COUNCIL_FORMATION": {
+          "requiredFlags": ["TENANT_CHAMPION"],
+          "scenarioId": "TENANT_REPRESENTATION_SYSTEM"
+        }
+      },
+      "gameplayChanges": {
+        "TENANT_RETENTION_BOOST": {
+          "requiredFlags": ["TENANT_CHAMPION"],
+          "effects": {
+            "tenantTurnoverRate": -0.15,
+            "newTenantApplications": 1.2
+          }
+        },
+        "STAFF_QUALITY_IMPROVEMENT": {
+          "requiredFlags": ["INDUSTRY_RESPECTED"],
+          "effects": {
+            "staffApplicationQuality": 1.25,
+            "staffTrainingEffectiveness": 1.1
+          }
+        },
+        "FINANCIAL_ADVANTAGE": {
+          "requiredFlags": ["MODEL_PROPERTY", "INDUSTRY_RESPECTED"],
+          "effects": {
+            "loanInterestRate": -0.01,
+            "insurancePremiums": -0.1,
+            "vendorPrices": -0.05
+          }
+        }
+      },
+      "visualChanges": {
+        "PROPERTY_APPEARANCE_IMPROVEMENT": {
+          "requiredFlags": ["MODEL_PROPERTY"],
+          "changes": {
+            "buildingExterior": "upgraded_exterior",
+            "lobbyAppearance": "modern_lobby",
+            "landscaping": "premium_landscaping"
+          }
+        },
+        "COMMUNITY_ENGAGEMENT_VISUALS": {
+          "requiredFlags": ["COMMUNITY_PILLAR"],
+          "changes": {
+            "tenantDensity": "high",
+            "communitySpaces": "active",
+            "eventDecorations": "visible"
+          }
+        }
+      }
+    },
+    "worldStateTracking": {
+      "reputationScores": {
+        "tenants": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "staff": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "industry": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "community": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "localGovernment": {
+          "currentValue": 50,
+          "historyPoints": []
+        }
+      },
+      "characterRelationships": {
+        "NPC_COMMUNITY_LEADER_CHEN": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "NPC_ELDERLY_LIU": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "NPC_YOUNG_FAMILY_WU": {
+          "currentValue": 50,
+          "historyPoints": []
+        },
+        "STAFF_TECHNICIAN_WANG": {
+          "currentValue": 70,
+          "historyPoints": []
+        },
+        "STAFF_RECEPTIONIST_LI": {
+          "currentValue": 85,
+          "historyPoints": []
+        },
+        "STAFF_SECURITY_ZHANG": {
+          "currentValue": 75,
+          "historyPoints": []
+        }
+      },
+      "worldChanges": {
+        "seasonalCycle": {
+          "current": "summer",
+          "progression": ["spring", "summer", "autumn", "winter"]
+        },
+        "propertyValue": {
+          "startingValue": 5000000,
+          "currentValue": 5000000,
+          "historyPoints": []
+        },
+        "neighborhoodDevelopment": {
+          "currentLevel": "developing",
+          "progression": ["emerging", "developing", "established", "prestigious"]
+        }
+      }
+    }
+  }
+} 

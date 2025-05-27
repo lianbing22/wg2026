@@ -1,0 +1,637 @@
+{
+  "staffSystem": {
+    "staffTypes": [
+      {
+        "id": "MAINTENANCE",
+        "name": "维修人员",
+        "baseSalary": 5000,
+        "requiredSkills": ["基础维修"],
+        "description": "负责日常维修和设备保养工作"
+      },
+      {
+        "id": "CUSTOMER_SERVICE",
+        "name": "客服人员",
+        "baseSalary": 4500,
+        "requiredSkills": ["沟通能力"],
+        "description": "处理租户请求和投诉，提供客户服务"
+      },
+      {
+        "id": "SECURITY",
+        "name": "安保人员",
+        "baseSalary": 4800,
+        "requiredSkills": ["安全管理"],
+        "description": "维护物业安全，进行日常巡逻"
+      },
+      {
+        "id": "CLEANING",
+        "name": "清洁人员",
+        "baseSalary": 4000,
+        "requiredSkills": ["清洁技能"],
+        "description": "负责公共区域的清洁和卫生维护"
+      },
+      {
+        "id": "MANAGEMENT",
+        "name": "管理人员",
+        "baseSalary": 8000,
+        "requiredSkills": ["领导能力", "组织协调"],
+        "description": "监督各部门工作，制定管理策略"
+      }
+    ],
+    "skills": [
+      {
+        "id": "BASIC_MAINTENANCE",
+        "name": "基础维修",
+        "levelDescriptions": [
+          "可以处理简单的维修任务，如更换灯泡、简单的管道疏通",
+          "能够处理一般性电气和管道问题，维修门窗",
+          "熟练掌握各类维修技能，能解决大多数常见问题",
+          "高级维修技能，能处理复杂问题并提供预防性维护建议",
+          "专家级维修技能，能够处理任何维修挑战并培训他人"
+        ],
+        "progressionRate": 1.0,
+        "relatedAttributes": ["dexterity", "problemSolving"]
+      },
+      {
+        "id": "ELECTRICAL_REPAIR",
+        "name": "电气维修",
+        "levelDescriptions": [
+          "基础电气知识，能更换插座和开关",
+          "能够诊断和修复简单的电路问题",
+          "熟练掌握电气系统维修，能处理大多数电气故障",
+          "高级电气维修技能，能维修复杂设备和控制系统",
+          "专家级电气维修技能，能设计和升级电气系统"
+        ],
+        "progressionRate": 0.8,
+        "relatedAttributes": ["technical", "caution"]
+      },
+      {
+        "id": "PLUMBING",
+        "name": "管道维修",
+        "levelDescriptions": [
+          "基础管道知识，能处理简单的漏水和堵塞",
+          "能够更换水龙头和简单的管道部件",
+          "熟练掌握管道系统维修，能处理大多数管道问题",
+          "高级管道维修技能，能处理复杂的管道系统和安装",
+          "专家级管道技能，能设计和优化整栋建筑的管道系统"
+        ],
+        "progressionRate": 0.8,
+        "relatedAttributes": ["strength", "precision"]
+      },
+      {
+        "id": "HVAC_MAINTENANCE",
+        "name": "暖通空调维护",
+        "levelDescriptions": [
+          "基础暖通知识，能进行简单的清洁和检查",
+          "能够诊断和修复常见的暖通系统问题",
+          "熟练掌握暖通系统维护，能处理大多数故障",
+          "高级暖通维修技能，能处理复杂系统和控制单元",
+          "专家级暖通技能，能设计和优化系统效率"
+        ],
+        "progressionRate": 0.7,
+        "relatedAttributes": ["technical", "analytical"]
+      },
+      {
+        "id": "COMMUNICATION",
+        "name": "沟通能力",
+        "levelDescriptions": [
+          "基础沟通能力，能够清晰表达简单信息",
+          "良好的沟通技巧，能够处理一般性客户互动",
+          "出色的沟通能力，能处理复杂情况和解决冲突",
+          "高级沟通技巧，能在压力下维持良好沟通并影响他人",
+          "专家级沟通能力，能处理任何沟通挑战并培训他人"
+        ],
+        "progressionRate": 1.2,
+        "relatedAttributes": ["empathy", "articulation"]
+      },
+      {
+        "id": "PROBLEM_SOLVING",
+        "name": "问题解决",
+        "levelDescriptions": [
+          "能够解决简单、明确的问题",
+          "能够分析和解决常见问题",
+          "良好的问题分析能力，能找到有效解决方案",
+          "高级问题解决能力，能处理复杂和模糊的问题",
+          "专家级问题解决能力，能开发创新解决方案"
+        ],
+        "progressionRate": 1.0,
+        "relatedAttributes": ["analytical", "creativity"]
+      },
+      {
+        "id": "LEADERSHIP",
+        "name": "领导能力",
+        "levelDescriptions": [
+          "基础领导技能，能够指导简单任务",
+          "能够有效管理小团队完成常规工作",
+          "良好的领导能力，能激励团队并处理冲突",
+          "高级领导技能，能在挑战性环境中有效管理团队",
+          "专家级领导能力，能够制定战略并培养其他领导者"
+        ],
+        "progressionRate": 0.6,
+        "relatedAttributes": ["charisma", "decisionMaking"]
+      },
+      {
+        "id": "SECURITY_MANAGEMENT",
+        "name": "安全管理",
+        "levelDescriptions": [
+          "基础安全知识，能执行简单的安全检查",
+          "能够识别常见安全风险并采取预防措施",
+          "熟练掌握安全管理技能，能处理大多数安全问题",
+          "高级安全管理能力，能设计全面的安全计划",
+          "专家级安全管理，能预测风险并开发先进安全系统"
+        ],
+        "progressionRate": 0.9,
+        "relatedAttributes": ["vigilance", "calmness"]
+      },
+      {
+        "id": "CLEANING",
+        "name": "清洁技能",
+        "levelDescriptions": [
+          "基础清洁能力，能完成简单的清洁任务",
+          "能够有效执行各种清洁工作，了解基本清洁剂使用",
+          "熟练掌握各类清洁技术，能处理顽固污渍和特殊表面",
+          "高级清洁技能，能制定清洁计划并使用专业设备",
+          "专家级清洁能力，能处理任何清洁挑战并培训他人"
+        ],
+        "progressionRate": 1.1,
+        "relatedAttributes": ["thoroughness", "efficiency"]
+      }
+    ],
+    "staffMembers": [
+      {
+        "id": "STAFF_TECHNICIAN_WANG",
+        "name": "王师傅",
+        "type": "MAINTENANCE",
+        "level": 3,
+        "salary": 5500,
+        "satisfaction": 75,
+        "skills": [
+          {
+            "id": "BASIC_MAINTENANCE",
+            "level": 4
+          },
+          {
+            "id": "ELECTRICAL_REPAIR",
+            "level": 3
+          },
+          {
+            "id": "PLUMBING",
+            "level": 3
+          },
+          {
+            "id": "HVAC_MAINTENANCE",
+            "level": 2
+          },
+          {
+            "id": "PROBLEM_SOLVING",
+            "level": 3
+          }
+        ],
+        "attributes": {
+          "dexterity": 4,
+          "problemSolving": 3,
+          "technical": 4,
+          "precision": 3,
+          "reliability": 4,
+          "efficiency": 3
+        },
+        "background": "有15年维修经验，之前在大型物业公司工作",
+        "specialties": ["电梯维修", "电气系统"],
+        "relationshipWithManager": 70
+      },
+      {
+        "id": "STAFF_RECEPTIONIST_LI",
+        "name": "李小姐",
+        "type": "CUSTOMER_SERVICE",
+        "level": 2,
+        "salary": 4700,
+        "satisfaction": 82,
+        "skills": [
+          {
+            "id": "COMMUNICATION",
+            "level": 4
+          },
+          {
+            "id": "PROBLEM_SOLVING",
+            "level": 2
+          }
+        ],
+        "attributes": {
+          "empathy": 4,
+          "articulation": 4,
+          "patience": 3,
+          "organization": 3,
+          "politeness": 5,
+          "stress_resistance": 2
+        },
+        "background": "大学市场营销专业毕业，有3年客服经验",
+        "specialties": ["租户关系", "投诉处理"],
+        "relationshipWithManager": 85
+      },
+      {
+        "id": "STAFF_SECURITY_ZHANG",
+        "name": "张队长",
+        "type": "SECURITY",
+        "level": 3,
+        "salary": 5200,
+        "satisfaction": 68,
+        "skills": [
+          {
+            "id": "SECURITY_MANAGEMENT",
+            "level": 4
+          },
+          {
+            "id": "COMMUNICATION",
+            "level": 2
+          },
+          {
+            "id": "PROBLEM_SOLVING",
+            "level": 3
+          }
+        ],
+        "attributes": {
+          "vigilance": 4,
+          "calmness": 3,
+          "strength": 4,
+          "reliability": 5,
+          "decisiveness": 3,
+          "observation": 4
+        },
+        "background": "退伍军人，有8年安保工作经验",
+        "specialties": ["危机处理", "安全巡查"],
+        "relationshipWithManager": 75
+      }
+    ],
+    "hiringSystem": {
+      "recruitmentChannels": [
+        {
+          "id": "ONLINE_LISTING",
+          "name": "在线招聘平台",
+          "cost": 1000,
+          "timeToFill": 14,
+          "candidateQualityDistribution": {
+            "excellent": 0.1,
+            "good": 0.3,
+            "average": 0.4,
+            "poor": 0.2
+          },
+          "description": "在主流招聘网站发布职位信息"
+        },
+        {
+          "id": "EMPLOYEE_REFERRAL",
+          "name": "员工推荐",
+          "cost": 500,
+          "timeToFill": 10,
+          "candidateQualityDistribution": {
+            "excellent": 0.2,
+            "good": 0.4,
+            "average": 0.3,
+            "poor": 0.1
+          },
+          "description": "通过现有员工推荐的方式招聘新人"
+        },
+        {
+          "id": "PROFESSIONAL_AGENCY",
+          "name": "专业招聘机构",
+          "cost": 3000,
+          "timeToFill": 21,
+          "candidateQualityDistribution": {
+            "excellent": 0.3,
+            "good": 0.4,
+            "average": 0.2,
+            "poor": 0.1
+          },
+          "description": "委托专业招聘机构寻找合适人选"
+        },
+        {
+          "id": "LOCAL_COMMUNITY",
+          "name": "社区招聘",
+          "cost": 300,
+          "timeToFill": 7,
+          "candidateQualityDistribution": {
+            "excellent": 0.05,
+            "good": 0.25,
+            "average": 0.5,
+            "poor": 0.2
+          },
+          "description": "在社区内发布招聘信息，针对低技能岗位"
+        }
+      ],
+      "interviewProcess": {
+        "stages": ["简历筛选", "初步面试", "技能测试", "经理面试", "背景调查"],
+        "evaluationCriteria": {
+          "skills": 0.4,
+          "experience": 0.3,
+          "cultureFit": 0.2,
+          "potential": 0.1
+        }
+      },
+      "probationPeriod": {
+        "duration": 90,
+        "evaluationFrequency": 30,
+        "passingThreshold": 70
+      }
+    },
+    "trainingSystem": {
+      "trainingPrograms": [
+        {
+          "id": "BASIC_SKILLS",
+          "name": "基础技能培训",
+          "cost": 1000,
+          "duration": 5,
+          "skillsImproved": ["所有基础技能"],
+          "improvementFactor": 0.5,
+          "description": "提供各岗位必要的基础技能培训"
+        },
+        {
+          "id": "ADVANCED_MAINTENANCE",
+          "name": "高级维修培训",
+          "cost": 3000,
+          "duration": 10,
+          "skillsImproved": ["BASIC_MAINTENANCE", "ELECTRICAL_REPAIR", "PLUMBING", "HVAC_MAINTENANCE"],
+          "improvementFactor": 1.0,
+          "description": "针对维修人员的专业技能提升课程"
+        },
+        {
+          "id": "CUSTOMER_SERVICE_EXCELLENCE",
+          "name": "客户服务卓越课程",
+          "cost": 2000,
+          "duration": 7,
+          "skillsImproved": ["COMMUNICATION", "PROBLEM_SOLVING"],
+          "improvementFactor": 1.0,
+          "description": "提高客服人员的沟通和问题解决能力"
+        },
+        {
+          "id": "LEADERSHIP_DEVELOPMENT",
+          "name": "领导力发展项目",
+          "cost": 5000,
+          "duration": 15,
+          "skillsImproved": ["LEADERSHIP", "PROBLEM_SOLVING", "COMMUNICATION"],
+          "improvementFactor": 0.8,
+          "description": "培养管理人员的领导能力和决策技巧"
+        },
+        {
+          "id": "SECURITY_PROTOCOLS",
+          "name": "安全协议培训",
+          "cost": 2500,
+          "duration": 8,
+          "skillsImproved": ["SECURITY_MANAGEMENT"],
+          "improvementFactor": 1.2,
+          "description": "更新安保人员的安全管理技能和应急响应能力"
+        }
+      ],
+      "mentorshipProgram": {
+        "description": "将高技能员工与新员工配对，进行在职指导",
+        "mentorRequirements": {
+          "minimumSkillLevel": 4,
+          "minimumExperience": 2
+        },
+        "benefits": {
+          "mentee": {
+            "skillProgressionBoost": 1.5,
+            "satisfactionBoost": 10
+          },
+          "mentor": {
+            "leadershipSkillBoost": 0.5,
+            "satisfactionBoost": 5,
+            "bonusPayment": 300
+          }
+        }
+      }
+    },
+    "scheduleSystem": {
+      "shiftTypes": [
+        {
+          "id": "MORNING",
+          "name": "早班",
+          "startTime": "06:00",
+          "endTime": "14:00",
+          "stressFactor": 1.0
+        },
+        {
+          "id": "DAY",
+          "name": "日班",
+          "startTime": "09:00",
+          "endTime": "17:00",
+          "stressFactor": 0.8
+        },
+        {
+          "id": "EVENING",
+          "name": "晚班",
+          "startTime": "14:00",
+          "endTime": "22:00",
+          "stressFactor": 1.2
+        },
+        {
+          "id": "NIGHT",
+          "name": "夜班",
+          "startTime": "22:00",
+          "endTime": "06:00",
+          "stressFactor": 1.5,
+          "additionalPay": 200
+        }
+      ],
+      "workloadFactors": {
+        "understaffed": {
+          "threshold": 0.7,
+          "stressMultiplier": 1.5,
+          "errorRateIncrease": 0.2,
+          "satisfactionPenalty": -15
+        },
+        "optimal": {
+          "threshold": 1.0,
+          "stressMultiplier": 1.0,
+          "satisfactionBonus": 5
+        },
+        "overstaffed": {
+          "threshold": 1.3,
+          "stressMultiplier": 0.8,
+          "costPenalty": 0.15,
+          "satisfactionBonus": -5
+        }
+      },
+      "timeOffRequests": {
+        "approvalCriteria": {
+          "staffAvailability": 0.5,
+          "requestAdvanceTime": 0.3,
+          "employeePerformance": 0.2
+        },
+        "impactFactors": {
+          "approved": {
+            "employeeSatisfaction": 10,
+            "relationshipWithManager": 5
+          },
+          "denied": {
+            "employeeSatisfaction": -15,
+            "relationshipWithManager": -10,
+            "turnoverRisk": 0.2
+          }
+        }
+      }
+    },
+    "performanceSystem": {
+      "evaluationPeriod": 90,
+      "metrics": {
+        "taskCompletion": {
+          "weight": 0.3,
+          "measurement": "completedTasks / assignedTasks"
+        },
+        "workQuality": {
+          "weight": 0.3,
+          "measurement": "taskSuccessRate"
+        },
+        "efficiency": {
+          "weight": 0.2,
+          "measurement": "standardTime / actualTime"
+        },
+        "attendance": {
+          "weight": 0.1,
+          "measurement": "daysPresent / workingDays"
+        },
+        "teamwork": {
+          "weight": 0.1,
+          "measurement": "peerReviewScores"
+        }
+      },
+      "rewardSystem": {
+        "bonuses": [
+          {
+            "name": "季度表现奖金",
+            "triggerScore": 90,
+            "amount": "baseSalary * 0.1"
+          },
+          {
+            "name": "年度优秀员工奖",
+            "triggerScore": 95,
+            "amount": "baseSalary * 0.5",
+            "frequency": "yearly"
+          },
+          {
+            "name": "改进奖励",
+            "triggerCondition": "improvementRate > 15%",
+            "amount": 500
+          }
+        ],
+        "promotions": {
+          "eligibilityCriteria": {
+            "minimumPerformanceScore": 85,
+            "minimumTimeInRole": 365,
+            "requiredSkillLevel": "currentLevel + 1"
+          },
+          "benefits": {
+            "salaryIncrease": "baseSalary * 0.15",
+            "responsibilityIncrease": true,
+            "satisfactionBoost": 20
+          }
+        }
+      }
+    },
+    "moraleSatisfactionSystem": {
+      "factors": [
+        {
+          "id": "COMPENSATION",
+          "name": "薪资福利",
+          "weight": 0.25,
+          "description": "员工对薪资水平和福利待遇的满意度"
+        },
+        {
+          "id": "WORK_ENVIRONMENT",
+          "name": "工作环境",
+          "weight": 0.2,
+          "description": "工作场所的舒适度、安全性和便利性"
+        },
+        {
+          "id": "WORKLOAD",
+          "name": "工作负荷",
+          "weight": 0.15,
+          "description": "工作量的合理性和压力水平"
+        },
+        {
+          "id": "RECOGNITION",
+          "name": "工作认可",
+          "weight": 0.15,
+          "description": "努力和成就得到的认可和赞赏"
+        },
+        {
+          "id": "CAREER_GROWTH",
+          "name": "职业发展",
+          "weight": 0.15,
+          "description": "提供的培训机会和晋升路径"
+        },
+        {
+          "id": "RELATIONSHIP_WITH_MANAGER",
+          "name": "与管理者关系",
+          "weight": 0.1,
+          "description": "与直接上级的沟通和互动质量"
+        }
+      ],
+      "satisfactionEffects": {
+        "highSatisfaction": {
+          "threshold": 80,
+          "productivityBoost": 0.1,
+          "errorRateReduction": 0.15,
+          "turnoverRisk": 0.05
+        },
+        "mediumSatisfaction": {
+          "threshold": 60,
+          "productivityEffect": 0,
+          "errorRateEffect": 0,
+          "turnoverRisk": 0.15
+        },
+        "lowSatisfaction": {
+          "threshold": 40,
+          "productivityPenalty": -0.15,
+          "errorRateIncrease": 0.2,
+          "turnoverRisk": 0.4
+        },
+        "criticalSatisfaction": {
+          "threshold": 20,
+          "productivityPenalty": -0.3,
+          "errorRateIncrease": 0.4,
+          "turnoverRisk": 0.7
+        }
+      },
+      "improvementActions": [
+        {
+          "id": "SALARY_INCREASE",
+          "name": "加薪",
+          "cost": "employeeSalary * increasePercentage",
+          "factorsAffected": ["COMPENSATION"],
+          "effectStrength": 15,
+          "description": "提高员工的基本工资"
+        },
+        {
+          "id": "FACILITY_IMPROVEMENT",
+          "name": "改善设施",
+          "cost": 5000,
+          "factorsAffected": ["WORK_ENVIRONMENT"],
+          "effectStrength": 10,
+          "description": "升级工作环境和设施"
+        },
+        {
+          "id": "TEAM_BUILDING",
+          "name": "团队建设活动",
+          "cost": 2000,
+          "factorsAffected": ["RELATIONSHIP_WITH_MANAGER", "WORK_ENVIRONMENT"],
+          "effectStrength": 8,
+          "description": "组织团队建设活动增强凝聚力"
+        },
+        {
+          "id": "WORKLOAD_ADJUSTMENT",
+          "name": "调整工作量",
+          "cost": "potentialProductivityLoss",
+          "factorsAffected": ["WORKLOAD"],
+          "effectStrength": 12,
+          "description": "重新分配任务以平衡工作负荷"
+        },
+        {
+          "id": "RECOGNITION_PROGRAM",
+          "name": "表彰计划",
+          "cost": 1000,
+          "factorsAffected": ["RECOGNITION"],
+          "effectStrength": 10,
+          "description": "实施员工表彰和奖励计划"
+        }
+      ]
+    }
+  }
+} 

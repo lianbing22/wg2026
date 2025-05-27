@@ -1,0 +1,766 @@
+{
+  "buildingDegradationSystem": {
+    "components": [
+      {
+        "id": "ELEVATOR",
+        "name": "电梯系统",
+        "initialCondition": 100,
+        "currentCondition": 85,
+        "criticalThreshold": 30,
+        "warningThreshold": 50,
+        "baseDecayRate": 0.5,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.4,
+            "description": "使用频率对损耗的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.2,
+            "description": "设备年龄对损耗的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.1,
+            "description": "设备原始质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -20,
+          "buildingValue": -5,
+          "emergencyRepairCost": 15000
+        },
+        "maintenanceCost": {
+          "routine": 1000,
+          "moderate": 3500,
+          "major": 8000,
+          "replacement": 120000
+        },
+        "maintenanceEffect": {
+          "routine": 5,
+          "moderate": 15,
+          "major": 40,
+          "replacement": 100
+        },
+        "dependencies": ["ELECTRICAL_SYSTEM"],
+        "affectsComponents": ["BUILDING_ACCESSIBILITY"]
+      },
+      {
+        "id": "PLUMBING_SYSTEM",
+        "name": "管道系统",
+        "initialCondition": 100,
+        "currentCondition": 80,
+        "criticalThreshold": 35,
+        "warningThreshold": 55,
+        "baseDecayRate": 0.3,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.3,
+            "description": "使用频率对损耗的影响"
+          },
+          "waterQuality": {
+            "weight": 0.2,
+            "description": "水质对管道的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.1,
+            "description": "设备年龄对损耗的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.1,
+            "description": "设备原始质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -25,
+          "buildingValue": -7,
+          "emergencyRepairCost": 12000,
+          "waterDamageProbability": 0.3
+        },
+        "maintenanceCost": {
+          "routine": 800,
+          "moderate": 2800,
+          "major": 7000,
+          "replacement": 90000
+        },
+        "maintenanceEffect": {
+          "routine": 4,
+          "moderate": 12,
+          "major": 35,
+          "replacement": 100
+        },
+        "dependencies": ["WATER_SUPPLY"],
+        "affectsComponents": ["SANITARY_CONDITIONS", "INTERIOR_WALLS"]
+      },
+      {
+        "id": "ELECTRICAL_SYSTEM",
+        "name": "电气系统",
+        "initialCondition": 100,
+        "currentCondition": 90,
+        "criticalThreshold": 40,
+        "warningThreshold": 60,
+        "baseDecayRate": 0.2,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.3,
+            "description": "用电负荷对系统的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.2,
+            "description": "设备年龄对损耗的影响"
+          },
+          "environmentalFactors": {
+            "weight": 0.1,
+            "description": "环境因素如湿度、温度的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.1,
+            "description": "设备原始质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -30,
+          "buildingValue": -8,
+          "emergencyRepairCost": 18000,
+          "fireProbability": 0.1
+        },
+        "maintenanceCost": {
+          "routine": 1200,
+          "moderate": 4000,
+          "major": 9500,
+          "replacement": 130000
+        },
+        "maintenanceEffect": {
+          "routine": 5,
+          "moderate": 15,
+          "major": 40,
+          "replacement": 100
+        },
+        "dependencies": ["POWER_SUPPLY"],
+        "affectsComponents": ["LIGHTING_SYSTEM", "ELEVATOR", "HVAC_SYSTEM", "SECURITY_SYSTEM"]
+      },
+      {
+        "id": "HVAC_SYSTEM",
+        "name": "暖通空调系统",
+        "initialCondition": 100,
+        "currentCondition": 75,
+        "criticalThreshold": 35,
+        "warningThreshold": 55,
+        "baseDecayRate": 0.4,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.4,
+            "description": "使用频率和强度对系统的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.2,
+            "description": "设备年龄对损耗的影响"
+          },
+          "seasonalStress": {
+            "weight": 0.1,
+            "description": "季节性压力(如酷暑、严寒)的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -15,
+          "buildingValue": -4,
+          "emergencyRepairCost": 10000
+        },
+        "maintenanceCost": {
+          "routine": 1500,
+          "moderate": 5000,
+          "major": 12000,
+          "replacement": 150000
+        },
+        "maintenanceEffect": {
+          "routine": 6,
+          "moderate": 18,
+          "major": 45,
+          "replacement": 100
+        },
+        "dependencies": ["ELECTRICAL_SYSTEM"],
+        "affectsComponents": ["INDOOR_AIR_QUALITY", "TENANT_COMFORT"]
+      },
+      {
+        "id": "ROOF",
+        "name": "屋顶系统",
+        "initialCondition": 100,
+        "currentCondition": 85,
+        "criticalThreshold": 40,
+        "warningThreshold": 60,
+        "baseDecayRate": 0.25,
+        "decayFactors": {
+          "weatherExposure": {
+            "weight": 0.5,
+            "description": "天气和紫外线暴露的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.1,
+            "description": "材料年龄的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.1,
+            "description": "原始材料质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -20,
+          "buildingValue": -10,
+          "emergencyRepairCost": 25000,
+          "waterDamageProbability": 0.6
+        },
+        "maintenanceCost": {
+          "routine": 2000,
+          "moderate": 8000,
+          "major": 20000,
+          "replacement": 200000
+        },
+        "maintenanceEffect": {
+          "routine": 3,
+          "moderate": 12,
+          "major": 40,
+          "replacement": 100
+        },
+        "dependencies": [],
+        "affectsComponents": ["INTERIOR_WALLS", "CEILING", "INSULATION"]
+      },
+      {
+        "id": "EXTERIOR_WALLS",
+        "name": "外墙系统",
+        "initialCondition": 100,
+        "currentCondition": 90,
+        "criticalThreshold": 45,
+        "warningThreshold": 65,
+        "baseDecayRate": 0.15,
+        "decayFactors": {
+          "weatherExposure": {
+            "weight": 0.4,
+            "description": "天气暴露的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.2,
+            "description": "材料年龄的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.1,
+            "description": "原始材料质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -10,
+          "buildingValue": -15,
+          "emergencyRepairCost": 30000,
+          "energyEfficiency": -20
+        },
+        "maintenanceCost": {
+          "routine": 3000,
+          "moderate": 15000,
+          "major": 40000,
+          "replacement": 300000
+        },
+        "maintenanceEffect": {
+          "routine": 2,
+          "moderate": 10,
+          "major": 35,
+          "replacement": 100
+        },
+        "dependencies": [],
+        "affectsComponents": ["INSULATION", "BUILDING_APPEARANCE"]
+      },
+      {
+        "id": "SECURITY_SYSTEM",
+        "name": "安防系统",
+        "initialCondition": 100,
+        "currentCondition": 95,
+        "criticalThreshold": 50,
+        "warningThreshold": 70,
+        "baseDecayRate": 0.2,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.2,
+            "description": "使用频率对系统的影响"
+          },
+          "maintenance": {
+            "weight": 0.3,
+            "description": "维护质量和频率的影响"
+          },
+          "age": {
+            "weight": 0.2,
+            "description": "设备年龄对损耗的影响"
+          },
+          "technologicalObsolescence": {
+            "weight": 0.3,
+            "description": "技术过时的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -15,
+          "buildingValue": -3,
+          "emergencyRepairCost": 8000,
+          "securityRisk": 0.5
+        },
+        "maintenanceCost": {
+          "routine": 1000,
+          "moderate": 3000,
+          "major": 7000,
+          "replacement": 50000
+        },
+        "maintenanceEffect": {
+          "routine": 5,
+          "moderate": 15,
+          "major": 40,
+          "replacement": 100
+        },
+        "dependencies": ["ELECTRICAL_SYSTEM"],
+        "affectsComponents": ["TENANT_SECURITY_PERCEPTION"]
+      },
+      {
+        "id": "INTERIOR_FINISHES",
+        "name": "室内装修",
+        "initialCondition": 100,
+        "currentCondition": 80,
+        "criticalThreshold": 30,
+        "warningThreshold": 50,
+        "baseDecayRate": 0.6,
+        "decayFactors": {
+          "usage": {
+            "weight": 0.5,
+            "description": "使用强度和频率的影响"
+          },
+          "maintenance": {
+            "weight": 0.2,
+            "description": "维护质量和频率的影响"
+          },
+          "qualityFactor": {
+            "weight": 0.3,
+            "description": "原始材料质量的影响"
+          }
+        },
+        "failureEffects": {
+          "tenantSatisfaction": -10,
+          "buildingValue": -5,
+          "repairCost": 5000
+        },
+        "maintenanceCost": {
+          "routine": 500,
+          "moderate": 2000,
+          "major": 5000,
+          "replacement": 30000
+        },
+        "maintenanceEffect": {
+          "routine": 8,
+          "moderate": 25,
+          "major": 60,
+          "replacement": 100
+        },
+        "dependencies": [],
+        "affectsComponents": ["TENANT_SATISFACTION", "BUILDING_APPEARANCE"]
+      }
+    ],
+    "globalDegradationFactors": {
+      "weather": {
+        "normal": 1.0,
+        "harsh": 1.5,
+        "extreme": 2.0,
+        "affectedComponents": ["ROOF", "EXTERIOR_WALLS", "HVAC_SYSTEM"]
+      },
+      "tenantDensity": {
+        "low": 0.8,
+        "medium": 1.0,
+        "high": 1.3,
+        "affectedComponents": ["ELEVATOR", "PLUMBING_SYSTEM", "INTERIOR_FINISHES"]
+      },
+      "buildingAge": {
+        "new": 0.7,
+        "established": 1.0,
+        "old": 1.3,
+        "historic": 1.6,
+        "affectedComponents": ["ALL"]
+      },
+      "maintenanceQuality": {
+        "excellent": 0.6,
+        "good": 0.8,
+        "average": 1.0,
+        "poor": 1.5,
+        "neglected": 2.5,
+        "affectedComponents": ["ALL"]
+      },
+      "seasonalFactors": {
+        "spring": {
+          "HVAC_SYSTEM": 0.9,
+          "ROOF": 1.2
+        },
+        "summer": {
+          "HVAC_SYSTEM": 1.5,
+          "ELECTRICAL_SYSTEM": 1.3,
+          "ROOF": 1.4
+        },
+        "autumn": {
+          "HVAC_SYSTEM": 0.9,
+          "ROOF": 1.3
+        },
+        "winter": {
+          "HVAC_SYSTEM": 1.4,
+          "PLUMBING_SYSTEM": 1.3,
+          "ROOF": 1.1
+        }
+      }
+    },
+    "degradationEvents": [
+      {
+        "id": "SEVERE_STORM",
+        "name": "强烈暴风雨",
+        "probability": 0.15,
+        "seasonalModifiers": {
+          "spring": 1.2,
+          "summer": 1.5,
+          "autumn": 1.3,
+          "winter": 0.8
+        },
+        "componentEffects": {
+          "ROOF": -10,
+          "EXTERIOR_WALLS": -5,
+          "SECURITY_SYSTEM": -2
+        },
+        "description": "强烈的暴风雨对建筑外部造成损害，特别是屋顶系统"
+      },
+      {
+        "id": "POWER_SURGE",
+        "name": "电力浪涌",
+        "probability": 0.1,
+        "seasonalModifiers": {
+          "spring": 1.0,
+          "summer": 1.4,
+          "autumn": 1.0,
+          "winter": 1.1
+        },
+        "componentEffects": {
+          "ELECTRICAL_SYSTEM": -8,
+          "SECURITY_SYSTEM": -5,
+          "HVAC_SYSTEM": -3
+        },
+        "description": "电网浪涌对电气系统和连接的设备造成损害"
+      },
+      {
+        "id": "WATER_MAIN_BREAK",
+        "name": "主水管破裂",
+        "probability": 0.05,
+        "seasonalModifiers": {
+          "spring": 1.0,
+          "summer": 0.8,
+          "autumn": 1.0,
+          "winter": 1.6
+        },
+        "componentEffects": {
+          "PLUMBING_SYSTEM": -15,
+          "INTERIOR_FINISHES": -10
+        },
+        "description": "主水管破裂导致管道系统压力大幅波动并可能造成水渍损害"
+      },
+      {
+        "id": "HVAC_FAILURE",
+        "name": "暖通系统故障",
+        "probability": 0.08,
+        "seasonalModifiers": {
+          "spring": 0.9,
+          "summer": 1.5,
+          "autumn": 0.9,
+          "winter": 1.5
+        },
+        "componentEffects": {
+          "HVAC_SYSTEM": -12
+        },
+        "description": "在极端温度条件下暖通系统过载导致部分组件故障"
+      },
+      {
+        "id": "PEST_INFESTATION",
+        "name": "虫害侵袭",
+        "probability": 0.12,
+        "seasonalModifiers": {
+          "spring": 1.2,
+          "summer": 1.4,
+          "autumn": 1.0,
+          "winter": 0.6
+        },
+        "componentEffects": {
+          "INTERIOR_FINISHES": -5,
+          "ELECTRICAL_SYSTEM": -3
+        },
+        "description": "害虫侵袭可能导致电线绝缘层和内部装修损坏"
+      }
+    ],
+    "maintenanceSchedules": {
+      "scheduleTypes": [
+        {
+          "id": "REACTIVE",
+          "name": "被动响应型",
+          "description": "仅在问题出现后进行修复",
+          "costFactor": 0.8,
+          "effectivenessFactor": 0.6,
+          "emergencyRiskFactor": 1.5,
+          "tenantSatisfactionImpact": -10
+        },
+        {
+          "id": "SCHEDULED",
+          "name": "定期计划型",
+          "description": "按照固定时间表进行维护",
+          "costFactor": 1.0,
+          "effectivenessFactor": 1.0,
+          "emergencyRiskFactor": 1.0,
+          "tenantSatisfactionImpact": 0
+        },
+        {
+          "id": "PREDICTIVE",
+          "name": "预测性维护",
+          "description": "基于状态监测和预测分析进行维护",
+          "costFactor": 1.3,
+          "effectivenessFactor": 1.4,
+          "emergencyRiskFactor": 0.6,
+          "tenantSatisfactionImpact": 5,
+          "requiresTechnology": "BUILDING_MONITORING_SYSTEM"
+        }
+      ],
+      "recommendedIntervals": {
+        "ELEVATOR": {
+          "routine": 30,
+          "moderate": 180,
+          "major": 730
+        },
+        "PLUMBING_SYSTEM": {
+          "routine": 90,
+          "moderate": 365,
+          "major": 1825
+        },
+        "ELECTRICAL_SYSTEM": {
+          "routine": 90,
+          "moderate": 365,
+          "major": 1825
+        },
+        "HVAC_SYSTEM": {
+          "routine": 60,
+          "moderate": 180,
+          "major": 1095
+        },
+        "ROOF": {
+          "routine": 120,
+          "moderate": 730,
+          "major": 3650
+        },
+        "EXTERIOR_WALLS": {
+          "routine": 180,
+          "moderate": 1095,
+          "major": 3650
+        },
+        "SECURITY_SYSTEM": {
+          "routine": 60,
+          "moderate": 365,
+          "major": 1095
+        },
+        "INTERIOR_FINISHES": {
+          "routine": 90,
+          "moderate": 730,
+          "major": 1825
+        }
+      }
+    },
+    "upgradePaths": {
+      "ELEVATOR": [
+        {
+          "id": "ELEVATOR_CONTROL_UPGRADE",
+          "name": "电梯控制系统升级",
+          "cost": 25000,
+          "benefitDescription": "提高电梯效率和可靠性",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.1,
+            "currentCondition": 20,
+            "failureProbability": -0.2
+          }
+        },
+        {
+          "id": "ELEVATOR_MECHANICAL_UPGRADE",
+          "name": "电梯机械系统升级",
+          "cost": 50000,
+          "benefitDescription": "降低能耗并提高运行平稳度",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.15,
+            "currentCondition": 30,
+            "energyConsumption": -0.3
+          }
+        },
+        {
+          "id": "ELEVATOR_FULL_REPLACEMENT",
+          "name": "电梯完全更换",
+          "cost": 120000,
+          "benefitDescription": "安装全新电梯系统",
+          "effectsOnComponent": {
+            "currentCondition": 100,
+            "baseDecayRate": -0.2,
+            "energyConsumption": -0.4,
+            "tenantSatisfaction": 15
+          }
+        }
+      ],
+      "HVAC_SYSTEM": [
+        {
+          "id": "HVAC_CONTROLS_UPGRADE",
+          "name": "暖通控制系统升级",
+          "cost": 20000,
+          "benefitDescription": "提高温度控制精度和能效",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.05,
+            "currentCondition": 15,
+            "energyConsumption": -0.2
+          }
+        },
+        {
+          "id": "HVAC_EFFICIENCY_UPGRADE",
+          "name": "暖通效率升级",
+          "cost": 60000,
+          "benefitDescription": "更换主要部件以提高能效",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.1,
+            "currentCondition": 30,
+            "energyConsumption": -0.35
+          }
+        },
+        {
+          "id": "HVAC_SMART_SYSTEM",
+          "name": "智能暖通系统",
+          "cost": 100000,
+          "benefitDescription": "安装智能暖通系统，具有自动调节和远程控制功能",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.15,
+            "currentCondition": 40,
+            "energyConsumption": -0.5,
+            "tenantSatisfaction": 10
+          }
+        }
+      ],
+      "PLUMBING_SYSTEM": [
+        {
+          "id": "PLUMBING_FIXTURE_UPGRADE",
+          "name": "水龙头和设备升级",
+          "cost": 15000,
+          "benefitDescription": "更换节水型设备和现代化水龙头",
+          "effectsOnComponent": {
+            "currentCondition": 10,
+            "waterConsumption": -0.2
+          }
+        },
+        {
+          "id": "PLUMBING_PIPE_REPLACEMENT",
+          "name": "管道部分更换",
+          "cost": 40000,
+          "benefitDescription": "更换老化和问题管道",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.1,
+            "currentCondition": 30,
+            "failureProbability": -0.3
+          }
+        },
+        {
+          "id": "PLUMBING_COMPLETE_OVERHAUL",
+          "name": "管道系统全面翻新",
+          "cost": 90000,
+          "benefitDescription": "全面更新整个管道系统",
+          "effectsOnComponent": {
+            "baseDecayRate": -0.2,
+            "currentCondition": 100,
+            "waterConsumption": -0.3,
+            "failureProbability": -0.5
+          }
+        }
+      ]
+    },
+    "failureCascadeEffects": {
+      "ELEVATOR": {
+        "targetComponents": ["TENANT_SATISFACTION", "BUILDING_ACCESSIBILITY"],
+        "effects": {
+          "severity": "high",
+          "description": "电梯故障严重影响居民生活，特别是老年人和残障人士"
+        }
+      },
+      "PLUMBING_SYSTEM": {
+        "targetComponents": ["INTERIOR_FINISHES", "TENANT_SATISFACTION"],
+        "effects": {
+          "severity": "high",
+          "description": "管道故障可能导致漏水和进一步的结构损害"
+        }
+      },
+      "ELECTRICAL_SYSTEM": {
+        "targetComponents": ["ELEVATOR", "HVAC_SYSTEM", "SECURITY_SYSTEM", "TENANT_SATISFACTION"],
+        "effects": {
+          "severity": "critical",
+          "description": "电气系统故障会级联影响多个依赖系统"
+        }
+      },
+      "ROOF": {
+        "targetComponents": ["INTERIOR_FINISHES", "ELECTRICAL_SYSTEM", "TENANT_SATISFACTION"],
+        "effects": {
+          "severity": "high",
+          "description": "屋顶泄漏会导致内部结构和电气系统损坏"
+        }
+      }
+    },
+    "conditionLevels": [
+      {
+        "level": "Excellent",
+        "minValue": 90,
+        "description": "接近新的状态，性能最佳",
+        "recommendations": "继续常规维护"
+      },
+      {
+        "level": "Good",
+        "minValue": 75,
+        "description": "轻微磨损，但功能完好",
+        "recommendations": "定期检查并处理小问题"
+      },
+      {
+        "level": "Fair",
+        "minValue": 60,
+        "description": "明显磨损，但仍能正常运行",
+        "recommendations": "增加维护频率，计划中等维修"
+      },
+      {
+        "level": "Poor",
+        "minValue": 40,
+        "description": "严重磨损，功能降级",
+        "recommendations": "安排重大维修或考虑更换"
+      },
+      {
+        "level": "Critical",
+        "minValue": 20,
+        "description": "接近故障，可能存在安全风险",
+        "recommendations": "立即维修或更换"
+      },
+      {
+        "level": "Failed",
+        "minValue": 0,
+        "description": "完全故障，不再运行",
+        "recommendations": "必须更换"
+      }
+    ]
+  }
+} 

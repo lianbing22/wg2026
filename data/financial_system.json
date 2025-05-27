@@ -1,0 +1,250 @@
+{
+  "financialSystem": {
+    "incomeStreams": [
+      {
+        "id": "RENT_INCOME",
+        "name": "租金收入",
+        "baseValue": 50000,
+        "variableFactor": "occupancyRate",
+        "description": "从租户收取的月租金总和，受出租率和租户满意度影响"
+      },
+      {
+        "id": "PARKING_FEES",
+        "name": "停车费",
+        "baseValue": 5000,
+        "variableFactor": "parkingUsage",
+        "description": "停车场使用费，根据使用率浮动"
+      },
+      {
+        "id": "FACILITY_USAGE",
+        "name": "设施使用费",
+        "baseValue": 3000,
+        "variableFactor": "communityEngagement",
+        "description": "健身房、游泳池等公共设施的使用费"
+      },
+      {
+        "id": "DEPOSITS",
+        "name": "押金收入",
+        "baseValue": 2000,
+        "variableFactor": "newTenantRate",
+        "description": "新租户入住时缴纳的押金，仅计算净增长部分"
+      }
+    ],
+    "expenses": [
+      {
+        "id": "MAINTENANCE_COSTS",
+        "name": "维护成本",
+        "baseValue": 15000,
+        "variableFactor": "buildingCondition",
+        "description": "日常维护和修理费用，随建筑状况恶化而增加"
+      },
+      {
+        "id": "STAFF_SALARY",
+        "name": "员工工资",
+        "baseValue": 20000,
+        "variableFactor": "staffSize",
+        "description": "物业管理团队的薪资总和"
+      },
+      {
+        "id": "UTILITIES",
+        "name": "水电费",
+        "baseValue": 8000,
+        "variableFactor": "seasonalFactor",
+        "description": "公共区域的水电费用，受季节影响"
+      },
+      {
+        "id": "TAXES",
+        "name": "税费",
+        "baseValue": 7000,
+        "variableFactor": "fixed",
+        "description": "各类税费支出"
+      },
+      {
+        "id": "INSURANCE",
+        "name": "保险费",
+        "baseValue": 5000,
+        "variableFactor": "insuranceCoverage",
+        "description": "建筑和责任保险费用"
+      },
+      {
+        "id": "LOAN_INTEREST",
+        "name": "贷款利息",
+        "baseValue": 10000,
+        "variableFactor": "loanAmount",
+        "description": "物业贷款的利息支出"
+      }
+    ],
+    "investments": [
+      {
+        "id": "BUILDING_UPGRADES",
+        "name": "建筑升级",
+        "costRange": {
+          "min": 50000,
+          "max": 500000
+        },
+        "returnPeriod": "long",
+        "impactAreas": ["buildingCondition", "tenantSatisfaction", "propertyValue"],
+        "description": "建筑设施的大型升级，如电梯更换、外墙翻新等"
+      },
+      {
+        "id": "MARKETING",
+        "name": "市场营销",
+        "costRange": {
+          "min": 5000,
+          "max": 30000
+        },
+        "returnPeriod": "short",
+        "impactAreas": ["occupancyRate", "newTenantRate"],
+        "description": "广告和推广活动，吸引新租户"
+      },
+      {
+        "id": "STAFF_TRAINING",
+        "name": "员工培训",
+        "costRange": {
+          "min": 3000,
+          "max": 15000
+        },
+        "returnPeriod": "medium",
+        "impactAreas": ["staffEfficiency", "maintenanceQuality", "tenantSatisfaction"],
+        "description": "提升员工技能和服务质量的培训项目"
+      },
+      {
+        "id": "ENERGY_EFFICIENCY",
+        "name": "能源效率提升",
+        "costRange": {
+          "min": 20000,
+          "max": 100000
+        },
+        "returnPeriod": "medium",
+        "impactAreas": ["operatingCosts", "propertyValue", "environmentalReputation"],
+        "description": "节能改造，如太阳能面板、节能灯具、智能控温系统等"
+      }
+    ],
+    "financialHealth": {
+      "metrics": [
+        {
+          "id": "CASH_FLOW",
+          "name": "现金流",
+          "calculation": "totalIncome - totalExpenses",
+          "healthRanges": {
+            "excellent": 20000,
+            "good": 10000,
+            "neutral": 0,
+            "concerning": -10000,
+            "critical": -20000
+          }
+        },
+        {
+          "id": "OCCUPANCY_RATE",
+          "name": "出租率",
+          "calculation": "occupiedUnits / totalUnits * 100",
+          "healthRanges": {
+            "excellent": 95,
+            "good": 90,
+            "neutral": 85,
+            "concerning": 80,
+            "critical": 75
+          }
+        },
+        {
+          "id": "DEBT_RATIO",
+          "name": "债务比率",
+          "calculation": "totalDebt / propertyValue * 100",
+          "healthRanges": {
+            "excellent": 30,
+            "good": 40,
+            "neutral": 50,
+            "concerning": 60,
+            "critical": 70
+          }
+        },
+        {
+          "id": "MAINTENANCE_RESERVE",
+          "name": "维修储备金",
+          "calculation": "maintenanceReserve / (buildingSize * maintenanceCostFactor)",
+          "healthRanges": {
+            "excellent": 1.5,
+            "good": 1.2,
+            "neutral": 1.0,
+            "concerning": 0.7,
+            "critical": 0.5
+          }
+        }
+      ],
+      "overallScore": {
+        "calculation": "weightedAverage(metricScores)",
+        "weights": {
+          "CASH_FLOW": 0.4,
+          "OCCUPANCY_RATE": 0.3,
+          "DEBT_RATIO": 0.2,
+          "MAINTENANCE_RESERVE": 0.1
+        }
+      }
+    },
+    "budgetPlanning": {
+      "periods": ["monthly", "quarterly", "annual"],
+      "categories": {
+        "income": "incomeStreams",
+        "expenses": "expenses",
+        "investments": "investments"
+      },
+      "planningTools": {
+        "forecastModels": ["historical", "seasonal", "growth"],
+        "scenarioAnalysis": ["bestCase", "expected", "worstCase"],
+        "sensitivitiesTracked": ["occupancyRate", "maintenanceCosts", "interestRates"]
+      }
+    },
+    "financialEvents": [
+      {
+        "id": "TAX_AUDIT",
+        "name": "税务审计",
+        "probability": 0.05,
+        "impactRange": {
+          "min": -50000,
+          "max": 0
+        },
+        "mitigationFactor": "complianceLevel",
+        "description": "随机税务审计，可能导致罚款或补税"
+      },
+      {
+        "id": "INTEREST_RATE_CHANGE",
+        "name": "利率变动",
+        "probability": 0.15,
+        "impactRange": {
+          "min": -20000,
+          "max": 10000
+        },
+        "mitigationFactor": "fixedRateLoanPercentage",
+        "description": "市场利率变动，影响浮动利率贷款的支出"
+      },
+      {
+        "id": "UNEXPECTED_REPAIR",
+        "name": "意外维修",
+        "probability": 0.2,
+        "impactRange": {
+          "min": -40000,
+          "max": -5000
+        },
+        "mitigationFactor": "maintenanceQuality",
+        "description": "突发性的大型维修需求，如管道破裂、屋顶损坏等"
+      },
+      {
+        "id": "INSURANCE_CLAIM",
+        "name": "保险理赔",
+        "probability": 0.1,
+        "impactRange": {
+          "min": 0,
+          "max": 100000
+        },
+        "mitigationFactor": "insuranceCoverage",
+        "description": "因意外损失获得的保险赔付"
+      }
+    ],
+    "reports": {
+      "dailySnapshots": ["cashPosition", "pendingTransactions"],
+      "monthlyReports": ["incomeStatement", "expenseSummary", "occupancyReport"],
+      "quarterlyReports": ["cashFlowAnalysis", "maintenanceExpenseBreakdown", "tenantTurnoverAnalysis"],
+      "annualReports": ["financialPerformance", "propertyValuation", "investmentReturn", "taxSummary"]
+    }
+  }
+} 
