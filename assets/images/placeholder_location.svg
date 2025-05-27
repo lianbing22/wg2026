@@ -1,0 +1,5 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#e8f4f8" stroke="#4a90a4" stroke-width="2"/>
+  <text x="200" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#2c5f6f">Location Image</text>
+  <text x="200" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#4a90a4">400 x 200</text>
+</svg>

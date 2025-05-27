@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物业管理系统 - 注册</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>注册新账户</h1>
+                <p>加入物业管理系统</p>
+            </div>
+            
+            <form id="register-form" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">姓</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">名</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">邮箱地址</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">手机号码</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                    <small class="form-hint">用户名必须为3-20个字符</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                    <small class="form-hint">密码至少8个字符，包含字母和数字</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">申请角色</label>
+                    <select id="role" name="role" required>
+                        <option value="">请选择角色</option>
+                        <option value="manager">物业经理</option>
+                        <option value="staff">物业员工</option>
+                        <option value="tenant">租户</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">公司/物业名称</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">我同意 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a></label>
+                </div>
+                
+                <button type="submit" class="auth-btn primary">注册账户</button>
+                
+                <div class="auth-links">
+                    <a href="login.html">已有账户？立即登录</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>正在注册...</p>
+    </div>
+    
+    <script src="js/auth.js"></script>
+</body>
+</html>

@@ -6,13 +6,142 @@ body {
     color: #333;
 }
 
-#game-container {
+/* Basic styling for containers */
+#scenario-selector, #game-container {
     max-width: 800px;
-    margin: auto;
-    background-color: #fff;
+    margin: 0 auto;
     padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Scenario Selector Styles */
+#scenario-selector {
+    text-align: center;
+}
+
+#scenario-selector h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+#scenario-selector h2 {
+    color: #34495e;
+    margin-bottom: 30px;
+    font-weight: normal;
+}
+
+#scenario-list {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.scenario-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 2px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.scenario-item:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+}
+
+.scenario-item input[type="radio"] {
+    margin-right: 10px;
+}
+
+.scenario-item input[type="radio"]:checked + label {
+    color: #2980b9;
+}
+
+.scenario-item label {
+    cursor: pointer;
+    display: block;
+    margin-left: 25px;
+}
+
+.scenario-item h3 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 1.2em;
+}
+
+.scenario-item p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+#start-selected-scenario {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#start-selected-scenario:hover:not(:disabled) {
+    background-color: #229954;
+}
+
+#start-selected-scenario:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Game Container Styles */
+#game-container {
+    background-color: white;
+}
+
+/* Header with metrics display */
+#game-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+}
+
+#game-header h1 {
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+#metrics-display {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.metric {
+    background-color: #34495e;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 header#metrics-display {

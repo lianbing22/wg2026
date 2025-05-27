@@ -1,0 +1,813 @@
+{
+  "scenarios": [
+    {
+      "id": "BUILDING_MAINTENANCE_SYSTEM",
+      "title": "建筑维护系统-老旧电梯",
+      "involvedNPCs": ["NPC_TECHNICIAN_WANG", "NPC_ELDERLY_LIU"],
+      "startNode": "ELEVATOR_ISSUE_START",
+      "nodes": [
+        {
+          "nodeId": "ELEVATOR_ISSUE_START",
+          "text": "一大早，年长的刘奶奶打电话来报告说她所在的楼栋电梯运行不正常。"早上好，管理员。我们的电梯今天发出奇怪的声音，而且感觉不太稳定。我年纪大了，很担心安全问题。"",
+          "image": "assets/images/characters/tenant_concerned_elderly.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "立即联系技术员小王检查电梯",
+              "effects": {
+                "managerStress": 2,
+                "relationship_NPC_ELDERLY_LIU": 2
+              },
+              "nextNode": "CALL_TECHNICIAN_IMMEDIATELY"
+            },
+            {
+              "text": "告诉刘奶奶你会在下周定期维护时检查",
+              "effects": {
+                "managerStress": -1,
+                "relationship_NPC_ELDERLY_LIU": -3,
+                "tenantSatisfaction": -5
+              },
+              "nextNode": "DELAY_MAINTENANCE_CHECK"
+            },
+            {
+              "text": "亲自去检查电梯情况",
+              "effects": {
+                "managerStress": 1,
+                "relationship_NPC_ELDERLY_LIU": 1
+              },
+              "nextNode": "SELF_INSPECTION_ELEVATOR"
+            }
+          ]
+        },
+        {
+          "nodeId": "CALL_TECHNICIAN_IMMEDIATELY",
+          "text": "你联系了维修技术员小王。"小王，刘奶奶那栋楼的电梯似乎有问题，能立即去看一下吗？" 小王回应道："当然，我会立即过去检查。这可能是上次我们推迟的那次维护导致的。"",
+          "image": "assets/images/characters/technician_wang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "询问是否需要你一起去",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": 1
+              },
+              "nextNode": "JOIN_TECHNICIAN"
+            },
+            {
+              "text": "让他独自处理并向你报告",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": -1
+              },
+              "nextNode": "TECHNICIAN_SOLO_INSPECTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "JOIN_TECHNICIAN",
+          "text": "你和小王一起去了电梯。检查后，他指出："控制板需要调整，可能是因为长期缺乏定期维护。我可以现在修理，但需要你帮忙稳定一些组件。"",
+          "image": "assets/images/characters/technician_wang_working.png",
+          "location_image": "assets/images/locations/elevator_maintenance.png",
+          "choices": [
+            {
+              "text": "帮助调整控制板（QTE）",
+              "nextNode": "ELEVATOR_QTE_TRIGGER"
+            },
+            {
+              "text": "建议雇佣专业电梯公司处理",
+              "effects": {
+                "financialHealth": -200,
+                "buildingCondition": 5,
+                "relationship_NPC_TECHNICIAN_WANG": -1,
+                "relationship_NPC_ELDERLY_LIU": 1
+              },
+              "nextNode": "HIRE_PROFESSIONAL_COMPANY"
+            }
+          ]
+        },
+        {
+          "nodeId": "ELEVATOR_QTE_TRIGGER",
+          "text": "小王示意你帮助他精确调整控制面板上的设置。这需要谨慎和精确的操作。",
+          "image": "assets/images/locations/elevator_control_panel.png",
+          "qte": {
+            "type": "StopTheMovingBar",
+            "instructionText": "请在恰当的时刻点击停止按钮，将移动条停在绿色区域！",
+            "image": "ui/qte_elevator_maintenance.png",
+            "parameters": {
+              "targetZoneStart": 40,
+              "targetZoneEnd": 60,
+              "barSpeed": 35,
+              "attempts": 1
+            },
+            "successEffects": {
+              "buildingCondition": 5,
+              "relationship_NPC_TECHNICIAN_WANG": 2,
+              "relationship_NPC_ELDERLY_LIU": 2,
+              "managerStress": -1,
+              "financialHealth": 50
+            },
+            "failureEffects": {
+              "buildingCondition": -2,
+              "relationship_NPC_TECHNICIAN_WANG": -1,
+              "managerStress": 3
+            },
+            "successNextNode": "ELEVATOR_REPAIR_SUCCESS",
+            "failureNextNode": "ELEVATOR_REPAIR_FAILURE"
+          }
+        },
+        {
+          "nodeId": "ELEVATOR_REPAIR_SUCCESS",
+          "text": "在你的协助下，小王成功调整了电梯控制系统。"配合得很好！"他满意地说道，"这下电梯应该能正常运行一段时间了。不过我建议我们开始实施定期维护计划，防止类似问题再次发生。"",
+          "image": "assets/images/characters/technician_wang_happy.png",
+          "location_image": "assets/images/locations/elevator_fixed.png",
+          "choices": [
+            {
+              "text": "同意制定定期维护计划",
+              "effects": {
+                "buildingCondition": 3,
+                "relationship_NPC_TECHNICIAN_WANG": 1,
+                "managerStress": 1,
+                "financialHealth": -30
+              },
+              "nextNode": "IMPLEMENT_MAINTENANCE_PLAN"
+            },
+            {
+              "text": "表示会考虑，但现在先解决燃眉之急",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": -1
+              },
+              "nextNode": "DEFER_MAINTENANCE_PLAN"
+            }
+          ]
+        },
+        {
+          "nodeId": "ELEVATOR_REPAIR_FAILURE",
+          "text": "你的调整不够精确，控制面板发出刺耳的警告声。小王迅速接手："让我来吧！"他花了额外的时间重新调整。"不是每个人都有这个手感，"他委婉地说道，"不过至少我们发现了问题所在。"",
+          "image": "assets/images/characters/technician_wang_concerned.png",
+          "location_image": "assets/images/locations/elevator_maintenance.png",
+          "choices": [
+            {
+              "text": "道歉并提出雇佣专业公司进行全面检修",
+              "effects": {
+                "financialHealth": -150,
+                "buildingCondition": 5,
+                "managerStress": 2
+              },
+              "nextNode": "HIRE_PROFESSIONAL_COMPANY"
+            },
+            {
+              "text": "请他完成剩余的修理工作",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": -1,
+                "buildingCondition": 2
+              },
+              "nextNode": "TECHNICIAN_COMPLETES_WORK"
+            }
+          ]
+        },
+        {
+          "nodeId": "IMPLEMENT_MAINTENANCE_PLAN",
+          "text": "你和小王商定了一个每月电梯维护计划。刘奶奶听说后非常满意："谢谢你们这么重视我们的安全。知道电梯定期维护，我和其他老年住户都会更安心。"这个计划虽然增加了一些成本，但提高了建筑的整体状况和租户满意度。",
+          "image": "assets/images/characters/tenant_happy_elderly.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 10,
+            "buildingCondition": 5
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你成功解决了电梯问题并建立了预防性维护系统，提高了建筑状况和租户满意度。"
+        },
+        {
+          "nodeId": "DEFER_MAINTENANCE_PLAN",
+          "text": "你谢过小王解决了当前问题，但没有立即承诺定期维护计划。他看起来有些失望："好吧，但请记住，预防性维护总比紧急修复更经济有效。"刘奶奶对电梯修好了表示感谢，但仍然担心未来可能出现的问题。",
+          "image": "assets/images/characters/technician_wang_neutral.png",
+          "location_image": "assets/images/locations/elevator_fixed.png",
+          "effects": {
+            "tenantSatisfaction": 5,
+            "buildingCondition": -1
+          },
+          "endsScenario": true,
+          "endText": "场景结束：电梯问题暂时解决，但没有建立预防性维护系统，未来可能会面临更多维修挑战。"
+        },
+        {
+          "nodeId": "TECHNICIAN_COMPLETES_WORK",
+          "text": "小王完成了剩余的修理工作，电梯恢复了正常运行。"已经修好了，"他简短地报告道，"但这只是临时解决方案。我强烈建议安排专业检查。"刘奶奶对电梯修好了表示感谢，但对你们的工作效率有些保留意见。",
+          "image": "assets/images/characters/technician_wang_neutral.png",
+          "location_image": "assets/images/locations/elevator_fixed.png",
+          "effects": {
+            "tenantSatisfaction": 3,
+            "relationship_NPC_ELDERLY_LIU": 1
+          },
+          "endsScenario": true,
+          "endText": "场景结束：电梯问题得到了基本解决，但修复不够彻底，可能需要后续跟进。"
+        },
+        {
+          "nodeId": "HIRE_PROFESSIONAL_COMPANY",
+          "text": "你决定雇佣专业电梯维修公司进行全面检修。虽然花费不少，但他们彻底解决了问题并提供了一年保修。刘奶奶非常满意："谢谢你重视我们的安全，不惜重金请专业人员。"小王虽然理解你的决定，但似乎对自己的技能被质疑有些沮丧。",
+          "image": "assets/images/characters/vendor_elevator_company.png",
+          "location_image": "assets/images/locations/elevator_professional_maintenance.png",
+          "effects": {
+            "tenantSatisfaction": 10,
+            "buildingCondition": 8
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过专业公司彻底解决了电梯问题，虽然成本较高，但大大提高了建筑状况和租户满意度。"
+        },
+        {
+          "nodeId": "TECHNICIAN_SOLO_INSPECTION",
+          "text": "小王独自去检查电梯。一小时后，他打电话报告："情况比预期的要复杂。控制系统老化严重，我可以尝试修理，但可能需要专业公司彻底检修。"",
+          "image": "assets/images/characters/technician_wang_concerned.png",
+          "location_image": "assets/images/locations/phone_call.png",
+          "choices": [
+            {
+              "text": "让他尽力修理，避免高额支出",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": 1,
+                "buildingCondition": 1
+              },
+              "nextNode": "TECHNICIAN_ATTEMPTS_REPAIR"
+            },
+            {
+              "text": "直接联系专业电梯公司",
+              "effects": {
+                "financialHealth": -200,
+                "buildingCondition": 5,
+                "relationship_NPC_ELDERLY_LIU": 2
+              },
+              "nextNode": "HIRE_PROFESSIONAL_COMPANY"
+            }
+          ]
+        },
+        {
+          "nodeId": "TECHNICIAN_ATTEMPTS_REPAIR",
+          "text": "小王尽力修理电梯，但只能解决部分问题。"我做了基本调整，暂时能用，但我强烈建议进行全面检修，"他报告道，"这个系统需要更专业的维护。"刘奶奶对修理结果不太满意，仍然对使用电梯感到不安。",
+          "image": "assets/images/characters/technician_wang_neutral.png",
+          "location_image": "assets/images/locations/elevator_partially_fixed.png",
+          "effects": {
+            "tenantSatisfaction": -2,
+            "relationship_NPC_ELDERLY_LIU": -1,
+            "buildingCondition": -1
+          },
+          "choices": [
+            {
+              "text": "承诺安排专业检修",
+              "effects": {
+                "financialHealth": -200,
+                "relationship_NPC_ELDERLY_LIU": 2,
+                "buildingCondition": 5
+              },
+              "nextNode": "HIRE_PROFESSIONAL_COMPANY"
+            },
+            {
+              "text": "暂时使用这个临时解决方案",
+              "effects": {
+                "tenantSatisfaction": -5,
+                "buildingCondition": -3
+              },
+              "nextNode": "TEMPORARY_FIX_ONLY"
+            }
+          ]
+        },
+        {
+          "nodeId": "TEMPORARY_FIX_ONLY",
+          "text": "你决定暂时使用临时解决方案。刘奶奶和其他租户对此表示担忧，开始使用楼梯或减少外出。小王警告你："这只是延迟问题，不是解决问题。我们应该尽快安排彻底检修。"",
+          "image": "assets/images/characters/tenant_concerned_elderly.png",
+          "location_image": "assets/images/locations/elevator_warning_sign.png",
+          "effects": {
+            "tenantSatisfaction": -10,
+            "buildingCondition": -5
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你选择了临时解决方案，虽然节省了成本，但降低了建筑状况和租户满意度，未来可能面临更严重的问题。"
+        },
+        {
+          "nodeId": "DELAY_MAINTENANCE_CHECK",
+          "text": "你告诉刘奶奶会在下周例行维护时检查电梯。她明显不满意："下周？如果电梯在这期间出现故障怎么办？我们这栋楼有很多老年人！"她的担忧似乎很有道理。",
+          "image": "assets/images/characters/tenant_angry_elderly.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "重新考虑并立即安排检查",
+              "effects": {
+                "managerStress": 2,
+                "relationship_NPC_ELDERLY_LIU": 1,
+                "tenantSatisfaction": 2
+              },
+              "nextNode": "CALL_TECHNICIAN_IMMEDIATELY"
+            },
+            {
+              "text": "坚持按计划下周检查",
+              "effects": {
+                "tenantSatisfaction": -10,
+                "relationship_NPC_ELDERLY_LIU": -3
+              },
+              "nextNode": "MAINTENANCE_DELAYED_CONSEQUENCE"
+            }
+          ]
+        },
+        {
+          "nodeId": "MAINTENANCE_DELAYED_CONSEQUENCE",
+          "text": "两天后，电梯完全停止工作，多位租户被困在楼内。刘奶奶打电话来，非常生气："我告诉过你电梯有问题！现在我们都不得不爬楼梯，有些老人甚至不能下楼！"这已经变成了一个紧急情况。",
+          "image": "assets/images/characters/tenant_furious_elderly.png",
+          "location_image": "assets/images/locations/elevator_broken.png",
+          "effects": {
+            "tenantSatisfaction": -15,
+            "buildingCondition": -5,
+            "managerStress": 5
+          },
+          "choices": [
+            {
+              "text": "立即联系专业电梯公司紧急修复",
+              "effects": {
+                "financialHealth": -300,
+                "managerStress": 3
+              },
+              "nextNode": "EMERGENCY_PROFESSIONAL_REPAIR"
+            }
+          ]
+        },
+        {
+          "nodeId": "EMERGENCY_PROFESSIONAL_REPAIR",
+          "text": "你紧急联系了电梯公司，支付了高额加急费用。他们在几小时内修好了电梯，但指出问题本可以通过定期维护避免。刘奶奶和其他租户对问题解决感到如释重负，但对管理的信任度降低了。",
+          "image": "assets/images/characters/vendor_elevator_company.png",
+          "location_image": "assets/images/locations/elevator_emergency_repair.png",
+          "effects": {
+            "buildingCondition": 3,
+            "relationship_NPC_ELDERLY_LIU": -1
+          },
+          "endsScenario": true,
+          "endText": "场景结束：紧急修复解决了问题，但花费了大量金钱，且对租户关系造成了损害。"
+        },
+        {
+          "nodeId": "SELF_INSPECTION_ELEVATOR",
+          "text": "你亲自去检查电梯。搭乘时确实感觉不稳定，并且听到异常声音。你检查了电梯内部和机械室，但由于缺乏专业知识，无法确定具体问题所在。",
+          "image": "assets/images/placeholder.svg",
+          "location_image": "assets/images/locations/elevator_inspection.png",
+          "choices": [
+            {
+              "text": "联系技术员小王寻求专业帮助",
+              "effects": {
+                "relationship_NPC_TECHNICIAN_WANG": 1
+              },
+              "nextNode": "CALL_TECHNICIAN_IMMEDIATELY"
+            },
+            {
+              "text": "贴出"暂停使用"标志并安排专业检修",
+              "effects": {
+                "tenantSatisfaction": -5,
+                "buildingCondition": 1,
+                "financialHealth": -100
+              },
+              "nextNode": "CLOSE_ELEVATOR_ARRANGE_INSPECTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "CLOSE_ELEVATOR_ARRANGE_INSPECTION",
+          "text": "你贴出了"暂停使用"标志并安排了专业检修。租户们不得不使用楼梯，这引起了一些不满，但他们理解这是为了安全考虑。刘奶奶对你亲自检查和谨慎处理表示感谢。",
+          "image": "assets/images/characters/tenant_neutral_elderly.png",
+          "location_image": "assets/images/locations/elevator_out_of_order.png",
+          "effects": {
+            "relationship_NPC_ELDERLY_LIU": 2
+          },
+          "choices": [
+            {
+              "text": "向租户解释并道歉，承诺尽快修复",
+              "effects": {
+                "tenantSatisfaction": 3
+              },
+              "nextNode": "PROFESSIONAL_INSPECTION_RESULT"
+            }
+          ]
+        },
+        {
+          "nodeId": "PROFESSIONAL_INSPECTION_RESULT",
+          "text": "专业检修团队到达后发现了几个严重的机械问题。"幸好你及时关闭了电梯，"工程师说道，"再使用一段时间可能会导致更严重的故障，甚至安全事故。"尽管修理费用不菲，但租户们对你的谨慎处理表示赞赏。",
+          "image": "assets/images/characters/vendor_elevator_company.png",
+          "location_image": "assets/images/locations/elevator_professional_inspection.png",
+          "effects": {
+            "financialHealth": -150,
+            "tenantSatisfaction": 5,
+            "buildingCondition": 5
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你的谨慎处理避免了可能的安全事故，虽然花费了一定金钱，但提高了租户信任度和建筑状况。"
+        }
+      ]
+    },
+    {
+      "id": "NEGOTIATION_DIALOGUE_GAME",
+      "title": "租金谈判对话",
+      "involvedNPCs": ["NPC_LONG_TERM_ZHANG", "NPC_NEW_APPLICANT_LIN"],
+      "startNode": "RENT_NEGOTIATION_START",
+      "nodes": [
+        {
+          "nodeId": "RENT_NEGOTIATION_START",
+          "text": "长期租户张先生来到您的办公室。"我看到楼里新租户的广告价格比我现在付的租金低。我已经在这住了五年，一直按时付款。我觉得我应该得到同样优惠的价格。"",
+          "image": "assets/images/characters/tenant_annoyed_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "解释这是新租户特别促销价格",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": -1
+              },
+              "nextNode": "EXPLAIN_PROMOTION"
+            },
+            {
+              "text": "询问他想要什么样的调整",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "managerStress": 1
+              },
+              "nextNode": "ASK_FOR_ADJUSTMENT"
+            },
+            {
+              "text": "立即同意降低他的租金",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 3,
+                "financialHealth": -100,
+                "managerStress": -1
+              },
+              "nextNode": "IMMEDIATE_RENT_REDUCTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "EXPLAIN_PROMOTION",
+          "text": "你解释这是为吸引新租户的特别促销价格，只适用于首次签约。张先生听后表情更加不满："所以你们只重视新客户，对老客户反而没有任何优惠？这不公平。"",
+          "image": "assets/images/characters/tenant_angry_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "开始租金谈判（谈判对话游戏）",
+              "nextNode": "NEGOTIATION_GAME_START"
+            },
+            {
+              "text": "坚持政策不变",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": -3,
+                "tenantSatisfaction": -5
+              },
+              "nextNode": "STAND_BY_POLICY"
+            }
+          ]
+        },
+        {
+          "nodeId": "ASK_FOR_ADJUSTMENT",
+          "text": "你问张先生希望怎样调整租金。"我认为长期租户应该得到至少10%的优惠，"他说，"这是对我们忠诚的回报，也能让我感觉被重视。"",
+          "image": "assets/images/characters/tenant_neutral_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "开始租金谈判（谈判对话游戏）",
+              "nextNode": "NEGOTIATION_GAME_START"
+            },
+            {
+              "text": "提出5%的折扣作为妥协",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "financialHealth": -50,
+                "tenantSatisfaction": 2
+              },
+              "nextNode": "COMPROMISE_OFFER"
+            }
+          ]
+        },
+        {
+          "nodeId": "NEGOTIATION_GAME_START",
+          "text": "你决定与张先生进行谈判。这是一个微妙的对话，你的反应和语气将影响谈判的结果。",
+          "image": "assets/images/characters/tenant_neutral_zhang.png",
+          "location_image": "assets/images/locations/office_negotiation.png",
+          "negotiationGame": {
+            "type": "DialogueChoice",
+            "instructionText": "选择最适合当前情况的对话方式。考虑张先生的性格和当前情绪。",
+            "npcMood": "frustrated", 
+            "npcPersonality": "loyal_but_assertive",
+            "dialogueOptions": [
+              {
+                "text": "我理解您的感受，作为长期租户，您的满意度对我们非常重要。",
+                "tone": "Empathetic",
+                "successRate": 85,
+                "successNextNode": "NEGOTIATION_EMPATHETIC_SUCCESS",
+                "failureNextNode": "NEGOTIATION_EMPATHETIC_FAILURE"
+              },
+              {
+                "text": "我们可以提供其他增值服务来回馈您的忠诚，比如优先维修响应或设施升级。",
+                "tone": "Creative",
+                "successRate": 70,
+                "successNextNode": "NEGOTIATION_CREATIVE_SUCCESS",
+                "failureNextNode": "NEGOTIATION_CREATIVE_FAILURE"
+              },
+              {
+                "text": "根据市场分析，我们的租金已经非常合理。新租户价格是暂时性的亏本促销。",
+                "tone": "Assertive",
+                "successRate": 40,
+                "successNextNode": "NEGOTIATION_ASSERTIVE_SUCCESS",
+                "failureNextNode": "NEGOTIATION_ASSERTIVE_FAILURE"
+              },
+              {
+                "text": "您一直是我们最重视的租户，我相信我们可以找到双方都满意的解决方案。",
+                "tone": "Collaborative",
+                "successRate": 75,
+                "successNextNode": "NEGOTIATION_COLLABORATIVE_SUCCESS",
+                "failureNextNode": "NEGOTIATION_COLLABORATIVE_FAILURE"
+              }
+            ]
+          }
+        },
+        {
+          "nodeId": "NEGOTIATION_EMPATHETIC_SUCCESS",
+          "text": "张先生的表情软化了。"谢谢你理解我的立场。我只是希望感到被重视。"你们继续讨论，最终达成了一个互惠互利的协议：他的租金小幅下调5%，同时他同意延长租约期限。",
+          "image": "assets/images/characters/tenant_pleased_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "relationship_NPC_LONG_TERM_ZHANG": 2,
+            "tenantSatisfaction": 5,
+            "financialHealth": -50
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过理解和共情，你成功与张先生达成了双方都满意的协议。"
+        },
+        {
+          "nodeId": "NEGOTIATION_EMPATHETIC_FAILURE",
+          "text": "张先生看起来有些怀疑。"漂亮话谁都会说，但我需要实际行动。如果你真的理解，就应该给我提供实质性的租金减免。"你的共情尝试似乎不够有力。",
+          "image": "assets/images/characters/tenant_skeptical_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "提出具体的7%租金折扣",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "financialHealth": -70,
+                "tenantSatisfaction": 3
+              },
+              "nextNode": "SPECIFIC_DISCOUNT_OFFER"
+            },
+            {
+              "text": "转向提供其他增值服务",
+              "nextNode": "OFFER_VALUE_ADDED_SERVICES"
+            }
+          ]
+        },
+        {
+          "nodeId": "NEGOTIATION_CREATIVE_SUCCESS",
+          "text": "张先生对你的创新提议感到惊喜。"这是个有趣的建议。如果你能保证48小时内响应维修请求，并优先考虑我单元的设施升级，我可以接受现有租金。"你们商定了一份明确的增值服务清单，代替直接的租金减免。",
+          "image": "assets/images/characters/tenant_impressed_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "relationship_NPC_LONG_TERM_ZHANG": 3,
+            "tenantSatisfaction": 7,
+            "managerStress": 2
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过创新思维，你提供了增值服务代替租金折扣，保持了财务健康同时提高了租户满意度。"
+        },
+        {
+          "nodeId": "NEGOTIATION_CREATIVE_FAILURE",
+          "text": "张先生摇头："我不需要这些花哨的服务。我想要的是实际的租金减免，不是模糊的承诺。"你的创新提议未能打动他。",
+          "image": "assets/images/characters/tenant_annoyed_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "转向提供具体的租金折扣",
+              "effects": {
+                "financialHealth": -60,
+                "relationship_NPC_LONG_TERM_ZHANG": 1
+              },
+              "nextNode": "SPECIFIC_DISCOUNT_OFFER"
+            },
+            {
+              "text": "尝试解释市场情况和促销策略",
+              "nextNode": "EXPLAIN_MARKET_SITUATION"
+            }
+          ]
+        },
+        {
+          "nodeId": "NEGOTIATION_ASSERTIVE_SUCCESS",
+          "text": "令人惊讶的是，张先生接受了你的商业逻辑。"我理解市场运作方式。既然如此，你们能提供什么让我继续租约的激励呢？"你提出了一个小幅度的租金调整和一些维护优先权，他表示满意。",
+          "image": "assets/images/characters/tenant_understanding_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "relationship_NPC_LONG_TERM_ZHANG": 1,
+            "financialHealth": -30,
+            "tenantSatisfaction": 2
+          },
+          "endsScenario": true,
+          "endText": "场景结束：虽然采取了坚定立场，但你最终通过专业解释和小幅让步达成了协议。"
+        },
+        {
+          "nodeId": "NEGOTIATION_ASSERTIVE_FAILURE",
+          "text": "张先生明显生气了："所以你是在告诉我，我这个老租户反而比不上新来的陌生人重要？这完全不合理！"你的商业解释激怒了他。",
+          "image": "assets/images/characters/tenant_angry_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "改变策略，提供具体的租金折扣",
+              "effects": {
+                "financialHealth": -80,
+                "relationship_NPC_LONG_TERM_ZHANG": 0
+              },
+              "nextNode": "DAMAGE_CONTROL_OFFER"
+            },
+            {
+              "text": "坚持立场，表明这是公司政策",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": -3,
+                "tenantSatisfaction": -5
+              },
+              "nextNode": "STAND_BY_POLICY"
+            }
+          ]
+        },
+        {
+          "nodeId": "NEGOTIATION_COLLABORATIVE_SUCCESS",
+          "text": "张先生对你的合作态度做出了积极回应。"很高兴听到这个。我想我们可以找到双赢的解决方案。"经过友好的讨论，你们达成了协议：租金小幅下调3%，他同意签署更长期的租约，并推荐朋友入住。",
+          "image": "assets/images/characters/tenant_happy_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "relationship_NPC_LONG_TERM_ZHANG": 3,
+            "tenantSatisfaction": 8,
+            "financialHealth": -30
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过合作的方式，你与张先生建立了更紧密的关系，并达成了互利的协议。"
+        },
+        {
+          "nodeId": "NEGOTIATION_COLLABORATIVE_FAILURE",
+          "text": "张先生看起来不太信服。"听起来像是标准的客套话。我需要看到实际的诚意，而不只是空洞的承诺。"你的合作提议没有取得预期效果。",
+          "image": "assets/images/characters/tenant_skeptical_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "提出具体的合作方案",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "financialHealth": -40
+              },
+              "nextNode": "SPECIFIC_COLLABORATION_PROPOSAL"
+            },
+            {
+              "text": "以理解的态度，提供适度的租金调整",
+              "effects": {
+                "financialHealth": -50,
+                "relationship_NPC_LONG_TERM_ZHANG": 2
+              },
+              "nextNode": "SPECIFIC_DISCOUNT_OFFER"
+            }
+          ]
+        },
+        {
+          "nodeId": "STAND_BY_POLICY",
+          "text": "你坚持公司政策不变。张先生明显失望和生气："看来我这五年的忠诚毫无价值。我会考虑搬到其他更重视老租户的地方。"他离开了你的办公室，关门声很大。",
+          "image": "assets/images/characters/tenant_angry_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": -10
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你坚持了政策，但损害了与长期租户的关系，可能导致他退租。"
+        },
+        {
+          "nodeId": "IMMEDIATE_RENT_REDUCTION",
+          "text": "你立即同意降低他的租金到与新租户相同的水平。张先生很惊喜："真的？太感谢了！我就知道你们是重视老租户的。"尽管这会影响财务收入，但张先生的满意度和忠诚度明显提高了。",
+          "image": "assets/images/characters/tenant_happy_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 10
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你立即满足了张先生的要求，大大提高了他的满意度，但对财务产生了显著影响。"
+        },
+        {
+          "nodeId": "COMPROMISE_OFFER",
+          "text": "你提出5%的租金折扣作为妥协。张先生考虑了一下："虽然不是我期望的10%，但我理解你们也有经营压力。谢谢你愿意做出调整。"他接受了你的提议，看起来基本满意。",
+          "image": "assets/images/characters/tenant_neutral_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 5
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过适度的让步，你在保持财务健康的同时提高了租户满意度。"
+        },
+        {
+          "nodeId": "SPECIFIC_DISCOUNT_OFFER",
+          "text": "你提出了一个具体的租金折扣方案。张先生仔细听完后点头："这个提议还算合理。我接受这个折扣，并会考虑续签长期租约。"谈判达成了令双方都能接受的结果。",
+          "image": "assets/images/characters/tenant_pleased_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 6
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过提供具体的折扣方案，你成功解决了租金争议。"
+        },
+        {
+          "nodeId": "OFFER_VALUE_ADDED_SERVICES",
+          "text": "你详细列出了可以提供的额外服务，包括优先维修响应、免费的年度深度清洁、以及公共区域设施的优先使用权。张先生对这些实质性的提议显得更加感兴趣。",
+          "image": "assets/images/characters/tenant_interested_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "同时提供小幅度的租金调整",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 2,
+                "financialHealth": -30,
+                "tenantSatisfaction": 7
+              },
+              "nextNode": "COMBINED_OFFER_ACCEPTED"
+            },
+            {
+              "text": "坚持只提供服务，不调整租金",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "tenantSatisfaction": 3
+              },
+              "nextNode": "SERVICES_ONLY_RESPONSE"
+            }
+          ]
+        },
+        {
+          "nodeId": "COMBINED_OFFER_ACCEPTED",
+          "text": "你结合了额外服务和小幅度的租金调整。张先生非常满意："这正是我想要的——感受到被重视。服务升级加上适当的租金调整，证明你们确实珍视长期租户。"他热情地同意续签更长期的租约。",
+          "image": "assets/images/characters/tenant_happy_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 10
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过服务和租金的综合调整，你大大提高了长期租户的满意度和忠诚度。"
+        },
+        {
+          "nodeId": "SERVICES_ONLY_RESPONSE",
+          "text": "你坚持只提供增值服务，不调整租金。张先生思考了一会儿："这些服务确实有价值...但我还是希望能有一些租金上的体现。不过，我愿意先试试这个安排。"他暂时接受了，但看起来不是完全满意。",
+          "image": "assets/images/characters/tenant_neutral_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 3
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你通过提供额外服务避免了直接的租金减免，取得了部分成功。"
+        },
+        {
+          "nodeId": "EXPLAIN_MARKET_SITUATION",
+          "text": "你详细解释了当前的房地产市场状况、运营成本上升以及促销策略的必要性。张先生听后显得更能理解："好吧，从商业角度我能明白。但作为长期客户，我还是希望得到一些特别待遇。"",
+          "image": "assets/images/characters/tenant_understanding_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "choices": [
+            {
+              "text": "提出租金和服务的综合方案",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 2,
+                "financialHealth": -40,
+                "tenantSatisfaction": 6
+              },
+              "nextNode": "COMBINED_OFFER_ACCEPTED"
+            },
+            {
+              "text": "提出租约延长换取小幅折扣的方案",
+              "effects": {
+                "relationship_NPC_LONG_TERM_ZHANG": 1,
+                "financialHealth": -20,
+                "tenantSatisfaction": 4
+              },
+              "nextNode": "LONGER_LEASE_DISCOUNT_DEAL"
+            }
+          ]
+        },
+        {
+          "nodeId": "LONGER_LEASE_DISCOUNT_DEAL",
+          "text": "你提出如果张先生愿意延长租约期限，可以获得小幅租金折扣。"两年租约可以获得3%的折扣，三年租约则是5%的折扣。"张先生对这个提议表示满意，并选择了三年租约以获得更大折扣。",
+          "image": "assets/images/characters/tenant_pleased_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 7,
+            "financialHealth": -50
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过将租金折扣与更长的租约期限挂钩，你达成了对双方都有利的协议。"
+        },
+        {
+          "nodeId": "DAMAGE_CONTROL_OFFER",
+          "text": "看到张先生的反应，你立即改变策略，提出了更慷慨的租金折扣。"我理解您的感受，让我们重新考虑。我可以提供8%的租金折扣，这是我们对长期租户的特别优惠。"张先生的情绪缓和了一些。",
+          "image": "assets/images/characters/tenant_calming_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 4
+          },
+          "endsScenario": true,
+          "endText": "场景结束：你通过及时的让步挽回了局面，但这次谈判的经验教训是要更加谨慎地选择沟通策略。"
+        },
+        {
+          "nodeId": "SPECIFIC_COLLABORATION_PROPOSAL",
+          "text": "你提出了一个具体的合作方案："如果您愿意担任我们的'居民顾问'，每月参加一次社区会议提供建议，我们可以提供5%的租金折扣和一些设施升级。"张先生对这个有意义的角色表示了兴趣。",
+          "image": "assets/images/characters/tenant_interested_zhang.png",
+          "location_image": "assets/images/locations/office.png",
+          "effects": {
+            "tenantSatisfaction": 8,
+            "relationship_NPC_LONG_TERM_ZHANG": 3
+          },
+          "endsScenario": true,
+          "endText": "场景结束：通过给予张先生一个有价值的社区角色，你不仅解决了租金问题，还增强了他对社区的归属感和投入。"
+        }
+      ]
+    }
+  ]
+} 

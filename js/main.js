@@ -117,6 +117,28 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMetricsDisplay();
     }
 
+    // Function to start game with a specific scenario (called from scenario selector)
+    window.startGameWithScenario = function(scenarioId) {
+        activeQTE = false;
+        qteContainer.style.display = 'none';
+        
+        if (scenariosData && scenariosData.scenarios) {
+            const selectedScenario = scenariosData.scenarios.find(s => s.id === scenarioId);
+            if (selectedScenario) {
+                currentScenario = selectedScenario;
+                currentNodeId = currentScenario.startNode;
+                initializeScenarioNPCs(currentScenario);
+                renderNode(currentNodeId);
+                feedbackTextElement.textContent = "";
+                updateMetricsDisplay();
+            } else {
+                scenarioTextElement.textContent = "Selected scenario not found.";
+            }
+        } else {
+            scenarioTextElement.textContent = "No scenarios loaded.";
+        }
+    };
+
     // Function to render a scenario node
     function renderNode(nodeId) {
         const node = currentScenario.nodes.find(n => n.nodeId === nodeId);
@@ -129,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentNodeId = nodeId;
         scenarioTextElement.textContent = node.text;
         
-        scenarioImageElement.src = node.image ? `assets/${node.image}` : 'assets/images/placeholder.png';
+        scenarioImageElement.src = node.image || 'assets/images/placeholder.svg';
         scenarioImageElement.alt = node.image || "Scenario Image";
-        locationImageElement.src = node.location_image ? `assets/${node.location_image}` : 'assets/images/placeholder_location.png';
+        locationImageElement.src = node.location_image || 'assets/images/placeholder_location.svg';
         locationImageElement.alt = node.location_image || "Location Image";
         
         // Update relationship display if primary NPC changes or is notable for this node
@@ -154,8 +176,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (node.endsScenario) {
                 feedbackTextElement.textContent = node.endText || "Scenario Ended.";
                 const restartButton = document.createElement('button');
-                restartButton.textContent = "Restart Game"; // Changed to restart game
-                restartButton.addEventListener('click', loadScenarios); // Reload all scenarios
+                restartButton.textContent = "Choose Another Scenario";
+                restartButton.addEventListener('click', () => {
+                    // Reset game state
+                    gameState.metrics = {
+                        tenantSatisfaction: 70,
+                        managerStress: 10,
+                        buildingCondition: 80,
+                        financialHealth: 5000
+                    };
+                    gameState.relationshipScores = {};
+                    updateMetricsDisplay();
+                    updateRelationshipDisplay(null);
+                    
+                    // Show scenario selector
+                    if (window.showScenarioSelector) {
+                        window.showScenarioSelector();
+                    }
+                });
                 choicesAreaElement.appendChild(restartButton);
             } else if (node.choices && node.choices.length > 0) {
                 node.choices.forEach(choice => {

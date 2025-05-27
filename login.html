@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物业管理系统 - 登录</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>物业管理系统</h1>
+                <p>企业级物业管理解决方案</p>
+            </div>
+            
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">角色</label>
+                    <select id="role" name="role" required>
+                        <option value="">请选择角色</option>
+                        <option value="admin">系统管理员</option>
+                        <option value="manager">物业经理</option>
+                        <option value="staff">物业员工</option>
+                        <option value="tenant">租户</option>
+                    </select>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">记住我</label>
+                </div>
+                
+                <button type="submit" class="auth-btn primary">登录</button>
+                
+                <div class="auth-links">
+                    <a href="#" id="forgot-password">忘记密码？</a>
+                    <a href="register.html">注册新账户</a>
+                </div>
+            </form>
+            
+            <div class="demo-accounts">
+                <h3>演示账户</h3>
+                <div class="demo-account" data-username="admin" data-password="admin123" data-role="admin">
+                    <strong>管理员:</strong> admin / admin123
+                </div>
+                <div class="demo-account" data-username="manager" data-password="manager123" data-role="manager">
+                    <strong>经理:</strong> manager / manager123
+                </div>
+                <div class="demo-account" data-username="staff" data-password="staff123" data-role="staff">
+                    <strong>员工:</strong> staff / staff123
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>正在登录...</p>
+    </div>
+    
+    <script src="js/auth.js"></script>
+</body>
+</html>

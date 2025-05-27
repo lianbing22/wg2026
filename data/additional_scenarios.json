@@ -1,0 +1,219 @@
+{
+  "scenarios": [
+    {
+      "id": "TENANT_COMPLAINT_NOISE",
+      "title": "Noise Complaint from Mrs. Davis",
+      "involvedNPCs": ["NPC_MRS_DAVIS", "NPC_TENANT_UNIT_3B"],
+      "startNode": "COMPLAINT_RECEIVED",
+      "nodes": [
+        {
+          "nodeId": "COMPLAINT_RECEIVED",
+          "text": "Mrs. Davis from Unit 2A calls you, clearly frustrated. 'I've had enough! The tenant in 3B has been playing loud music until 2 AM every night this week. I have to get up early for work, and I can't take it anymore!' You can hear the exhaustion in her voice.",
+          "image": "assets/images/placeholder.svg",
+          "choices": [
+            {
+              "text": "Apologize sincerely and promise to investigate immediately",
+              "effects": {
+                "tenantSatisfaction": 2,
+                "relationship_NPC_MRS_DAVIS": 1
+              },
+              "nextNode": "INVESTIGATE_IMMEDIATELY"
+            },
+            {
+              "text": "Ask for more specific details about the noise",
+              "effects": {
+                "managerStress": 1
+              },
+              "nextNode": "GATHER_DETAILS"
+            },
+            {
+              "text": "Suggest she try talking to the neighbor first",
+              "effects": {
+                "tenantSatisfaction": -3,
+                "relationship_NPC_MRS_DAVIS": -2
+              },
+              "nextNode": "SUGGEST_DIRECT_TALK"
+            }
+          ]
+        },
+        {
+          "nodeId": "INVESTIGATE_IMMEDIATELY",
+          "text": "You head to Unit 3B right away. You can hear faint music coming from inside. When you knock, a young tenant opens the door, looking surprised to see you.",
+          "image": "assets/images/placeholder_location.svg",
+          "choices": [
+            {
+              "text": "Politely explain the noise complaint and ask for cooperation",
+              "effects": {
+                "relationship_NPC_TENANT_UNIT_3B": 1,
+                "tenantSatisfaction": 3
+              },
+              "nextNode": "POLITE_RESOLUTION"
+            },
+            {
+              "text": "Firmly remind them about quiet hours policy",
+              "effects": {
+                "relationship_NPC_TENANT_UNIT_3B": -1,
+                "tenantSatisfaction": 1
+              },
+              "nextNode": "FIRM_WARNING"
+            }
+          ]
+        },
+        {
+          "nodeId": "GATHER_DETAILS",
+          "text": "Mrs. Davis provides specific times and describes the type of music. 'It's that electronic dance music, and it's so loud I can feel the bass through the walls. Last night it went until 2:30 AM!' This detailed information will help you address the issue more effectively.",
+          "image": "assets/images/placeholder.svg",
+          "choices": [
+            {
+              "text": "Thank her for the details and go speak with Unit 3B",
+              "effects": {
+                "relationship_NPC_MRS_DAVIS": 1,
+                "managerStress": -1
+              },
+              "nextNode": "INVESTIGATE_WITH_DETAILS"
+            },
+            {
+              "text": "Ask if she has documented the incidents",
+              "effects": {
+                "managerStress": 1
+              },
+              "nextNode": "REQUEST_DOCUMENTATION"
+            }
+          ]
+        },
+        {
+          "nodeId": "POLITE_RESOLUTION",
+          "text": "The tenant in 3B is apologetic: 'I had no idea I was being so loud! I work late shifts and thought everyone was asleep. I'll definitely keep it down after 10 PM.' They seem genuinely sorry and cooperative.",
+          "image": "assets/images/placeholder.svg",
+          "choices": [
+            {
+              "text": "Thank them and follow up with Mrs. Davis",
+              "effects": {
+                "tenantSatisfaction": 5,
+                "relationship_NPC_MRS_DAVIS": 2,
+                "relationship_NPC_TENANT_UNIT_3B": 1
+              },
+              "nextNode": "SUCCESSFUL_RESOLUTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "SUCCESSFUL_RESOLUTION",
+          "text": "You call Mrs. Davis back to let her know the situation has been resolved. She sounds relieved: 'Thank you so much for handling this quickly. I really appreciate a property manager who listens and takes action.' The noise issue appears to be resolved amicably.",
+          "image": "assets/images/placeholder.svg",
+          "endsScenario": true
+        },
+        {
+          "nodeId": "FIRM_WARNING",
+          "text": "The tenant becomes defensive: 'I didn't know there were specific quiet hours. Fine, I'll keep it down, but this building has thin walls anyway.' They comply but seem annoyed by your approach.",
+          "image": "assets/images/placeholder.svg",
+          "choices": [
+            {
+              "text": "Follow up with Mrs. Davis about the resolution",
+              "effects": {
+                "tenantSatisfaction": 2,
+                "relationship_NPC_MRS_DAVIS": 1
+              },
+              "nextNode": "ADEQUATE_RESOLUTION"
+            }
+          ]
+        },
+        {
+          "nodeId": "ADEQUATE_RESOLUTION",
+          "text": "Mrs. Davis is satisfied that you addressed the issue, though she mentions: 'I hope they actually follow through. Thank you for taking care of it.' The immediate problem is solved, but the tenant relationship could be better.",
+          "image": "assets/images/placeholder.svg",
+          "endsScenario": true
+        }
+      ]
+    },
+    {
+      "id": "EMERGENCY_REPAIR_QTE",
+      "title": "Emergency Pipe Repair",
+      "involvedNPCs": ["NPC_HANDYMAN_JOE"],
+      "startNode": "EMERGENCY_CALL",
+      "nodes": [
+        {
+          "nodeId": "EMERGENCY_CALL",
+          "text": "At 11 PM, you receive an urgent call from a tenant: 'There's water everywhere! A pipe burst in my bathroom and it's flooding into the hallway!' You need to act fast to minimize damage.",
+          "image": "assets/images/placeholder.svg",
+          "choices": [
+            {
+              "text": "Rush to the scene immediately",
+              "effects": {
+                "managerStress": 3
+              },
+              "nextNode": "ASSESS_DAMAGE"
+            },
+            {
+              "text": "Call the emergency plumber first, then head over",
+              "effects": {
+                "managerStress": 2,
+                "financialHealth": -200
+              },
+              "nextNode": "PLUMBER_CALLED"
+            }
+          ]
+        },
+        {
+          "nodeId": "ASSESS_DAMAGE",
+          "text": "You arrive to find water pouring from a burst pipe behind the toilet. The tenant has placed buckets, but water is still spreading. You need to shut off the water supply quickly.",
+          "image": "assets/images/placeholder_location.svg",
+          "choices": [
+            {
+              "text": "Attempt to shut off the water valve yourself",
+              "effects": {},
+              "nextNode": "WATER_SHUTOFF_QTE"
+            },
+            {
+              "text": "Call for professional help immediately",
+              "effects": {
+                "financialHealth": -300,
+                "buildingCondition": -5
+              },
+              "nextNode": "PROFESSIONAL_HELP"
+            }
+          ]
+        },
+        {
+          "nodeId": "WATER_SHUTOFF_QTE",
+          "text": "You locate the water shutoff valve, but it's old and stiff. You need to turn it with just the right amount of force - too little and it won't budge, too much and you might break it!",
+          "image": "assets/images/placeholder_location.svg",
+          "qte": {
+            "type": "StopTheMovingBar",
+            "parameters": {
+              "targetZoneStart": 40,
+              "targetZoneEnd": 60,
+              "barSpeed": 60,
+              "attempts": 1
+            },
+            "instructionText": "Stop the bar in the green zone to apply the right amount of force!",
+            "successEffects": {
+              "buildingCondition": 2,
+              "tenantSatisfaction": 5,
+              "relationship_NPC_HANDYMAN_JOE": 1
+            },
+            "failureEffects": {
+              "buildingCondition": -3,
+              "financialHealth": -150,
+              "managerStress": 2
+            },
+            "successNextNode": "SUCCESSFUL_SHUTOFF",
+            "failureNextNode": "FAILED_SHUTOFF"
+          }
+        },
+        {
+          "nodeId": "SUCCESSFUL_SHUTOFF",
+          "text": "Perfect! You successfully shut off the water supply. The flooding stops immediately. The tenant looks relieved: 'Wow, you really know what you're doing! Thank you for acting so quickly.' Your quick thinking prevented major damage.",
+          "image": "assets/images/placeholder.svg",
+          "endsScenario": true
+        },
+        {
+          "nodeId": "FAILED_SHUTOFF",
+          "text": "The valve handle snaps under too much pressure! Water continues to flow, and now you'll need both a plumber and additional repairs. The tenant looks worried as water damage spreads to the hallway.",
+          "image": "assets/images/placeholder.svg",
+          "endsScenario": true
+        }
+      ]
+    }
+  ]
+}

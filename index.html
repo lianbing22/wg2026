@@ -7,22 +7,52 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="game-container">
-        <header id="metrics-display">
-            <p>Tenant Satisfaction: <span id="tenantSatisfaction">70</span>%</p>
-            <p>Manager Stress: <span id="managerStress">10</span>%</p>
-            <p>Building Condition: <span id="buildingCondition">80</span>%</p>
-            <p>Financial Health: $<span id="financialHealth">5000</span></p>
+    <!-- Scenario Selector -->
+    <div id="scenario-selector">
+        <header>
+            <h1>Property Manager Simulator</h1>
+            <h2>Choose Your Scenario</h2>
         </header>
+        <div id="scenario-list">
+            <!-- Scenarios will be loaded here dynamically -->
+        </div>
+        <button id="start-selected-scenario" disabled>Start Selected Scenario</button>
+    </div>
 
-        <section id="npc-relationship-display" style="display:none;">
-            <p>Relationship with <span id="npc-name">NPC</span>: <span id="npc-relationship-score">0</span></p>
-        </section>
+    <div id="game-container" style="display: none;">
+        <header id="game-header">
+            <h1>Property Manager Simulator</h1>
+            <div id="metrics-display">
+                <div class="metric">
+                    <span class="metric-label">Tenant Satisfaction:</span>
+                    <span id="tenantSatisfaction" class="metric-value">70</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Manager Stress:</span>
+                    <span id="managerStress" class="metric-value">10</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Building Condition:</span>
+                    <span id="buildingCondition" class="metric-value">80</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Financial Health:</span>
+                    <span id="financialHealth" class="metric-value">5000</span>
+                </div>
+            </div>
+            <div id="npc-relationship-display" style="display: none;">
+                <h3>Current NPC Relationship</h3>
+                <div class="relationship-info">
+                    <span class="npc-name" id="npc-name">NPC Name</span>
+                    <span class="relationship-score" id="npc-relationship-score">0</span>
+                </div>
+            </div>
+        </header>
 
         <main id="scenario-area">
             <div id="image-container">
-                <img id="scenario-image" src="assets/images/placeholder.png" alt="Scenario Image">
-                <img id="location-image" src="assets/images/placeholder_location.png" alt="Location Image">
+                <img id="scenario-image" src="assets/images/placeholder.svg" alt="Scenario Image">
+                <img id="location-image" src="assets/images/placeholder_location.svg" alt="Location Image">
             </div>
             <div id="text-area">
                 <p id="scenario-text">Welcome to the Property Management Game!</p>
@@ -48,5 +78,6 @@
     </div>
 
     <script src="js/main.js"></script>
+    <script src="js/scenario_selector.js"></script>
 </body>
 </html>

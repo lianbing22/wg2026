@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>租户仪表板 - 物业管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .dashboard-header {
+            background-color: #9b59b6; /* 租户紫色调 */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #3d3d3d; /* 深灰色 */
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar h2 {
+            font-size: 1.5em;
+            margin-top: 0;
+            border-bottom: 1px solid #5e5e5e;
+            padding-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar ul li a {
+            display: block;
+            color: #ecf0f1;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #8e44ad; /* 亮紫色 */
+            color: white;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        .widget {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .widget h3 {
+            margin-top: 0;
+            color: #9b59b6;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .user-info {
+            text-align: right;
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            font-size: 0.9em;
+        }
+        .user-info span {
+            font-weight: bold;
+        }
+        .user-info a {
+            color: #9b59b6;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #3d3d3d;
+            color: white;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>加载中...</p>
+    </div>
+
+    <header class="dashboard-header">
+        <h1>物业管理系统 - 租户仪表板</h1>
+    </header>
+
+    <div class="user-info">
+        欢迎, <span id="username-display">租户</span>! 
+        <a href="#" id="logout-button">登出</a>
+    </div>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>导航菜单</h2>
+            <ul>
+                <li><a href="#" class="active" data-target="my-home">我的住所</a></li>
+                <li><a href="#" data-target="submit-request">提交请求</a></li>
+                <li><a href="#" data-target="payment-history">缴费记录</a></li>
+                <li><a href="#" data-target="community-info">社区信息</a></li>
+                <li><a href="#" data-target="profile-settings">账户设置</a></li>
+                <li><a href="#" data-target="game-portal-tenant">生活模拟游戏</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="my-home" class="widget active-section">
+                <h3>我的住所</h3>
+                <p>查看您的租约详情、房屋信息和重要通知。</p>
+                <!-- 住所信息组件 -->
+            </section>
+
+            <section id="submit-request" class="widget" style="display: none;">
+                <h3>提交请求</h3>
+                <p>提交维修请求、咨询或其他服务请求。</p>
+                <!-- 请求提交表单 -->
+            </section>
+
+            <section id="payment-history" class="widget" style="display: none;">
+                <h3>缴费记录</h3>
+                <p>查看您的租金和其他费用的缴费历史。</p>
+                <!-- 缴费记录列表 -->
+            </section>
+
+            <section id="community-info" class="widget" style="display: none;">
+                <h3>社区信息</h3>
+                <p>获取社区公告、活动信息和周边设施介绍。</p>
+                <!-- 社区信息展示 -->
+            </section>
+
+            <section id="profile-settings" class="widget" style="display: none;">
+                <h3>账户设置</h3>
+                <p>更新您的个人信息和联系方式。</p>
+                <!-- 账户设置表单 -->
+            </section>
+            
+            <section id="game-portal-tenant" class="widget" style="display: none;">
+                <h3>生活模拟游戏</h3>
+                <p>体验作为租户在物业中生活的各种情景。</p>
+                <p><a href="index.html" target="_blank">开始游戏</a></p>
+                <!-- 游戏链接或嵌入 -->
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 物业管理系统. 保留所有权利.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            UIUtils.hideLoading();
+
+            const currentUser = userManager.getCurrentUser();
+            if (!currentUser || currentUser.role !== 'tenant') {
+                alert('访问受限。请以租户身份登录。');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('username-display').textContent = `${currentUser.firstName} ${currentUser.lastName} (${currentUser.username})`;
+
+            const logoutButton = document.getElementById('logout-button');
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                userManager.logout();
+                alert('您已成功登出。');
+                window.location.href = 'login.html';
+            });
+
+            const navLinks = document.querySelectorAll('.sidebar ul li a');
+            const sections = document.querySelectorAll('.main-content .widget');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetId = this.dataset.target;
+                    sections.forEach(section => {
+                        section.style.display = (section.id === targetId) ? 'block' : 'none';
+                        if (section.id === targetId) section.classList.add('active-section');
+                        else section.classList.remove('active-section');
+                    });
+                });
+            });
+            
+            document.querySelector('.sidebar ul li a[data-target="my-home"]').click();
+        });
+    </script>
+</body>
+</html>
