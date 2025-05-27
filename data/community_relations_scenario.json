@@ -1,0 +1,481 @@
+{
+  "scenario": {
+    "id": "COMMUNITY_RELATIONS_BUILDING",
+    "title": "社区关系建设",
+    "involvedNPCs": ["NPC_COMMUNITY_LEADER_CHEN", "NPC_ELDERLY_LIU", "NPC_YOUNG_FAMILY_WU", "NPC_LOCAL_BUSINESS_OWNER_ZHANG"],
+    "startNode": "COMMUNITY_ENGAGEMENT_START",
+    "nodes": [
+      {
+        "nodeId": "COMMUNITY_ENGAGEMENT_START",
+        "text": "随着物业规模扩大，你意识到有必要加强与社区的联系，提升居民归属感和满意度。陈女士作为社区代表前来讨论："我们的小区缺乏凝聚力，希望物业能够支持一些社区活动，增进邻里关系。"",
+        "image": "assets/images/characters/community_leader_chen.png",
+        "location_image": "assets/images/locations/property_common_area.png",
+        "choices": [
+          {
+            "text": "组织大型社区庆典活动",
+            "effects": {
+              "financialHealth": -80,
+              "communityEngagement": 15,
+              "tenantSatisfaction": 10
+            },
+            "nextNode": "COMMUNITY_FESTIVAL"
+          },
+          {
+            "text": "建立定期小型社区活动系统",
+            "effects": {
+              "financialHealth": -50,
+              "communityEngagement": 10,
+              "tenantSatisfaction": 8
+            },
+            "nextNode": "REGULAR_ACTIVITIES"
+          },
+          {
+            "text": "成立社区志愿者委员会",
+            "effects": {
+              "financialHealth": -20,
+              "communityEngagement": 12,
+              "managerWorkload": -5
+            },
+            "nextNode": "VOLUNTEER_COMMITTEE"
+          },
+          {
+            "text": "专注于线上社区平台建设",
+            "effects": {
+              "financialHealth": -30,
+              "communityEngagement": 5,
+              "propertyModernImage": 10
+            },
+            "nextNode": "ONLINE_PLATFORM"
+          }
+        ]
+      },
+      {
+        "nodeId": "COMMUNITY_FESTIVAL",
+        "text": "你决定组织一场大型社区庆典，包括文艺表演、美食分享和游戏活动。活动当天，小区内热闹非凡，不同年龄段的居民积极参与。刘奶奶开心地说："好多年没见过这么热闹的场面了，真像过年一样！"",
+        "image": "assets/images/characters/community_festival.png",
+        "location_image": "assets/images/locations/festival_grounds.png",
+        "storyFlags": {
+          "set": ["LARGE_COMMUNITY_EVENT", "INCREASED_NEIGHBOR_INTERACTION"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 5,
+          "relationship_NPC_YOUNG_FAMILY_WU": 3,
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 5
+        },
+        "choices": [
+          {
+            "text": "将庆典设为年度传统活动",
+            "effects": {
+              "financialHealth": -50,
+              "communityEngagement": 5,
+              "tenantRetention": 5
+            },
+            "nextNode": "ANNUAL_TRADITION"
+          },
+          {
+            "text": "借势推动更多居民自发活动",
+            "effects": {
+              "communityEngagement": 8,
+              "managerWorkload": -8
+            },
+            "nextNode": "RESIDENT_INITIATIVES"
+          }
+        ]
+      },
+      {
+        "nodeId": "REGULAR_ACTIVITIES",
+        "text": "你建立了定期小型社区活动系统，包括每周读书会、月度电影之夜和季度健康讲座。这些活动吸引了不同兴趣的居民参与，逐渐形成了稳定的社区活动文化。",
+        "image": "assets/images/characters/community_activities.png",
+        "location_image": "assets/images/locations/activity_room.png",
+        "storyFlags": {
+          "set": ["REGULAR_COMMUNITY_PROGRAMS", "DIVERSE_ENGAGEMENT"]
+        },
+        "choices": [
+          {
+            "text": "鼓励居民主导活动，提供场地和基础支持",
+            "effects": {
+              "communityEngagement": 10,
+              "managerWorkload": -10,
+              "tenantEmpowerment": 15
+            },
+            "nextNode": "RESIDENT_LED"
+          },
+          {
+            "text": "根据参与度调整活动内容，优化资源分配",
+            "effects": {
+              "communityEngagement": 8,
+              "financialHealth": 10,
+              "managerReputation": 5
+            },
+            "nextNode": "OPTIMIZED_PROGRAMS"
+          }
+        ]
+      },
+      {
+        "nodeId": "VOLUNTEER_COMMITTEE",
+        "text": "你发起成立了社区志愿者委员会，邀请热心居民参与社区事务决策和活动组织。陈女士很快就组织起了一个积极的团队，开始规划各种社区项目。",
+        "image": "assets/images/characters/volunteer_committee.png",
+        "location_image": "assets/images/locations/community_meeting_room.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_SELF_GOVERNANCE", "RESIDENT_EMPOWERMENT"]
+        },
+        "choices": [
+          {
+            "text": "提供预算和决策权，支持委员会自主运作",
+            "effects": {
+              "financialHealth": -30,
+              "communityEngagement": 15,
+              "managerWorkload": -15,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": 8
+            },
+            "nextNode": "EMPOWERED_COMMITTEE"
+          },
+          {
+            "text": "保持适度监督，确保活动符合物业整体目标",
+            "effects": {
+              "communityEngagement": 8,
+              "managerControl": 10,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": 3
+            },
+            "nextNode": "SUPERVISED_COMMITTEE"
+          }
+        ]
+      },
+      {
+        "nodeId": "ONLINE_PLATFORM",
+        "text": "你投资建设了一个社区在线平台，包括移动应用和网站，方便居民交流、报修和参与线上活动。年轻家庭反响热烈，吴先生评论道："这真的很方便，不用再跑物业办公室了。"",
+        "image": "assets/images/characters/digital_platform.png",
+        "location_image": "assets/images/locations/tech_usage.png",
+        "storyFlags": {
+          "set": ["DIGITAL_COMMUNITY", "MODERN_PROPERTY_IMAGE"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 5,
+          "relationship_NPC_ELDERLY_LIU": -2,
+          "operationalEfficiency": 10
+        },
+        "choices": [
+          {
+            "text": "增加线下支持，帮助老年人适应数字平台",
+            "effects": {
+              "financialHealth": -20,
+              "relationship_NPC_ELDERLY_LIU": 5,
+              "inclusivity": 10
+            },
+            "nextNode": "DIGITAL_INCLUSION"
+          },
+          {
+            "text": "专注拓展平台功能，增加更多数字化服务",
+            "effects": {
+              "financialHealth": -40,
+              "propertyModernImage": 15,
+              "operationalEfficiency": 15
+            },
+            "nextNode": "EXPANDED_DIGITAL"
+          }
+        ]
+      },
+      {
+        "nodeId": "ANNUAL_TRADITION",
+        "text": "你宣布将社区庆典设为年度传统活动，获得了广泛支持。居民们开始期待并主动参与筹备工作。陈女士表示："有了这样的传统，大家更有归属感，社区也更有凝聚力了。"",
+        "image": "assets/images/characters/annual_event_planning.png",
+        "location_image": "assets/images/locations/decorated_community.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_TRADITION_ESTABLISHED"]
+        },
+        "nextNode": "COMMUNITY_IDENTITY"
+      },
+      {
+        "nodeId": "RESIDENT_INITIATIVES",
+        "text": "借着庆典的成功，你鼓励居民发起自己的社区活动。很快，一些兴趣小组自发形成，包括园艺俱乐部、晨练团和烹饪交流会。这些活动丰富了社区生活，减轻了物业的组织负担。",
+        "image": "assets/images/characters/resident_groups.png",
+        "location_image": "assets/images/locations/garden_club.png",
+        "storyFlags": {
+          "set": ["SELF_ORGANIZED_ACTIVITIES", "COMMUNITY_AUTONOMY"]
+        },
+        "nextNode": "SUPPORTIVE_ROLE"
+      },
+      {
+        "nodeId": "RESIDENT_LED",
+        "text": "你将活动主导权逐渐转交给居民，物业主要提供场地和基础支持。这激发了居民的主人翁意识，一些有才能的居民如吴太太组织了深受欢迎的儿童艺术班，刘奶奶则开设了太极教室。",
+        "image": "assets/images/characters/resident_teaching.png",
+        "location_image": "assets/images/locations/community_class.png",
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 5,
+          "relationship_NPC_ELDERLY_LIU": 5,
+          "communityEngagement": 12
+        },
+        "storyFlags": {
+          "set": ["RESIDENT_TALENT_UTILIZED", "COMMUNITY_OWNERSHIP"]
+        },
+        "nextNode": "THRIVING_COMMUNITY"
+      },
+      {
+        "nodeId": "OPTIMIZED_PROGRAMS",
+        "text": "你根据参与情况调整活动内容，将资源集中在最受欢迎的项目上。这种数据驱动的方法提高了整体参与率和资源效率，但一些小众活动的支持者表示失望。",
+        "image": "assets/images/characters/program_analytics.png",
+        "location_image": "assets/images/locations/popular_activity.png",
+        "storyFlags": {
+          "set": ["OPTIMIZED_RESOURCE_ALLOCATION", "DATA_DRIVEN_MANAGEMENT"]
+        },
+        "effects": {
+          "tenantSatisfaction": 5,
+          "financialEfficiency": 8,
+          "communityDiversity": -5
+        },
+        "nextNode": "RESOURCE_EFFICIENCY"
+      },
+      {
+        "nodeId": "EMPOWERED_COMMITTEE",
+        "text": "你给予志愿者委员会充分的预算和决策权，支持他们自主运作。在陈女士的领导下，委员会迅速展开工作，组织了一系列深受欢迎的活动，还解决了一些长期存在的社区问题。",
+        "image": "assets/images/characters/community_leader_chen_leading.png",
+        "location_image": "assets/images/locations/committee_working.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_AUTONOMY", "DISTRIBUTED_LEADERSHIP"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 10,
+          "tenantSatisfaction": 15,
+          "managerWorkload": -20
+        },
+        "nextNode": "SELF_GOVERNING"
+      },
+      {
+        "nodeId": "SUPERVISED_COMMITTEE",
+        "text": "你保持对委员会的适度监督，确保活动符合物业整体目标。这种平衡方法既给予居民参与感，又保持了管理的连贯性。陈女士有时对限制表示不满，但总体合作良好。",
+        "image": "assets/images/characters/committee_reporting.png",
+        "location_image": "assets/images/locations/manager_meeting.png",
+        "storyFlags": {
+          "set": ["BALANCED_GOVERNANCE", "MANAGED_PARTICIPATION"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 5,
+          "tenantSatisfaction": 8,
+          "managerControl": 15
+        },
+        "nextNode": "COLLABORATIVE_MANAGEMENT"
+      },
+      {
+        "nodeId": "DIGITAL_INCLUSION",
+        "text": "你增加了线下支持，帮助老年人适应数字平台。组织了技术培训班并设立了帮助台，刘奶奶很快学会了使用应用程序报修和参与活动，高兴地说："没想到我这把年纪还能学会这些新东西！"",
+        "image": "assets/images/characters/elderly_tech_learning.png",
+        "location_image": "assets/images/locations/tech_support_desk.png",
+        "storyFlags": {
+          "set": ["DIGITAL_ACCESSIBILITY", "INTERGENERATIONAL_INTEGRATION"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 8,
+          "communityInclusion": 15,
+          "tenantSatisfaction": 10
+        },
+        "nextNode": "INCLUSIVE_COMMUNITY"
+      },
+      {
+        "nodeId": "EXPANDED_DIGITAL",
+        "text": "你专注拓展平台功能，增加了在线支付、社区市场和智能家居控制等服务。这些创新功能吸引了更多年轻家庭和专业人士，提升了物业的现代形象，但也加大了与部分老年居民的沟通鸿沟。",
+        "image": "assets/images/characters/advanced_app_features.png",
+        "location_image": "assets/images/locations/smart_community.png",
+        "storyFlags": {
+          "set": ["CUTTING_EDGE_TECHNOLOGY", "DIGITAL_DIVIDE"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 8,
+          "relationship_NPC_ELDERLY_LIU": -5,
+          "propertyModernImage": 20,
+          "newTenantAttraction": 15
+        },
+        "nextNode": "MODERN_LIVING"
+      },
+      {
+        "nodeId": "COMMUNITY_IDENTITY",
+        "text": "年度庆典逐渐成为社区标志性活动，甚至吸引了周边社区居民参与。本地媒体报道了活动盛况，提升了物业知名度。居民们以居住在这样一个有活力的社区为荣。",
+        "image": "assets/images/characters/media_coverage.png",
+        "location_image": "assets/images/locations/vibrant_community.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_PRIDE", "ENHANCED_REPUTATION"]
+        },
+        "effects": {
+          "propertyReputation": 20,
+          "tenantRetention": 15,
+          "communityEngagement": 20
+        },
+        "choices": [
+          {
+            "text": "与本地企业合作，扩大活动规模和影响",
+            "effects": {
+              "financialHealth": 30,
+              "communityInfluence": 15
+            },
+            "nextNode": "BUSINESS_PARTNERSHIPS"
+          },
+          {
+            "text": "保持社区内部特色，关注居民体验",
+            "effects": {
+              "tenantSatisfaction": 10,
+              "communityIntimacy": 15
+            },
+            "nextNode": "INTIMATE_COMMUNITY"
+          }
+        ]
+      },
+      {
+        "nodeId": "SUPPORTIVE_ROLE",
+        "text": "物业转为支持者角色，提供场地、设备和适当宣传，让居民主导社区活动。这种模式大大减轻了管理负担，同时增强了居民参与感和社区自主性。",
+        "image": "assets/images/characters/manager_supporting.png",
+        "location_image": "assets/images/locations/resident_activity.png",
+        "storyFlags": {
+          "set": ["FACILITATIVE_MANAGEMENT", "RESIDENT_AUTONOMY"]
+        },
+        "choices": [
+          {
+            "text": "设立社区活动基金，提供小额资助",
+            "effects": {
+              "financialHealth": -40,
+              "communityCreativity": 15,
+              "tenantSatisfaction": 10
+            },
+            "nextNode": "ACTIVITY_FUND"
+          },
+          {
+            "text": "建立活动评价系统，表彰优秀组织者",
+            "effects": {
+              "communityEngagement": 10,
+              "residentRecognition": 15
+            },
+            "nextNode": "RECOGNITION_SYSTEM"
+          }
+        ]
+      },
+      {
+        "nodeId": "THRIVING_COMMUNITY",
+        "text": "在居民主导下，社区活动蓬勃发展，涵盖文化、教育、健康和娱乐等多个领域。物业因支持这种自主模式而受到赞誉，吸引了许多寻求活跃社区生活的潜在租户。",
+        "image": "assets/images/characters/thriving_community.png",
+        "location_image": "assets/images/locations/active_common_area.png",
+        "storyFlags": {
+          "set": ["VIBRANT_COMMUNITY_LIFE", "RESIDENT_LEADERSHIP"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你成功培养了一个由居民主导的活跃社区，提高了生活质量和居民满意度，同时提升了物业价值和吸引力。"
+      },
+      {
+        "nodeId": "RESOURCE_EFFICIENCY",
+        "text": "经过几个月的数据收集和调整，社区活动系统运行得更加高效。资源集中在最受欢迎的活动上，满足了大多数居民需求，同时控制了成本。管理团队对这种精细化运营方式感到满意。",
+        "image": "assets/images/characters/efficient_management.png",
+        "location_image": "assets/images/locations/well_attended_event.png",
+        "storyFlags": {
+          "set": ["EFFICIENT_OPERATIONS", "MAJORITY_SATISFACTION"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你建立了一个高效的社区活动系统，平衡了居民需求和资源限制，虽然牺牲了一些多样性，但提高了整体效率和主流满意度。"
+      },
+      {
+        "nodeId": "SELF_GOVERNING",
+        "text": "志愿者委员会在充分授权下蓬勃发展，逐渐成为社区治理的核心。陈女士领导的团队不仅组织活动，还协助解决邻里纠纷、改进公共空间使用和提出物业服务建议，形成了真正的社区自治。",
+        "image": "assets/images/characters/community_governance.png",
+        "location_image": "assets/images/locations/community_leadership.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_SELF_GOVERNANCE", "DEMOCRATIC_PROPERTY"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你培养了一个自治社区，实现了权力下放和居民参与的理想，提高了社区凝聚力和居民满意度，同时减轻了管理负担。"
+      },
+      {
+        "nodeId": "COLLABORATIVE_MANAGEMENT",
+        "text": "物业与志愿者委员会建立了有效的合作关系，在保持整体方向控制的同时，给予居民适当的参与空间。这种平衡方法既满足了管理需求，又提供了足够的社区参与感。",
+        "image": "assets/images/characters/collaborative_meeting.png",
+        "location_image": "assets/images/locations/partnership_signing.png",
+        "storyFlags": {
+          "set": ["BALANCED_GOVERNANCE", "STRUCTURED_PARTICIPATION"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你创建了一个结构化的社区参与模式，保持管理控制的同时提供了足够的居民参与渠道，实现了可预测和可持续的社区发展。"
+      },
+      {
+        "nodeId": "INCLUSIVE_COMMUNITY",
+        "text": "通过数字包容性举措，你成功地将各年龄段居民整合到社区平台中。技术不再是障碍，而成为连接工具。刘奶奶现在经常在平台上分享她的太极课程，吴家的孩子则参加她的线下教学。",
+        "image": "assets/images/characters/intergenerational_activity.png",
+        "location_image": "assets/images/locations/inclusive_tech.png",
+        "storyFlags": {
+          "set": ["DIGITAL_INCLUSION", "INTERGENERATIONAL_COMMUNITY"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你创建了一个既利用现代技术又照顾所有居民需求的包容性社区，促进了代际交流，提高了整体社区满意度和凝聚力。"
+      },
+      {
+        "nodeId": "MODERN_LIVING",
+        "text": "社区逐渐转型为科技驱动的现代生活空间，吸引了更多年轻专业人士和科技爱好者。物业因其创新服务获得了行业认可，但部分老年居民感到被边缘化，一些人甚至考虑搬离。",
+        "image": "assets/images/characters/tech_community.png",
+        "location_image": "assets/images/locations/smart_living.png",
+        "storyFlags": {
+          "set": ["SMART_COMMUNITY", "DEMOGRAPHIC_SHIFT"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你将社区转型为科技驱动的现代空间，提升了物业价值和吸引力，但造成了一定的社区分化，未来可能面临人口结构变化的挑战。"
+      },
+      {
+        "nodeId": "BUSINESS_PARTNERSHIPS",
+        "text": "你与本地企业建立了合作关系，扩大了年度庆典的规模和影响。张老板的餐厅提供特色美食，附近商店赞助活动奖品，社区活动成为了当地文化亮点，为物业带来了声誉和附加收入。",
+        "image": "assets/images/characters/business_sponsorship.png",
+        "location_image": "assets/images/locations/expanded_festival.png",
+        "storyFlags": {
+          "set": ["COMMERCIAL_PARTNERSHIPS", "COMMUNITY_LANDMARK_EVENT"]
+        },
+        "effects": {
+          "financialHealth": 50,
+          "propertyReputation": 25,
+          "relationship_NPC_LOCAL_BUSINESS_OWNER_ZHANG": 10
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过商业合作将社区活动发展为地区文化标志，创造了经济效益和声誉提升，同时加强了与本地商业的互利关系。"
+      },
+      {
+        "nodeId": "INTIMATE_COMMUNITY",
+        "text": "你选择保持社区活动的内部特色，专注于居民体验和邻里关系。庆典虽然规模不大，但氛围温馨亲切，真正体现了"家"的感觉。居民们特别欣赏这种注重质量而非规模的方式。",
+        "image": "assets/images/characters/intimate_gathering.png",
+        "location_image": "assets/images/locations/cozy_community.png",
+        "storyFlags": {
+          "set": ["INTIMATE_ATMOSPHERE", "QUALITY_OVER_QUANTITY"]
+        },
+        "effects": {
+          "tenantSatisfaction": 20,
+          "communityBelonging": 25,
+          "tenantRetention": 15
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你培养了一个亲密紧密的社区氛围，增强了居民的归属感和满意度，创造了一个真正意义上的家，而不仅仅是居住场所。"
+      },
+      {
+        "nodeId": "ACTIVITY_FUND",
+        "text": "你设立了社区活动基金，为居民发起的创意项目提供小额资助。这一举措激发了巨大的创造力，涌现出许多创新活动，从都市农场到代际技能交换项目，丰富了社区生活。",
+        "image": "assets/images/characters/grant_ceremony.png",
+        "location_image": "assets/images/locations/creative_projects.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_INNOVATION", "GRASSROOTS_FUNDING"]
+        },
+        "effects": {
+          "communityCreativity": 20,
+          "tenantEmpowerment": 15,
+          "propertyReputation": 10
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过提供资源支持，释放了社区创造力和自主性，培养了一个充满活力和创新的社区环境，成为物业管理的示范案例。"
+      },
+      {
+        "nodeId": "RECOGNITION_SYSTEM",
+        "text": "你建立了社区活动评价和表彰系统，定期表彰优秀的组织者和志愿者。这一制度激励了更多居民积极参与，形成了良性竞争氛围，持续提升活动质量和参与度。",
+        "image": "assets/images/characters/award_ceremony.png",
+        "location_image": "assets/images/locations/recognition_event.png",
+        "storyFlags": {
+          "set": ["RECOGNITION_CULTURE", "VOLUNTEER_MOTIVATION"]
+        },
+        "effects": {
+          "communityEngagement": 15,
+          "volunteerParticipation": 20,
+          "activityQuality": 15
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过认可和表彰机制培养了活跃的志愿者文化，提高了居民参与度和活动质量，建立了可持续的社区活动生态系统。"
+      }
+    ]
+  }
+} 

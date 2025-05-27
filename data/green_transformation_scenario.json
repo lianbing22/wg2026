@@ -1,0 +1,602 @@
+{
+  "scenario": {
+    "id": "GREEN_TRANSFORMATION_PLAN",
+    "title": "环保改造计划",
+    "involvedNPCs": ["NPC_YOUNG_FAMILY_WU", "NPC_ELDERLY_LIU", "NPC_ENVIRONMENTAL_ENGINEER_ZHAO", "NPC_COMMUNITY_LEADER_CHEN"],
+    "startNode": "GREEN_INITIATIVE_START",
+    "nodes": [
+      {
+        "nodeId": "GREEN_INITIATIVE_START",
+        "text": "随着环保意识的提高和政府绿色建筑政策的推进，你正考虑对物业进行环保改造。赵工程师向你介绍了几种可行方案："我们可以从多个方面提升物业的环保性能，既符合政策要求，又能降低长期运营成本。"",
+        "image": "assets/images/characters/environmental_engineer.png",
+        "location_image": "assets/images/locations/property_assessment.png",
+        "choices": [
+          {
+            "text": "实施全面的绿色改造（高投入，高回报）",
+            "effects": {
+              "financialHealth": -300,
+              "operatingCosts": -50,
+              "environmentalReputation": 20,
+              "propertyValue": 100
+            },
+            "nextNode": "COMPREHENSIVE_GREEN_UPGRADE"
+          },
+          {
+            "text": "优先改造能源系统（中等投入，显著节能）",
+            "effects": {
+              "financialHealth": -150,
+              "operatingCosts": -40,
+              "environmentalReputation": 10
+            },
+            "nextNode": "ENERGY_SYSTEM_FOCUS"
+          },
+          {
+            "text": "实施分阶段小规模改造（投入分散，循序渐进）",
+            "effects": {
+              "financialHealth": -70,
+              "operatingCosts": -15,
+              "environmentalReputation": 5
+            },
+            "nextNode": "PHASED_APPROACH"
+          },
+          {
+            "text": "仅进行最低限度的符合性改造（最小投入）",
+            "effects": {
+              "financialHealth": -50,
+              "environmentalReputation": -5
+            },
+            "nextNode": "MINIMAL_COMPLIANCE"
+          }
+        ]
+      },
+      {
+        "nodeId": "COMPREHENSIVE_GREEN_UPGRADE",
+        "text": "你决定实施全面的绿色改造，包括太阳能系统、智能楼宇控制、高效隔热材料和雨水回收系统。这是一项重大投资，但赵工程师保证："这将使物业成为环保标杆，长期节省能源成本，并提升物业价值。"",
+        "image": "assets/images/characters/environmental_engineer_excited.png",
+        "location_image": "assets/images/locations/green_renovation_plan.png",
+        "storyFlags": {
+          "set": ["MAJOR_GREEN_INVESTMENT", "SUSTAINABILITY_PRIORITIZED"]
+        },
+        "choices": [
+          {
+            "text": "申请绿色建筑补贴和税收优惠",
+            "effects": {
+              "financialHealth": 100,
+              "managerWorkload": 10
+            },
+            "nextNode": "SUBSIDY_APPLICATION"
+          },
+          {
+            "text": "举办环保改造展示活动，提升物业形象",
+            "effects": {
+              "financialHealth": -20,
+              "environmentalReputation": 15,
+              "communityEngagement": 10
+            },
+            "nextNode": "GREEN_SHOWCASE"
+          }
+        ]
+      },
+      {
+        "nodeId": "ENERGY_SYSTEM_FOCUS",
+        "text": "你选择优先改造能源系统，包括更新中央空调、安装LED照明和智能能源管理系统。赵工程师解释："这些改进可以快速产生明显的节能效果，投资回收期较短。"",
+        "image": "assets/images/characters/environmental_engineer_explaining.png",
+        "location_image": "assets/images/locations/energy_system_upgrade.png",
+        "storyFlags": {
+          "set": ["ENERGY_EFFICIENCY_FOCUS", "QUICK_ROI_PRIORITIZED"]
+        },
+        "choices": [
+          {
+            "text": "同时开展节能宣传教育，鼓励居民参与",
+            "effects": {
+              "financialHealth": -10,
+              "operatingCosts": -10,
+              "communityEngagement": 10
+            },
+            "nextNode": "ENERGY_CONSERVATION_EDUCATION"
+          },
+          {
+            "text": "收集详细能源使用数据，进一步优化系统",
+            "effects": {
+              "operationalEfficiency": 15,
+              "managerWorkload": 5
+            },
+            "nextNode": "DATA_DRIVEN_OPTIMIZATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "PHASED_APPROACH",
+        "text": "你决定采取分阶段改造策略，首先从照明系统和水龙头更换开始，然后逐步扩展到其他系统。这种方法减轻了即时财务压力，但改造时间较长。赵工程师表示："这是一种谨慎的方法，但要注意维持改造的连续性。"",
+        "image": "assets/images/characters/environmental_engineer_thoughtful.png",
+        "location_image": "assets/images/locations/phased_renovation.png",
+        "storyFlags": {
+          "set": ["INCREMENTAL_APPROACH", "FINANCIAL_CAUTION"]
+        },
+        "choices": [
+          {
+            "text": "制定详细的长期改造路线图",
+            "effects": {
+              "managerWorkload": 10,
+              "planningQuality": 15
+            },
+            "nextNode": "DETAILED_ROADMAP"
+          },
+          {
+            "text": "根据每阶段效果灵活调整后续计划",
+            "effects": {
+              "adaptability": 15,
+              "operationalEfficiency": 8
+            },
+            "nextNode": "ADAPTIVE_PLANNING"
+          }
+        ]
+      },
+      {
+        "nodeId": "MINIMAL_COMPLIANCE",
+        "text": "你选择只进行最低限度的符合性改造，主要关注政策法规要求的基本项目。赵工程师看起来有些失望："这满足了基本要求，但错过了很多提升效率和降低长期成本的机会。"",
+        "image": "assets/images/characters/environmental_engineer_disappointed.png",
+        "location_image": "assets/images/locations/basic_upgrade.png",
+        "storyFlags": {
+          "set": ["MINIMAL_INVESTMENT", "COMPLIANCE_ONLY"]
+        },
+        "choices": [
+          {
+            "text": "专注于最具成本效益的小改进",
+            "effects": {
+              "financialHealth": -20,
+              "operatingCosts": -10
+            },
+            "nextNode": "COST_EFFECTIVE_TWEAKS"
+          },
+          {
+            "text": "承诺在财务状况改善后重新考虑更全面的改造",
+            "effects": {
+              "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 5,
+              "environmentalReputation": 2
+            },
+            "nextNode": "FUTURE_COMMITMENT"
+          }
+        ]
+      },
+      {
+        "nodeId": "SUBSIDY_APPLICATION",
+        "text": "你开始申请绿色建筑补贴和税收优惠。这个过程需要大量文书工作和协调，但赵工程师的专业知识极大地帮助了申请过程。几个月后，你成功获得了显著的财政支持，大大减轻了改造成本。",
+        "image": "assets/images/characters/subsidy_approval.png",
+        "location_image": "assets/images/locations/financial_documents.png",
+        "storyFlags": {
+          "set": ["GOVERNMENT_SUPPORT_SECURED", "FINANCIAL_BURDEN_REDUCED"]
+        },
+        "nextNode": "RENOVATION_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "GREEN_SHOWCASE",
+        "text": "你举办了环保改造展示活动，邀请居民、媒体和行业专业人士参观。赵工程师详细介绍了各项绿色技术及其效益。吴先生带着孩子参观后表示："这让我们看到物业管理真正重视可持续发展，为孩子树立了好榜样。"",
+        "image": "assets/images/characters/green_tech_showcase.png",
+        "location_image": "assets/images/locations/community_exhibition.png",
+        "storyFlags": {
+          "set": ["PUBLIC_AWARENESS_CAMPAIGN", "PROPERTY_IMAGE_ENHANCED"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 8,
+          "environmentalReputation": 15,
+          "propertyReputation": 10
+        },
+        "nextNode": "RENOVATION_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "ENERGY_CONSERVATION_EDUCATION",
+        "text": "你组织了一系列节能教育活动，包括讲座、宣传材料和实用技巧分享。许多居民积极参与，吴太太甚至组织了一个"绿色家庭"小组，鼓励邻居们分享节能经验。这些努力与硬件改造相结合，产生了超出预期的节能效果。",
+        "image": "assets/images/characters/energy_workshop.png",
+        "location_image": "assets/images/locations/community_education.png",
+        "storyFlags": {
+          "set": ["RESIDENT_EDUCATION", "BEHAVIORAL_CHANGE"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 5,
+          "communityEngagement": 15,
+          "operatingCosts": -15
+        },
+        "nextNode": "COMBINED_APPROACH_RESULTS"
+      },
+      {
+        "nodeId": "DATA_DRIVEN_OPTIMIZATION",
+        "text": "你安装了详细的能源监测系统，收集各区域和系统的使用数据。通过分析这些数据，赵工程师发现了几个意外的能源浪费点，并进行了针对性调整，进一步提高了系统效率。",
+        "image": "assets/images/characters/data_analysis.png",
+        "location_image": "assets/images/locations/energy_monitoring.png",
+        "storyFlags": {
+          "set": ["SMART_MONITORING", "ANALYTICS_BASED_MANAGEMENT"]
+        },
+        "effects": {
+          "operationalEfficiency": 20,
+          "operatingCosts": -20
+        },
+        "nextNode": "SYSTEM_REFINEMENT"
+      },
+      {
+        "nodeId": "DETAILED_ROADMAP",
+        "text": "你与赵工程师一起制定了详细的五年改造路线图，包括每个阶段的目标、预算和预期成果。这个计划获得了物业管理团队的一致支持，为长期持续改进提供了清晰指导。",
+        "image": "assets/images/characters/planning_session.png",
+        "location_image": "assets/images/locations/renovation_timeline.png",
+        "storyFlags": {
+          "set": ["STRATEGIC_PLANNING", "LONG_TERM_VISION"]
+        },
+        "nextNode": "FIRST_PHASE_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "ADAPTIVE_PLANNING",
+        "text": "你采取了灵活的改造策略，在完成每个阶段后评估效果并调整后续计划。这种适应性方法使你能够利用新出现的技术和机会，并根据实际节能效果优化投资决策。",
+        "image": "assets/images/characters/adaptive_management.png",
+        "location_image": "assets/images/locations/planning_adjustment.png",
+        "storyFlags": {
+          "set": ["FLEXIBLE_IMPLEMENTATION", "ITERATIVE_IMPROVEMENT"]
+        },
+        "nextNode": "EVOLVING_RESULTS"
+      },
+      {
+        "nodeId": "COST_EFFECTIVE_TWEAKS",
+        "text": "你专注于实施几项高性价比的小改进，如优化锅炉运行时间、安装感应灯和调整公共区域温控设置。尽管规模有限，这些变化仍产生了可观的节能效果，引起了部分居民的关注。",
+        "image": "assets/images/characters/small_improvements.png",
+        "location_image": "assets/images/locations/equipment_adjustment.png",
+        "storyFlags": {
+          "set": ["TARGETED_EFFICIENCY", "MINIMAL_DISRUPTION"]
+        },
+        "nextNode": "LIMITED_RESULTS"
+      },
+      {
+        "nodeId": "FUTURE_COMMITMENT",
+        "text": "你向赵工程师承诺在财务状况改善后重新考虑更全面的环保改造。为表诚意，你要求他准备一份详细的未来方案，并设立了专门的环保改造基金，开始积累资金。赵工程师对这一长期承诺表示赞赏。",
+        "image": "assets/images/characters/environmental_engineer_hopeful.png",
+        "location_image": "assets/images/locations/future_planning.png",
+        "storyFlags": {
+          "set": ["FUTURE_PLANNING", "FINANCIAL_PREPARATION"]
+        },
+        "effects": {
+          "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 8
+        },
+        "nextNode": "FOUNDATION_SETTING"
+      },
+      {
+        "nodeId": "RENOVATION_IMPLEMENTATION",
+        "text": "全面环保改造工程正式启动。项目团队高效协作，尽量减少对居民的干扰。几个月后，主要系统更新完成，新安装的智能仪表显示能源使用已显著降低。",
+        "image": "assets/images/characters/renovation_progress.png",
+        "location_image": "assets/images/locations/active_construction.png",
+        "storyFlags": {
+          "set": ["MAJOR_RENOVATION_COMPLETED", "SYSTEM_MODERNIZATION"]
+        },
+        "choices": [
+          {
+            "text": "详细分析改造效果，编制成果报告",
+            "effects": {
+              "environmentalReputation": 10,
+              "propertyReputation": 5
+            },
+            "nextNode": "RESULTS_ANALYSIS"
+          },
+          {
+            "text": "开展居民使用培训，确保新系统充分利用",
+            "effects": {
+              "operationalEfficiency": 10,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "RESIDENT_TRAINING"
+          }
+        ]
+      },
+      {
+        "nodeId": "COMBINED_APPROACH_RESULTS",
+        "text": "能源系统改造与居民教育相结合，产生了显著成效。月度能源使用量下降了30%，超出了最初预期。物业获得了当地"节能先锋"奖项，一些居民自发组织了环保小组，继续推广可持续生活方式。",
+        "image": "assets/images/characters/energy_savings_chart.png",
+        "location_image": "assets/images/locations/award_ceremony.png",
+        "storyFlags": {
+          "set": ["SIGNIFICANT_ENERGY_REDUCTION", "COMMUNITY_INITIATIVE"]
+        },
+        "effects": {
+          "environmentalReputation": 20,
+          "operatingCosts": -25,
+          "communityEngagement": 15
+        },
+        "nextNode": "EXPANSION_CONSIDERATION"
+      },
+      {
+        "nodeId": "SYSTEM_REFINEMENT",
+        "text": "基于数据分析的系统优化取得了出色效果。赵工程师向你展示最新报告："通过精细调整，我们比预期多节省了15%的能源。这些数据也为未来改进提供了宝贵参考。"",
+        "image": "assets/images/characters/environmental_engineer_reporting.png",
+        "location_image": "assets/images/locations/system_optimization.png",
+        "storyFlags": {
+          "set": ["OPTIMIZED_PERFORMANCE", "DATA_PROVEN_RESULTS"]
+        },
+        "effects": {
+          "operationalEfficiency": 25,
+          "operatingCosts": -25,
+          "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 5
+        },
+        "nextNode": "EXPANSION_CONSIDERATION"
+      },
+      {
+        "nodeId": "FIRST_PHASE_IMPLEMENTATION",
+        "text": "五年计划的第一阶段按时完成，包括照明系统升级和水资源节约措施。改进效果符合预期，为后续阶段奠定了良好基础。物业团队对有序推进的方法感到满意。",
+        "image": "assets/images/characters/phase_completion.png",
+        "location_image": "assets/images/locations/upgraded_lighting.png",
+        "storyFlags": {
+          "set": ["FIRST_MILESTONE_ACHIEVED", "MOMENTUM_BUILT"]
+        },
+        "nextNode": "CONTINUED_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "EVOLVING_RESULTS",
+        "text": "灵活的改造方法使你能够迅速调整优先事项，当发现公共区域改造效果特别显著时，你增加了这方面的投入。随着时间推移，这种适应性方法产生了比预期更好的整体结果。",
+        "image": "assets/images/characters/evolving_project.png",
+        "location_image": "assets/images/locations/improved_common_area.png",
+        "storyFlags": {
+          "set": ["ADAPTIVE_MANAGEMENT", "RESPONSIVE_IMPROVEMENT"]
+        },
+        "effects": {
+          "operationalEfficiency": 18,
+          "propertyValue": 30
+        },
+        "nextNode": "CONTINUED_ADAPTATION"
+      },
+      {
+        "nodeId": "LIMITED_RESULTS",
+        "text": "高性价比改进产生了一定效果，节省了一些运营成本，但整体影响有限。一些对环保关注度高的居民，尤其是吴家，对物业未进行更全面的环保升级表示失望。",
+        "image": "assets/images/characters/modest_results.png",
+        "location_image": "assets/images/locations/limited_improvement.png",
+        "storyFlags": {
+          "set": ["MODEST_ACHIEVEMENTS", "LIMITED_AMBITION"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": -5,
+          "environmentalReputation": -5
+        },
+        "nextNode": "REEVALUATION_NEEDED"
+      },
+      {
+        "nodeId": "FOUNDATION_SETTING",
+        "text": "虽然当前只进行了最低限度的改造，但你开始为未来更全面的升级做准备，包括设立专项基金和研究新技术。这种长远眼光赢得了赵工程师的尊重，他定期提供行业动态和技术更新。",
+        "image": "assets/images/characters/foundation_building.png",
+        "location_image": "assets/images/locations/planning_documents.png",
+        "storyFlags": {
+          "set": ["PREPARATION_PHASE", "LONG_TERM_COMMITMENT"]
+        },
+        "nextNode": "GRADUAL_PROGRESS"
+      },
+      {
+        "nodeId": "RESULTS_ANALYSIS",
+        "text": "你委托赵工程师编制了详细的改造成果报告，包括能源节约、碳排放减少和经济回报分析。这份专业报告引起了行业关注，你的物业被列为绿色改造案例研究，大大提升了声誉。",
+        "image": "assets/images/characters/professional_report.png",
+        "location_image": "assets/images/locations/case_study_presentation.png",
+        "storyFlags": {
+          "set": ["DOCUMENTED_SUCCESS", "INDUSTRY_RECOGNITION"]
+        },
+        "effects": {
+          "propertyReputation": 20,
+          "environmentalReputation": 25,
+          "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 10
+        },
+        "nextNode": "SUSTAINABLE_OPERATIONS"
+      },
+      {
+        "nodeId": "RESIDENT_TRAINING",
+        "text": "你组织了一系列培训会，教导居民如何使用新安装的智能系统和设备。刘奶奶起初对新技术感到困惑，但在耐心指导下，她学会了使用智能温控器，高兴地说："原来这么简单，还能省电！"",
+        "image": "assets/images/characters/resident_learning.png",
+        "location_image": "assets/images/locations/training_session.png",
+        "storyFlags": {
+          "set": ["USER_EDUCATION", "TECHNOLOGY_ADOPTION"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 5,
+          "tenantSatisfaction": 10,
+          "operationalEfficiency": 15
+        },
+        "nextNode": "SUSTAINABLE_OPERATIONS"
+      },
+      {
+        "nodeId": "EXPANSION_CONSIDERATION",
+        "text": "看到能源系统改造的成功，你开始考虑扩展环保项目范围。赵工程师提出了几个潜在方向，包括雨水收集系统、绿色屋顶和可再生能源扩展。",
+        "image": "assets/images/characters/expansion_planning.png",
+        "location_image": "assets/images/locations/additional_opportunities.png",
+        "choices": [
+          {
+            "text": "继续投资扩展绿色基础设施",
+            "effects": {
+              "financialHealth": -100,
+              "propertyValue": 80,
+              "environmentalReputation": 15
+            },
+            "nextNode": "GREEN_EXPANSION"
+          },
+          {
+            "text": "巩固现有成果，优化运营管理",
+            "effects": {
+              "operationalEfficiency": 20,
+              "staffCapability": 15
+            },
+            "nextNode": "OPERATIONAL_EXCELLENCE"
+          }
+        ]
+      },
+      {
+        "nodeId": "CONTINUED_IMPLEMENTATION",
+        "text": "按照五年规划，你开始实施第二阶段改造，专注于暖通系统升级。有了第一阶段的经验，团队工作更加高效，居民也更加配合。陈女士作为社区代表表示："我们看到了第一阶段的好处，大家都支持继续这个计划。"",
+        "image": "assets/images/characters/next_phase.png",
+        "location_image": "assets/images/locations/hvac_upgrade.png",
+        "storyFlags": {
+          "set": ["SUSTAINED_MOMENTUM", "RESIDENT_SUPPORT"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 5,
+          "operatingCosts": -15,
+          "tenantSatisfaction": 5
+        },
+        "nextNode": "LONG_TERM_TRANSFORMATION"
+      },
+      {
+        "nodeId": "CONTINUED_ADAPTATION",
+        "text": "你继续采用适应性方法进行环保改造，根据每次改进的结果调整后续计划。这种灵活性使你能够利用新出现的机会，如当地政府推出的新补贴计划和新技术的出现，实现比原计划更好的结果。",
+        "image": "assets/images/characters/opportunity_leverage.png",
+        "location_image": "assets/images/locations/emerging_technology.png",
+        "storyFlags": {
+          "set": ["OPPORTUNITY_MAXIMIZATION", "AGILE_MANAGEMENT"]
+        },
+        "nextNode": "ONGOING_EVOLUTION"
+      },
+      {
+        "nodeId": "REEVALUATION_NEEDED",
+        "text": "有限的环保措施效果不够理想，一些居民开始比较你的物业与周边已进行全面绿色升级的社区。吴先生直言："我们考虑搬到更环保的社区，这对孩子的成长环境很重要。"你意识到需要重新评估环保策略。",
+        "image": "assets/images/characters/tenant_comparing.png",
+        "location_image": "assets/images/locations/competing_property.png",
+        "storyFlags": {
+          "set": ["COMPETITIVE_DISADVANTAGE", "STRATEGIC_RECONSIDERATION"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": -8,
+          "tenantRetentionRisk": 15
+        },
+        "choices": [
+          {
+            "text": "重新启动更全面的环保计划",
+            "effects": {
+              "financialHealth": -150,
+              "tenantSatisfaction": 10,
+              "environmentalReputation": 10
+            },
+            "nextNode": "RENEWED_COMMITMENT"
+          },
+          {
+            "text": "侧重宣传已有的环保措施，强调渐进改进",
+            "effects": {
+              "financialHealth": -20,
+              "propertyReputation": 5
+            },
+            "nextNode": "PERCEPTION_MANAGEMENT"
+          }
+        ]
+      },
+      {
+        "nodeId": "GRADUAL_PROGRESS",
+        "text": "随着环保基金的增长，你开始实施一些小规模但引人注目的绿色项目，如社区花园和太阳能照明。这些渐进改善虽然规模有限，但向居民和赵工程师展示了你的承诺正在转化为实际行动。",
+        "image": "assets/images/characters/small_green_projects.png",
+        "location_image": "assets/images/locations/community_garden.png",
+        "storyFlags": {
+          "set": ["VISIBLE_PROGRESS", "COMMITMENT_DEMONSTRATION"]
+        },
+        "effects": {
+          "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 5,
+          "tenantSatisfaction": 5,
+          "environmentalReputation": 5
+        },
+        "nextNode": "BUILDING_MOMENTUM"
+      },
+      {
+        "nodeId": "SUSTAINABLE_OPERATIONS",
+        "text": "环保改造完成后，你的关注点转向维持和优化新系统的运行。建立了定期维护计划，培训设施管理人员，并持续监控性能指标。这种系统化管理确保了长期可持续的运营和持续的效益。",
+        "image": "assets/images/characters/system_maintenance.png",
+        "location_image": "assets/images/locations/control_room.png",
+        "storyFlags": {
+          "set": ["SUSTAINABLE_MANAGEMENT", "LONG_TERM_PERFORMANCE"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你成功实施了全面的环保改造，并建立了可持续的运营系统，使物业在环保和财务方面都取得了长期收益，成为行业标杆。"
+      },
+      {
+        "nodeId": "GREEN_EXPANSION",
+        "text": "你决定继续扩展绿色基础设施，投资建设雨水收集系统和屋顶花园。这些新增设施不仅进一步提高了环保性能，还创造了居民喜爱的新公共空间。物业因全面的可持续发展方法获得了绿色建筑认证。",
+        "image": "assets/images/characters/green_expansion.png",
+        "location_image": "assets/images/locations/rooftop_garden.png",
+        "storyFlags": {
+          "set": ["COMPREHENSIVE_SUSTAINABILITY", "GREEN_CERTIFICATION"]
+        },
+        "effects": {
+          "propertyValue": 120,
+          "tenantSatisfaction": 15,
+          "environmentalReputation": 25
+        },
+        "endsScenario": true,
+        "endText": "场景结束：通过持续扩展绿色基础设施，你将物业打造成为可持续发展的典范，大幅提升了物业价值和声誉，同时创造了更健康宜居的环境。"
+      },
+      {
+        "nodeId": "OPERATIONAL_EXCELLENCE",
+        "text": "你选择专注于优化现有系统的运营，深入培训管理团队，完善监控和维护流程。这种精细管理使能源效率持续提升，设备寿命延长，并确保了长期稳定的运营成本节约。",
+        "image": "assets/images/characters/operational_training.png",
+        "location_image": "assets/images/locations/management_excellence.png",
+        "storyFlags": {
+          "set": ["MANAGEMENT_FOCUS", "EFFICIENCY_OPTIMIZATION"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过卓越的运营管理最大化了环保改造的长期价值，确保系统持续高效运行，为物业提供稳定的经济和环境效益。"
+      },
+      {
+        "nodeId": "LONG_TERM_TRANSFORMATION",
+        "text": "随着五年计划的持续实施，物业逐步完成了全面的绿色转型。居民们见证了每个阶段的改进，对最终成果感到自豪。陈女士在社区会议上表示："这种有计划、有步骤的改造方式是成功的关键，我们现在有了一个真正环保的社区。"",
+        "image": "assets/images/characters/transformation_complete.png",
+        "location_image": "assets/images/locations/transformed_property.png",
+        "storyFlags": {
+          "set": ["PLANNED_TRANSFORMATION_COMPLETED", "COMMUNITY_PRIDE"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 10,
+          "propertyValue": 150,
+          "operatingCosts": -50,
+          "tenantSatisfaction": 20
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过系统化的长期规划和稳步实施，成功完成了物业的全面绿色转型，在控制风险的同时实现了显著的环境和经济效益。"
+      },
+      {
+        "nodeId": "ONGOING_EVOLUTION",
+        "text": "适应性环保改造方法成为物业管理的常态，持续识别和实施改进机会。这种持续进化的方法使物业能够灵活应对不断变化的技术、政策和居民期望，保持环保领先地位。",
+        "image": "assets/images/characters/continuous_improvement.png",
+        "location_image": "assets/images/locations/evolving_property.png",
+        "storyFlags": {
+          "set": ["CONTINUOUS_EVOLUTION", "ADAPTIVE_CULTURE"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你建立了一种适应性环保管理文化，使物业能够持续进化和改进，灵活应对变化，长期保持环保竞争力和运营效率。"
+      },
+      {
+        "nodeId": "RENEWED_COMMITMENT",
+        "text": "认识到有限措施的不足后，你决定重新启动更全面的环保计划。与赵工程师合作，你制定了更有野心的改造方案，明确传达了这一新承诺。吴先生得知后表示："很高兴看到物业认真对待环保问题，这对我们决定是否继续租住很重要。"",
+        "image": "assets/images/characters/renewed_plans.png",
+        "location_image": "assets/images/locations/comprehensive_planning.png",
+        "storyFlags": {
+          "set": ["STRATEGIC_PIVOT", "AMBITIOUS_RECOMMITMENT"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 5,
+          "relationship_NPC_ENVIRONMENTAL_ENGINEER_ZHAO": 10,
+          "tenantRetention": 10
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你及时认识到最小化环保措施的局限性，重新制定了全面战略，挽回了租户信任并重新确立了物业的环保方向。"
+      },
+      {
+        "nodeId": "PERCEPTION_MANAGEMENT",
+        "text": "你决定加强对现有环保措施的宣传，策划了一系列沟通活动强调渐进改进的价值。这种做法产生了混合反应，一些居民对相对有限的实际措施表示失望，但也有人欣赏透明沟通和未来规划。",
+        "image": "assets/images/characters/communication_campaign.png",
+        "location_image": "assets/images/locations/resident_information.png",
+        "storyFlags": {
+          "set": ["PERCEPTION_FOCUS", "COMMUNICATION_STRATEGY"]
+        },
+        "effects": {
+          "propertyReputation": 5,
+          "tenantSatisfaction": -5,
+          "transparencyRating": 10
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你选择了强调现有环保措施的沟通策略，在有限实际行动的情况下尽力维护物业形象，但可能需要在未来更加实质性地解决环保需求。"
+      },
+      {
+        "nodeId": "BUILDING_MOMENTUM",
+        "text": "随着小型环保项目的成功实施和专项基金的持续增长，你逐渐获得了实施更大规模改造的信心和资源。赵工程师注意到："这种循序渐进的方法虽然较慢，但建立了坚实基础和必要经验，为未来更大的转变做好了准备。"",
+        "image": "assets/images/characters/growing_momentum.png",
+        "location_image": "assets/images/locations/expanding_projects.png",
+        "storyFlags": {
+          "set": ["INCREASING_CAPACITY", "FOUNDATION_ESTABLISHED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过耐心的资源积累和小规模项目经验，为物业的长期环保转型奠定了基础，同时避免了重大财务风险。"
+      }
+    ]
+  }
+} 

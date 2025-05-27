@@ -1,0 +1,487 @@
+{
+  "scenario": {
+    "id": "RENT_ADJUSTMENT_DECISION",
+    "title": "租金调整决策",
+    "involvedNPCs": ["NPC_ELDERLY_LIU", "NPC_YOUNG_FAMILY_WU", "NPC_COMMUNITY_LEADER_CHEN"],
+    "startNode": "RENT_ADJUSTMENT_START",
+    "nodes": [
+      {
+        "nodeId": "RENT_ADJUSTMENT_START",
+        "text": "随着维护成本上涨和通货膨胀加剧，财务部门建议提高租金以保持财务健康。你需要决定是否调整租金，以及如何向租户传达这一决定。",
+        "image": "assets/images/characters/financial_advisor.png",
+        "location_image": "assets/images/locations/manager_office_financial.png",
+        "choices": [
+          {
+            "text": "实施10%的全面租金上调",
+            "effects": {
+              "financialHealth": 200,
+              "tenantSatisfaction": -15,
+              "occupancyRate": -5
+            },
+            "nextNode": "SIGNIFICANT_INCREASE"
+          },
+          {
+            "text": "实施5%的温和租金上调",
+            "effects": {
+              "financialHealth": 100,
+              "tenantSatisfaction": -8,
+              "occupancyRate": -2
+            },
+            "nextNode": "MODERATE_INCREASE"
+          },
+          {
+            "text": "针对不同租户类型差异化调整",
+            "effects": {
+              "financialHealth": 120,
+              "managerStress": 5
+            },
+            "nextNode": "DIFFERENTIATED_APPROACH"
+          },
+          {
+            "text": "暂不调整租金，寻找其他增收方式",
+            "effects": {
+              "financialHealth": -50,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "ALTERNATIVE_REVENUE"
+          }
+        ]
+      },
+      {
+        "nodeId": "SIGNIFICANT_INCREASE",
+        "text": "你决定实施10%的全面租金上调。通知发出后，租户们反应强烈。刘奶奶忧心忡忡地来到办公室："我的退休金是固定的，这么大的涨幅我负担不起。"吴家也表示这会严重影响他们的家庭预算。",
+        "image": "assets/images/characters/tenant_worried_elderly.png",
+        "location_image": "assets/images/locations/property_office.png",
+        "storyFlags": {
+          "set": ["SIGNIFICANT_RENT_INCREASE", "TENANT_FINANCIAL_STRESS"]
+        },
+        "choices": [
+          {
+            "text": "坚持统一调整，解释成本上涨的现实",
+            "effects": {
+              "relationship_NPC_ELDERLY_LIU": -5,
+              "relationship_NPC_YOUNG_FAMILY_WU": -5,
+              "tenantSatisfaction": -10
+            },
+            "nextNode": "FIRM_STANCE"
+          },
+          {
+            "text": "为特殊情况租户(如老人)提供过渡期或补贴",
+            "effects": {
+              "financialHealth": -50,
+              "relationship_NPC_ELDERLY_LIU": 3,
+              "tenantSatisfaction": -5
+            },
+            "nextNode": "TRANSITIONAL_SUPPORT"
+          }
+        ]
+      },
+      {
+        "nodeId": "MODERATE_INCREASE",
+        "text": "你宣布了5%的租金上调，并详细解释了这一决定的必要性。租户们对此有不同反应。一些人理解成本上涨的现实，而其他人，特别是预算紧张的家庭，表示担忧。",
+        "image": "assets/images/characters/tenants_mixed_reaction.png",
+        "location_image": "assets/images/locations/community_notice_board.png",
+        "storyFlags": {
+          "set": ["MODERATE_RENT_INCREASE"]
+        },
+        "choices": [
+          {
+            "text": "举办租户沟通会，详细解释调整原因",
+            "effects": {
+              "tenantSatisfaction": 3,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": 2
+            },
+            "nextNode": "COMMUNICATION_MEETING"
+          },
+          {
+            "text": "提供分期付款选项，减轻租户短期负担",
+            "effects": {
+              "financialHealth": -20,
+              "cashFlow": -30,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "PAYMENT_OPTIONS"
+          }
+        ]
+      },
+      {
+        "nodeId": "DIFFERENTIATED_APPROACH",
+        "text": "你决定根据不同租户情况实施差异化租金调整：长期租户5%，新租户8%，商业空间10%。这一方案引起了讨论，陈女士作为社区代表来找你交流："差异化方案有道理，但一些租户担心这会导致不公平。"",
+        "image": "assets/images/characters/community_leader_chen.png",
+        "location_image": "assets/images/locations/manager_office.png",
+        "storyFlags": {
+          "set": ["DIFFERENTIATED_RENT_ADJUSTMENT"]
+        },
+        "choices": [
+          {
+            "text": "坚持方案，强调这是基于客观标准的公平决策",
+            "effects": {
+              "tenantSatisfaction": -5,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": -2
+            },
+            "nextNode": "DEFEND_DIFFERENTIATION"
+          },
+          {
+            "text": "与租户代表一起审核方案，确保透明度和接受度",
+            "effects": {
+              "financialHealth": -30,
+              "tenantSatisfaction": 3,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": 3
+            },
+            "nextNode": "COLLABORATIVE_REVIEW"
+          }
+        ]
+      },
+      {
+        "nodeId": "ALTERNATIVE_REVENUE",
+        "text": "你决定暂不调整租金，而是寻找其他增收方式。这一决定受到租户欢迎，但财务团队提醒你可能面临预算压力。你需要找到创新方法来平衡财务健康。",
+        "image": "assets/images/characters/financial_advisor_concerned.png",
+        "location_image": "assets/images/locations/finance_meeting.png",
+        "storyFlags": {
+          "set": ["RENT_FREEZE", "ALTERNATIVE_REVENUE_NEEDED"]
+        },
+        "choices": [
+          {
+            "text": "升级并收费的高级设施和服务",
+            "effects": {
+              "financialHealth": 50,
+              "propertyValue": 30,
+              "tenantSatisfaction": -3
+            },
+            "nextNode": "PREMIUM_SERVICES"
+          },
+          {
+            "text": "出租公共空间用于商业活动",
+            "effects": {
+              "financialHealth": 80,
+              "communityEngagement": -5
+            },
+            "nextNode": "COMMERCIAL_USAGE"
+          },
+          {
+            "text": "优化能源使用，降低运营成本",
+            "effects": {
+              "financialHealth": 30,
+              "environmentalReputation": 10
+            },
+            "nextNode": "ENERGY_OPTIMIZATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "FIRM_STANCE",
+        "text": "你坚持统一调整方案，详细解释了物业面临的成本上涨压力。一些租户表示理解，但许多人仍然不满。随后几周，三户家庭通知他们将搬离，包括一位居住了八年的老租户。",
+        "image": "assets/images/characters/tenants_moving_out.png",
+        "location_image": "assets/images/locations/moving_day.png",
+        "storyFlags": {
+          "set": ["TENANT_TURNOVER_INCREASED"]
+        },
+        "effects": {
+          "occupancyRate": -8,
+          "tenantSatisfaction": -12
+        },
+        "nextNode": "VACANCY_CHALLENGE"
+      },
+      {
+        "nodeId": "TRANSITIONAL_SUPPORT",
+        "text": "你为老年人和特殊情况家庭提供了过渡期和租金补贴。刘奶奶感激地说："谢谢你考虑我们的困难。"尽管这减少了一些收入，但大多数租户对物业的人性化管理表示赞赏。",
+        "image": "assets/images/characters/tenant_grateful_elderly.png",
+        "location_image": "assets/images/locations/tenant_meeting.png",
+        "storyFlags": {
+          "set": ["TRANSITIONAL_SUPPORT_PROVIDED", "HUMANE_MANAGEMENT_RECOGNIZED"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 5,
+          "propertyReputation": 5
+        },
+        "nextNode": "ADJUSTMENT_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "COMMUNICATION_MEETING",
+        "text": "你组织了一次租户沟通会，详细解释了租金调整的必要性和具体成本上涨数据。陈女士对这种透明沟通表示赞赏："这种开诚布公的态度有助于建立互信。"大多数租户虽然不满意加价，但理解了决定背后的原因。",
+        "image": "assets/images/characters/tenant_community_meeting.png",
+        "location_image": "assets/images/locations/community_hall_meeting.png",
+        "storyFlags": {
+          "set": ["TRANSPARENT_COMMUNICATION"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 5,
+          "tenantSatisfaction": 2
+        },
+        "nextNode": "ADJUSTMENT_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "PAYMENT_OPTIONS",
+        "text": "你提供了灵活的分期付款选项，减轻租户的短期财务压力。吴先生表示："这对我们家很有帮助，可以更好地规划预算。"虽然这影响了短期现金流，但提高了租户满意度和续租意愿。",
+        "image": "assets/images/characters/young_family_relieved.png",
+        "location_image": "assets/images/locations/property_office_discussion.png",
+        "storyFlags": {
+          "set": ["FLEXIBLE_PAYMENT_OPTIONS"]
+        },
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 4,
+          "tenantRetention": 5
+        },
+        "nextNode": "ADJUSTMENT_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "DEFEND_DIFFERENTIATION",
+        "text": "你坚持差异化方案，解释这是基于租期、使用量和市场行情的客观决策。一些租户接受了解释，但社区内出现了一些摩擦。陈女士表示："我理解你的立场，但这确实在社区内造成了一些分歧。"",
+        "image": "assets/images/characters/community_leader_chen_concerned.png",
+        "location_image": "assets/images/locations/tenant_groups.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_TENSION"]
+        },
+        "effects": {
+          "communityEngagement": -5,
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": -3
+        },
+        "nextNode": "ADJUSTMENT_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "COLLABORATIVE_REVIEW",
+        "text": "你邀请租户代表参与方案审核，增加透明度和参与感。经过讨论，对方案进行了小幅调整，保持整体收入目标但分配更加公平。陈女士对此表示赞赏："这种合作方式有助于维护社区和谐。"",
+        "image": "assets/images/characters/community_leader_chen_satisfied.png",
+        "location_image": "assets/images/locations/collaborative_meeting.png",
+        "storyFlags": {
+          "set": ["COLLABORATIVE_DECISION_MAKING", "COMMUNITY_HARMONY_PRESERVED"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 5,
+          "communityEngagement": 8,
+          "tenantSatisfaction": 3
+        },
+        "nextNode": "ADJUSTMENT_IMPLEMENTATION"
+      },
+      {
+        "nodeId": "PREMIUM_SERVICES",
+        "text": "你投资升级了一些设施，如健身房和公共休闲区，并推出了收费服务。一些租户欢迎这些改进，而其他人则抱怨基础服务应该包含在租金中。总体上，这创造了新的收入流，但也引发了一些讨论。",
+        "image": "assets/images/characters/upgraded_facilities.png",
+        "location_image": "assets/images/locations/new_gym.png",
+        "storyFlags": {
+          "set": ["PREMIUM_SERVICES_INTRODUCED"]
+        },
+        "effects": {
+          "propertyValue": 50,
+          "tenantSatisfaction": -2,
+          "attractivenessToNewTenants": 10
+        },
+        "nextNode": "REVENUE_DIVERSIFICATION"
+      },
+      {
+        "nodeId": "COMMERCIAL_USAGE",
+        "text": "你开始出租社区大厅和其他公共空间用于商业活动和私人聚会。这创造了可观的额外收入，但一些租户抱怨公共空间可用性减少。陈女士建议："我们需要平衡商业利益和社区需求。"",
+        "image": "assets/images/characters/commercial_event.png",
+        "location_image": "assets/images/locations/community_hall_commercial.png",
+        "storyFlags": {
+          "set": ["SPACE_COMMERCIALIZATION"]
+        },
+        "effects": {
+          "financialHealth": 100,
+          "communityEngagement": -8,
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": -2
+        },
+        "nextNode": "COMMUNITY_BALANCE"
+      },
+      {
+        "nodeId": "ENERGY_OPTIMIZATION",
+        "text": "你实施了一系列能源优化措施，包括LED照明升级、智能温控系统和用水效率改进。虽然初期投入较大，但长期运营成本显著下降，同时提升了物业的环保形象。",
+        "image": "assets/images/characters/energy_efficiency.png",
+        "location_image": "assets/images/locations/building_systems.png",
+        "storyFlags": {
+          "set": ["ENERGY_EFFICIENCY_IMPROVED", "OPERATIONAL_COSTS_REDUCED"]
+        },
+        "effects": {
+          "environmentalReputation": 15,
+          "propertyValue": 40,
+          "operatingCosts": -60
+        },
+        "nextNode": "SUSTAINABLE_APPROACH"
+      },
+      {
+        "nodeId": "VACANCY_CHALLENGE",
+        "text": "随着一些租户搬离，你面临空置率上升的挑战。财务团队提醒你这对收入造成了显著影响，需要采取措施吸引新租户或留住现有租户。",
+        "image": "assets/images/characters/vacant_apartment.png",
+        "location_image": "assets/images/locations/empty_unit.png",
+        "choices": [
+          {
+            "text": "降低对新租户的租金要求，快速填补空缺",
+            "effects": {
+              "financialHealth": -50,
+              "occupancyRate": 8
+            },
+            "nextNode": "DISCOUNTED_RENTALS"
+          },
+          {
+            "text": "投资升级空置单元，提高吸引力并支持更高租金",
+            "effects": {
+              "financialHealth": -120,
+              "propertyValue": 80,
+              "attractivenessToNewTenants": 15
+            },
+            "nextNode": "UNIT_UPGRADES"
+          }
+        ]
+      },
+      {
+        "nodeId": "ADJUSTMENT_IMPLEMENTATION",
+        "text": "租金调整方案开始实施，大多数租户接受了新的租金水平。你注意到社区氛围有所变化，需要关注租户满意度和潜在的长期影响。",
+        "image": "assets/images/characters/property_daily_life.png",
+        "location_image": "assets/images/locations/property_overview.png",
+        "choices": [
+          {
+            "text": "加强租户服务，弥补租金上涨带来的负面感受",
+            "effects": {
+              "financialHealth": -30,
+              "tenantSatisfaction": 8,
+              "staffWorkload": 10
+            },
+            "nextNode": "ENHANCED_SERVICES"
+          },
+          {
+            "text": "投资物业设施改进，提供更高价值",
+            "effects": {
+              "financialHealth": -100,
+              "propertyValue": 80,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "PROPERTY_IMPROVEMENTS"
+          }
+        ]
+      },
+      {
+        "nodeId": "REVENUE_DIVERSIFICATION",
+        "text": "新的收入来源开始产生效果，部分弥补了未提高租金的财务压力。租户们对不加租的决定保持感谢，但对一些新增收费服务有不同看法。",
+        "image": "assets/images/characters/financial_chart_positive.png",
+        "location_image": "assets/images/locations/property_amenities.png",
+        "effects": {
+          "financialHealth": 50,
+          "managerReputation": 5
+        },
+        "nextNode": "BALANCING_ACT"
+      },
+      {
+        "nodeId": "COMMUNITY_BALANCE",
+        "text": "商业使用带来了收入，但也引发了一些社区冲突。你需要找到平衡商业利益和社区需求的方法，以维持和谐的环境。",
+        "image": "assets/images/characters/community_discussion.png",
+        "location_image": "assets/images/locations/community_hall.png",
+        "choices": [
+          {
+            "text": "制定清晰规则，限制商业使用时间和影响",
+            "effects": {
+              "financialHealth": -30,
+              "communityEngagement": 10,
+              "relationship_NPC_COMMUNITY_LEADER_CHEN": 5
+            },
+            "nextNode": "BALANCED_USAGE"
+          },
+          {
+            "text": "将部分商业收入用于社区活动和设施改进",
+            "effects": {
+              "financialHealth": -50,
+              "communityEngagement": 15,
+              "tenantSatisfaction": 8
+            },
+            "nextNode": "COMMUNITY_REINVESTMENT"
+          }
+        ]
+      },
+      {
+        "nodeId": "SUSTAINABLE_APPROACH",
+        "text": "能源优化措施不仅降低了运营成本，还提升了物业的环保形象。一些租户对此表示赞赏，特别是年轻家庭。吴先生评论道："很高兴看到物业在环保方面做出努力，这对我们的孩子也是好榜样。"",
+        "image": "assets/images/characters/young_family_approving.png",
+        "location_image": "assets/images/locations/energy_efficient_building.png",
+        "effects": {
+          "relationship_NPC_YOUNG_FAMILY_WU": 5,
+          "attractivenessToNewTenants": 10
+        },
+        "storyFlags": {
+          "set": ["GREEN_PROPERTY_IMAGE", "OPERATIONAL_EFFICIENCY"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过能源优化而非租金上调来改善财务状况，创造了可持续的运营模式，同时提升了物业形象和租户满意度。"
+      },
+      {
+        "nodeId": "DISCOUNTED_RENTALS",
+        "text": "你针对新租户提供了租金优惠，很快填补了空缺单元。虽然解决了空置问题，但产生了新老租户间的租金差异，引发了一些讨论。",
+        "image": "assets/images/characters/new_tenants.png",
+        "location_image": "assets/images/locations/apartment_viewing.png",
+        "storyFlags": {
+          "set": ["OCCUPANCY_PRIORITIZED", "RENTAL_RATES_INCONSISTENT"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过租金优惠策略迅速解决了空置问题，维持了现金流，但可能面临租金结构不一致带来的长期挑战。"
+      },
+      {
+        "nodeId": "UNIT_UPGRADES",
+        "text": "你投资升级了空置单元，安装了现代化厨卫设备和智能家居系统。这些改进显著提高了物业吸引力，不仅吸引了新租户，还支持了更高的租金水平。",
+        "image": "assets/images/characters/upgraded_apartment.png",
+        "location_image": "assets/images/locations/modern_kitchen.png",
+        "storyFlags": {
+          "set": ["PROPERTY_VALUE_INCREASED", "RENTAL_RATES_INCREASED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过战略性投资提升了物业价值和吸引力，解决了空置问题并为未来租金增长奠定了基础。"
+      },
+      {
+        "nodeId": "ENHANCED_SERVICES",
+        "text": "你增强了物业服务，包括更快的维修响应、增加保安巡逻和定期社区活动。这些努力有效缓解了租金上涨带来的不满，提高了整体租户满意度。",
+        "image": "assets/images/characters/service_staff.png",
+        "location_image": "assets/images/locations/property_service.png",
+        "storyFlags": {
+          "set": ["SERVICE_QUALITY_IMPROVED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过提升服务质量平衡了租金上涨的负面影响，成功维持了租户满意度和忠诚度。"
+      },
+      {
+        "nodeId": "PROPERTY_IMPROVEMENTS",
+        "text": "你投资改进了物业设施，包括公共区域翻新、景观美化和安全系统升级。租户们对这些改进表示赞赏，认为提高的租金得到了相应的价值回报。",
+        "image": "assets/images/characters/renovated_common_area.png",
+        "location_image": "assets/images/locations/improved_landscape.png",
+        "storyFlags": {
+          "set": ["PROPERTY_QUALITY_ENHANCED", "VALUE_PROPOSITION_IMPROVED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过物业改进证明了租金增加的合理性，提高了物业价值和租户体验，建立了可持续的价值主张。"
+      },
+      {
+        "nodeId": "BALANCING_ACT",
+        "text": "你继续微调收入策略，平衡额外服务收费和租户满意度。这种灵活方法帮助你在不提高基本租金的情况下保持财务健康，同时满足不同租户的需求和偏好。",
+        "image": "assets/images/characters/manager_planning.png",
+        "location_image": "assets/images/locations/service_options.png",
+        "storyFlags": {
+          "set": ["FINANCIAL_CREATIVITY", "TENANT_CHOICE_EMPHASIZED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过创新的收入多元化策略而非简单加租解决了财务挑战，为租户提供了选择灵活性，维持了良好的社区关系。"
+      },
+      {
+        "nodeId": "BALANCED_USAGE",
+        "text": "你制定了明确的公共空间使用规则，包括限制商业活动时间和类型。这些规定减少了对居民的干扰，同时保留了额外收入来源。陈女士对这一平衡表示赞赏。",
+        "image": "assets/images/characters/community_leader_chen_approving.png",
+        "location_image": "assets/images/locations/community_hall_schedule.png",
+        "storyFlags": {
+          "set": ["BALANCED_COMMERCIAL_USE", "COMMUNITY_NEEDS_RESPECTED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你成功平衡了商业利益和社区需求，既创造了额外收入，又维护了居民的生活质量和社区空间可用性。"
+      },
+      {
+        "nodeId": "COMMUNITY_REINVESTMENT",
+        "text": "你决定将商业收入的一部分用于社区活动和设施改进。这一决定受到租户热烈欢迎，增强了社区凝聚力。陈女士评论道："这是物业管理的典范，既创造价值又回馈社区。"",
+        "image": "assets/images/characters/community_celebration.png",
+        "location_image": "assets/images/locations/improved_community_space.png",
+        "storyFlags": {
+          "set": ["REVENUE_REINVESTMENT", "COMMUNITY_STRENGTHENED"]
+        },
+        "effects": {
+          "relationship_NPC_COMMUNITY_LEADER_CHEN": 8,
+          "communityEngagement": 15
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过将商业收入部分回馈社区，创造了双赢局面，既满足了财务需求，又显著提升了社区满意度和凝聚力。"
+      }
+    ]
+  }
+} 

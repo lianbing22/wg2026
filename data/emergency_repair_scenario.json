@@ -1,0 +1,387 @@
+{
+  "scenario": {
+    "id": "EMERGENCY_ELEVATOR_REPAIR",
+    "title": "紧急电梯维修危机",
+    "involvedNPCs": ["STAFF_TECHNICIAN_WANG", "NPC_ELDERLY_LIU", "NPC_YOUNG_FAMILY_WU"],
+    "startNode": "ELEVATOR_FAILURE_START",
+    "nodes": [
+      {
+        "nodeId": "ELEVATOR_FAILURE_START",
+        "text": "周一早高峰时段，电梯突然停止运行。多位租户被困在电梯内，其他人则无法上下楼。王师傅迅速赶到现场，对你说："电梯控制系统出现严重故障，需要立即处理。我们有几种选择，但都各有利弊。"",
+        "image": "assets/images/characters/staff_technician_wang_worried.png",
+        "location_image": "assets/images/locations/elevator_malfunction.png",
+        "choices": [
+          {
+            "text": "立即请专业电梯公司紧急维修（成本高但速度快）",
+            "effects": {
+              "financialHealth": -100,
+              "tenantSatisfaction": 5,
+              "relationship_STAFF_TECHNICIAN_WANG": -1
+            },
+            "nextNode": "PROFESSIONAL_REPAIR"
+          },
+          {
+            "text": "让王师傅和内部团队尝试修复（成本低但可能需要更长时间）",
+            "effects": {
+              "financialHealth": -30,
+              "tenantSatisfaction": -5,
+              "relationship_STAFF_TECHNICIAN_WANG": 3
+            },
+            "nextNode": "INTERNAL_REPAIR_ATTEMPT"
+          },
+          {
+            "text": "临时关闭电梯，等到非高峰时段再维修（最省钱但会严重影响租户）",
+            "effects": {
+              "financialHealth": -20,
+              "tenantSatisfaction": -15
+            },
+            "nextNode": "DELAYED_REPAIR"
+          }
+        ]
+      },
+      {
+        "nodeId": "PROFESSIONAL_REPAIR",
+        "text": "你联系了专业电梯维修公司，他们派遣技术团队紧急处理。四小时后，电梯恢复运行。刘奶奶向你表示感谢："谢谢你这么快解决问题，对我们老年人来说爬楼梯很困难。"虽然花费不菲，但租户们对快速响应感到满意。",
+        "image": "assets/images/characters/tenant_happy_elderly.png",
+        "location_image": "assets/images/locations/elevator_repair.png",
+        "storyFlags": {
+          "set": ["PROFESSIONAL_REPAIR_CHOSEN", "RAPID_RESPONSE"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 3
+        },
+        "choices": [
+          {
+            "text": "讨论进一步升级电梯系统的可能性",
+            "nextNode": "DISCUSS_UPGRADE"
+          },
+          {
+            "text": "开始制定预防性维护计划",
+            "nextNode": "PREVENTIVE_MAINTENANCE"
+          }
+        ]
+      },
+      {
+        "nodeId": "INTERNAL_REPAIR_ATTEMPT",
+        "text": "王师傅和他的团队开始维修工作。虽然他们尽力而为，但故障比预期更复杂。八小时后，电梯终于恢复运行。期间，一些租户表达了不满，特别是吴家的孩子和刘奶奶。",
+        "image": "assets/images/characters/staff_technician_wang_working.png",
+        "location_image": "assets/images/locations/elevator_repair_internal.png",
+        "storyFlags": {
+          "set": ["INTERNAL_REPAIR_CHOSEN"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": -2,
+          "relationship_NPC_YOUNG_FAMILY_WU": -1
+        },
+        "choices": [
+          {
+            "text": "向租户道歉并提供小补偿（如减免当月物业费）",
+            "effects": {
+              "financialHealth": -30,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "APOLOGIZE_COMPENSATE"
+          },
+          {
+            "text": "向租户解释内部维修如何节省长期成本",
+            "nextNode": "EXPLAIN_COST_SAVING"
+          }
+        ]
+      },
+      {
+        "nodeId": "DELAYED_REPAIR",
+        "text": "你决定暂时关闭电梯，等到晚上人流减少时再进行维修。这一决定引起了强烈不满，多位租户向你投诉。刘奶奶特别失望："我膝盖不好，没有电梯几乎无法出门。"吴家的孩子们因为上学迟到而父母非常生气。",
+        "image": "assets/images/characters/tenants_upset.png",
+        "location_image": "assets/images/locations/elevator_out_of_service.png",
+        "storyFlags": {
+          "set": ["DELAYED_REPAIR_CHOSEN", "DELAYED_RESPONSE"]
+        },
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": -5,
+          "relationship_NPC_YOUNG_FAMILY_WU": -4
+        },
+        "choices": [
+          {
+            "text": "认识到错误并立即联系专业维修",
+            "effects": {
+              "financialHealth": -100,
+              "tenantSatisfaction": -5
+            },
+            "nextNode": "CORRECT_MISTAKE"
+          },
+          {
+            "text": "坚持原计划，晚上进行维修",
+            "effects": {
+              "tenantSatisfaction": -10
+            },
+            "nextNode": "STICK_TO_PLAN"
+          }
+        ]
+      },
+      {
+        "nodeId": "DISCUSS_UPGRADE",
+        "text": "维修完成后，你与王师傅讨论电梯系统的长期解决方案。他建议："这个电梯系统已经使用了12年，虽然还能用，但故障会越来越频繁。现在有几种升级方案可以考虑。"",
+        "image": "assets/images/characters/staff_technician_wang.png",
+        "location_image": "assets/images/locations/office_meeting.png",
+        "choices": [
+          {
+            "text": "投资全面更换电梯系统（高成本但彻底解决问题）",
+            "effects": {
+              "financialHealth": -500,
+              "tenantSatisfaction": 10,
+              "relationship_STAFF_TECHNICIAN_WANG": 2
+            },
+            "nextNode": "COMPLETE_REPLACEMENT"
+          },
+          {
+            "text": "选择控制系统升级（中等成本和效果）",
+            "effects": {
+              "financialHealth": -200,
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "CONTROL_UPGRADE"
+          },
+          {
+            "text": "仅进行必要的部件更换（低成本但只是临时解决）",
+            "effects": {
+              "financialHealth": -80,
+              "tenantSatisfaction": 2
+            },
+            "nextNode": "MINIMAL_UPGRADE"
+          }
+        ]
+      },
+      {
+        "nodeId": "PREVENTIVE_MAINTENANCE",
+        "text": "你决定制定预防性维护计划，避免类似问题再次发生。王师傅提出了一个季度检查方案，包括关键部件定期检查和及时更换老化部件。",
+        "image": "assets/images/characters/staff_technician_wang_planning.png",
+        "location_image": "assets/images/locations/maintenance_planning.png",
+        "storyFlags": {
+          "set": ["PREVENTIVE_MEASURES_IMPLEMENTED"]
+        },
+        "choices": [
+          {
+            "text": "实施全面预防性维护计划（适中投资，长期收益）",
+            "effects": {
+              "financialHealth": -150,
+              "tenantSatisfaction": 5,
+              "relationship_STAFF_TECHNICIAN_WANG": 3
+            },
+            "nextNode": "COMPREHENSIVE_MAINTENANCE"
+          },
+          {
+            "text": "采用基础维护计划（低投资，基本保障）",
+            "effects": {
+              "financialHealth": -50,
+              "tenantSatisfaction": 2
+            },
+            "nextNode": "BASIC_MAINTENANCE"
+          }
+        ]
+      },
+      {
+        "nodeId": "APOLOGIZE_COMPENSATE",
+        "text": "你向受影响的租户道歉，并提供当月物业费10%的减免作为补偿。大多数租户接受了你的诚意，刘奶奶说："我理解维修需要时间，谢谢你的关心。"",
+        "image": "assets/images/characters/tenant_happy_elderly.png",
+        "location_image": "assets/images/locations/manager_office.png",
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 3,
+          "relationship_NPC_YOUNG_FAMILY_WU": 2,
+          "tenantSatisfaction": 5
+        },
+        "nextNode": "MAINTENANCE_DECISION"
+      },
+      {
+        "nodeId": "EXPLAIN_COST_SAVING",
+        "text": "你向租户解释使用内部团队进行维修如何帮助控制成本，从而避免物业费上涨。一些租户理解你的考虑，但其他人仍然对不便感到不满。",
+        "image": "assets/images/characters/manager_explaining.png",
+        "location_image": "assets/images/locations/tenant_meeting.png",
+        "effects": {
+          "tenantSatisfaction": -2
+        },
+        "nextNode": "MAINTENANCE_DECISION"
+      },
+      {
+        "nodeId": "CORRECT_MISTAKE",
+        "text": "认识到错误后，你立即联系专业维修公司紧急处理。尽管电梯很快恢复运行，但延迟造成的负面影响已经产生。你需要努力修复与租户的关系。",
+        "image": "assets/images/characters/manager_apologetic.png",
+        "location_image": "assets/images/locations/elevator_repair.png",
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": -2,
+          "relationship_NPC_YOUNG_FAMILY_WU": -2
+        },
+        "nextNode": "REPUTATION_RECOVERY"
+      },
+      {
+        "nodeId": "STICK_TO_PLAN",
+        "text": "你坚持原计划，等到晚上才开始维修。虽然这样节省了一些成本，但严重损害了与租户的关系。一些租户甚至开始讨论搬离或组织请愿。",
+        "image": "assets/images/characters/tenants_angry.png",
+        "location_image": "assets/images/locations/tenant_gathering.png",
+        "storyFlags": {
+          "set": ["TENANT_TRUST_DAMAGED", "REPUTATION_CRISIS"]
+        },
+        "nextNode": "REPUTATION_CRISIS"
+      },
+      {
+        "nodeId": "COMPLETE_REPLACEMENT",
+        "text": "你决定投资全面更换电梯系统。新电梯不仅更快、更安静，还提高了能源效率。租户们对这一改进非常满意，特别是刘奶奶："新电梯太棒了，感谢物业的用心。"",
+        "image": "assets/images/characters/tenant_happy_elderly.png",
+        "location_image": "assets/images/locations/new_elevator.png",
+        "storyFlags": {
+          "set": ["ELEVATOR_FULLY_REPLACED", "BUILDING_VALUE_INCREASED"]
+        },
+        "effects": {
+          "tenantSatisfaction": 15,
+          "relationship_NPC_ELDERLY_LIU": 5,
+          "relationship_NPC_YOUNG_FAMILY_WU": 3
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过全面更换电梯系统彻底解决了问题，提高了物业价值和租户满意度，尽管花费了大量资金。"
+      },
+      {
+        "nodeId": "CONTROL_UPGRADE",
+        "text": "你选择升级电梯控制系统。新系统提高了电梯的可靠性和效率，但机械部分仍然是原装的。这是一个平衡的解决方案，大多数租户表示满意。",
+        "image": "assets/images/characters/staff_technician_wang_satisfied.png",
+        "location_image": "assets/images/locations/upgraded_elevator_control.png",
+        "storyFlags": {
+          "set": ["ELEVATOR_PARTIALLY_UPGRADED"]
+        },
+        "effects": {
+          "tenantSatisfaction": 8
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你通过升级电梯控制系统提高了可靠性，在成本和效果之间取得了平衡。"
+      },
+      {
+        "nodeId": "MINIMAL_UPGRADE",
+        "text": "你选择只更换必要的部件。这解决了当前问题，但王师傅警告说："这只是临时解决方案，未来几个月可能会出现新的问题。"",
+        "image": "assets/images/characters/staff_technician_wang_concerned.png",
+        "location_image": "assets/images/locations/elevator_basic_repair.png",
+        "storyFlags": {
+          "set": ["ELEVATOR_MINIMALLY_REPAIRED", "FUTURE_FAILURE_RISK"]
+        },
+        "effects": {
+          "relationship_STAFF_TECHNICIAN_WANG": -1
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你暂时解决了电梯问题，但未来仍面临故障风险，需要更多维护和可能的紧急维修。"
+      },
+      {
+        "nodeId": "COMPREHENSIVE_MAINTENANCE",
+        "text": "你实施了全面的预防性维护计划，包括月度检查、季度维护和年度大检修。王师傅对此表示赞赏："这样能大大降低故障风险，延长设备寿命。"",
+        "image": "assets/images/characters/staff_technician_wang_happy.png",
+        "location_image": "assets/images/locations/maintenance_schedule.png",
+        "storyFlags": {
+          "set": ["COMPREHENSIVE_MAINTENANCE_IMPLEMENTED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你建立了完善的预防性维护系统，提高了设备可靠性，平衡了短期成本和长期收益。"
+      },
+      {
+        "nodeId": "BASIC_MAINTENANCE",
+        "text": "你采用了基础维护计划，满足最低要求但不够全面。王师傅表示："这比没有好，但可能无法预防所有潜在问题。"",
+        "image": "assets/images/characters/staff_technician_wang_neutral.png",
+        "location_image": "assets/images/locations/basic_maintenance.png",
+        "storyFlags": {
+          "set": ["BASIC_MAINTENANCE_IMPLEMENTED"]
+        },
+        "endsScenario": true,
+        "endText": "场景结束：你采用了基础维护计划，控制了成本，但可能无法防止所有潜在问题。"
+      },
+      {
+        "nodeId": "MAINTENANCE_DECISION",
+        "text": "处理完当前危机后，你需要决定如何防止类似问题再次发生。王师傅向你展示了电梯系统老化的证据，建议考虑长期解决方案。",
+        "image": "assets/images/characters/staff_technician_wang.png",
+        "location_image": "assets/images/locations/elevator_inspection.png",
+        "nextNode": "DISCUSS_UPGRADE"
+      },
+      {
+        "nodeId": "REPUTATION_RECOVERY",
+        "text": "电梯修复后，你需要努力修复物业声誉和租户关系。这可能需要额外的沟通和补偿措施。",
+        "image": "assets/images/characters/manager_thinking.png",
+        "location_image": "assets/images/locations/manager_office.png",
+        "choices": [
+          {
+            "text": "举办社区交流会，讨论物业维护计划并听取建议",
+            "effects": {
+              "tenantSatisfaction": 5,
+              "relationship_NPC_ELDERLY_LIU": 2,
+              "relationship_NPC_YOUNG_FAMILY_WU": 2
+            },
+            "nextNode": "COMMUNITY_MEETING"
+          },
+          {
+            "text": "提供一个月物业费折扣作为补偿",
+            "effects": {
+              "financialHealth": -100,
+              "tenantSatisfaction": 8
+            },
+            "nextNode": "FINANCIAL_COMPENSATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "REPUTATION_CRISIS",
+        "text": "你的决定导致严重的声誉危机。多位租户表示不满，一些人甚至联系了当地媒体。你需要采取紧急措施挽回局面。",
+        "image": "assets/images/characters/tenants_protest.png",
+        "location_image": "assets/images/locations/property_entrance.png",
+        "storyFlags": {
+          "set": ["SYSTEM_FAILURE_PUBLICIZED"]
+        },
+        "choices": [
+          {
+            "text": "公开道歉并承诺进行重大改进",
+            "effects": {
+              "tenantSatisfaction": 3,
+              "financialHealth": -200
+            },
+            "nextNode": "PUBLIC_APOLOGY"
+          },
+          {
+            "text": "私下联系主要不满租户，提供个人补偿",
+            "effects": {
+              "financialHealth": -50,
+              "tenantSatisfaction": -2
+            },
+            "nextNode": "PRIVATE_COMPENSATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "COMMUNITY_MEETING",
+        "text": "你组织了一次社区交流会，详细解释了维修决策并介绍了未来的维护计划。租户们对这种开放沟通表示赞赏，特别是当你认真记录他们的反馈和建议时。",
+        "image": "assets/images/characters/community_meeting.png",
+        "location_image": "assets/images/locations/community_hall.png",
+        "effects": {
+          "relationship_NPC_ELDERLY_LIU": 3,
+          "relationship_NPC_YOUNG_FAMILY_WU": 3
+        },
+        "nextNode": "MAINTENANCE_DECISION"
+      },
+      {
+        "nodeId": "FINANCIAL_COMPENSATION",
+        "text": "你向所有租户提供了一个月物业费20%的折扣作为补偿。这一举措平息了不满，但对财务造成了一定影响。",
+        "image": "assets/images/characters/tenants_satisfied.png",
+        "location_image": "assets/images/locations/property_office.png",
+        "nextNode": "MAINTENANCE_DECISION"
+      },
+      {
+        "nodeId": "PUBLIC_APOLOGY",
+        "text": "你发布了公开道歉信，并详细说明了物业将采取的改进措施，包括电梯系统全面升级。这一举措在初期获得了积极回应，但你需要兑现承诺才能真正重建信任。",
+        "image": "assets/images/characters/manager_public_statement.png",
+        "location_image": "assets/images/locations/community_gathering.png",
+        "nextNode": "COMPLETE_REPLACEMENT"
+      },
+      {
+        "nodeId": "PRIVATE_COMPENSATION",
+        "text": "你私下联系了主要不满的租户，提供个人补偿。这平息了一些投诉，但未能解决整体声誉问题，一些租户仍然考虑搬离。",
+        "image": "assets/images/characters/manager_private_meeting.png",
+        "location_image": "assets/images/locations/manager_office.png",
+        "effects": {
+          "tenantRetentionRisk": 15
+        },
+        "nextNode": "MAINTENANCE_DECISION"
+      }
+    ]
+  }
+} 
