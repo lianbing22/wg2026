@@ -1,4 +1,7 @@
-// 认证系统 JavaScript
+/**
+ * 物业管理模拟器 - 认证脚本
+ * 处理登录和注册功能
+ */
 
 // 用户数据存储（实际应用中应使用后端数据库）
 class UserManager {
@@ -291,219 +294,241 @@ document.addEventListener('DOMContentLoaded', function() {
         // window.location.href = 'dashboard.html';
     }
 
-    // 登录表单处理
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
+    // 密码显示切换
+    const passwordToggle = document.getElementById('passwordToggle');
+    if (passwordToggle) {
+        const passwordInput = document.getElementById('password');
         
-        // 演示账户点击处理
-        const demoAccounts = document.querySelectorAll('.demo-account');
-        demoAccounts.forEach(account => {
-            account.addEventListener('click', function() {
-                const username = this.dataset.username;
-                const password = this.dataset.password;
-                const role = this.dataset.role;
-                
-                document.getElementById('username').value = username;
-                document.getElementById('password').value = password;
-                document.getElementById('role').value = role;
-            });
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // 切换图标
+            this.innerHTML = type === 'password' ? 
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' : 
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
         });
     }
-
-    // 注册表单处理
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
-        
-        // 实时验证
-        const inputs = registerForm.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                validateField(this);
-            });
+    
+    // 登录表单提交
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            input.addEventListener('input', function() {
-                UIUtils.clearValidation(this);
-                
-                // 密码强度检查
-                if (this.id === 'password') {
-                    const strengthElement = document.querySelector('.password-strength');
-                    if (strengthElement) {
-                        UIUtils.updatePasswordStrength(this.value, strengthElement);
-                    }
-                }
-            });
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 简单的验证
+            if (username.length < 3) {
+                showNotification('用户名至少需要3个字符', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('密码至少需要6个字符', 'error');
+                return;
+            }
+            
+            // 模拟登录API调用
+            simulateLogin(username, password);
         });
-        
-        // 添加密码强度指示器
-        const passwordField = document.getElementById('password');
-        if (passwordField) {
-            const strengthIndicator = document.createElement('div');
-            strengthIndicator.className = 'password-strength';
-            strengthIndicator.innerHTML = '<div class="password-strength-bar"></div>';
-            passwordField.parentNode.appendChild(strengthIndicator);
-        }
+    }
+    
+    // 注册表单提交
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            // 验证
+            if (username.length < 3) {
+                showNotification('用户名至少需要3个字符', 'error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showNotification('请输入有效的电子邮箱', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('密码至少需要6个字符', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('两次输入的密码不一致', 'error');
+                return;
+            }
+            
+            if (!agreeTerms) {
+                showNotification('请同意用户协议和隐私政策', 'error');
+                return;
+            }
+            
+            // 模拟注册API调用
+            simulateRegister(username, email, password);
+        });
     }
 });
 
-// 登录处理函数
-function handleLogin(event) {
-    event.preventDefault();
+/**
+ * 验证邮箱格式
+ * @param {string} email - 邮箱地址
+ * @returns {boolean} - 是否有效
+ */
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+/**
+ * 显示通知信息
+ * @param {string} message - 通知消息
+ * @param {string} type - 通知类型 (success, error, warning)
+ */
+function showNotification(message, type = 'success') {
+    // 检查是否已存在通知元素，如果有则移除
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
     
-    const formData = new FormData(event.target);
-    const username = formData.get('username');
-    const password = formData.get('password');
-    const role = formData.get('role');
-    const remember = formData.get('remember');
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <span class="notification-message">${message}</span>
+        <span class="notification-close">&times;</span>
+    `;
     
-    UIUtils.showLoading();
+    document.body.appendChild(notification);
     
-    // 模拟网络延迟
+    // 添加样式
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '12px 20px';
+    notification.style.borderRadius = '4px';
+    notification.style.zIndex = '1000';
+    notification.style.minWidth = '250px';
+    notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+    notification.style.transition = 'all 0.3s ease';
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateY(-20px)';
+    
+    if (type === 'success') {
+        notification.style.backgroundColor = '#48BB78';
+        notification.style.color = 'white';
+    } else if (type === 'error') {
+        notification.style.backgroundColor = '#E53E3E';
+        notification.style.color = 'white';
+    } else if (type === 'warning') {
+        notification.style.backgroundColor = '#F6AD55';
+        notification.style.color = 'white';
+    }
+    
+    // 显示通知
     setTimeout(() => {
-        const result = userManager.login(username, password, role);
-        
-        UIUtils.hideLoading();
-        
-        if (result.success) {
-            // 登录成功
-            alert('登录成功！');
-            
-            // 根据角色重定向到不同页面
-            switch (result.user.role) {
-                case 'admin':
-                    window.location.href = 'admin-dashboard.html';
-                    break;
-                case 'manager':
-                    window.location.href = 'manager-dashboard.html';
-                    break;
-                case 'staff':
-                    window.location.href = 'staff-dashboard.html';
-                    break;
-                case 'tenant':
-                    window.location.href = 'tenant-dashboard.html';
-                    break;
-                default:
-                    window.location.href = 'dashboard.html';
-            }
-        } else {
-            // 登录失败
-            alert(result.message);
-        }
-    }, 1000);
-}
-
-// 注册处理函数
-function handleRegister(event) {
-    event.preventDefault();
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+    }, 10);
     
-    const formData = new FormData(event.target);
-    const userData = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        username: formData.get('username'),
-        password: formData.get('password'),
-        role: formData.get('role'),
-        company: formData.get('company')
-    };
+    // 点击关闭按钮移除通知
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.style.marginLeft = '10px';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.fontWeight = 'bold';
     
-    const confirmPassword = formData.get('confirmPassword');
+    closeBtn.addEventListener('click', () => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    });
     
-    // 验证表单
-    if (!validateRegistrationForm(userData, confirmPassword)) {
-        return;
-    }
-    
-    UIUtils.showLoading();
-    
-    // 模拟网络延迟
+    // 自动隐藏通知
     setTimeout(() => {
-        const result = userManager.register(userData);
-        
-        UIUtils.hideLoading();
-        
-        if (result.success) {
-            alert('注册成功！请登录您的账户。');
-            window.location.href = 'login.html';
-        } else {
-            alert(result.message);
-        }
-    }, 1000);
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
 }
 
-// 验证注册表单
-function validateRegistrationForm(userData, confirmPassword) {
-    let isValid = true;
+/**
+ * 模拟登录API调用
+ * @param {string} username - 用户名
+ * @param {string} password - 密码
+ */
+function simulateLogin(username, password) {
+    // 显示加载中...
+    showNotification('登录中...', 'success');
     
-    // 验证用户名
-    const usernameError = FormValidator.validateUsername(userData.username);
-    if (usernameError) {
-        UIUtils.showError(document.getElementById('username'), usernameError);
-        isValid = false;
-    }
-    
-    // 验证密码
-    const passwordError = FormValidator.validatePassword(userData.password);
-    if (passwordError) {
-        UIUtils.showError(document.getElementById('password'), passwordError);
-        isValid = false;
-    }
-    
-    // 验证确认密码
-    if (userData.password !== confirmPassword) {
-        UIUtils.showError(document.getElementById('confirmPassword'), '密码不匹配');
-        isValid = false;
-    }
-    
-    // 验证邮箱
-    const emailError = FormValidator.validateEmail(userData.email);
-    if (emailError) {
-        UIUtils.showError(document.getElementById('email'), emailError);
-        isValid = false;
-    }
-    
-    // 验证手机号
-    const phoneError = FormValidator.validatePhone(userData.phone);
-    if (phoneError) {
-        UIUtils.showError(document.getElementById('phone'), phoneError);
-        isValid = false;
-    }
-    
-    return isValid;
+    // 模拟API延迟
+    setTimeout(() => {
+        // 模拟登录成功
+        const user = {
+            id: 1,
+            username: username,
+            role: 'manager',
+            avatar: 'assets/images/ui/default_avatar.png'
+        };
+        
+        // 保存用户信息到本地存储
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // 显示成功消息
+        showNotification('登录成功，正在跳转...', 'success');
+        
+        // 跳转到主页
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
+    }, 1500);
 }
 
-// 验证单个字段
-function validateField(field) {
-    let error = null;
+/**
+ * 模拟注册API调用
+ * @param {string} username - 用户名
+ * @param {string} email - 电子邮箱
+ * @param {string} password - 密码
+ */
+function simulateRegister(username, email, password) {
+    // 显示加载中...
+    showNotification('注册中...', 'success');
     
-    switch (field.id) {
-        case 'username':
-            error = FormValidator.validateUsername(field.value);
-            break;
-        case 'password':
-            error = FormValidator.validatePassword(field.value);
-            break;
-        case 'email':
-            error = FormValidator.validateEmail(field.value);
-            break;
-        case 'phone':
-            error = FormValidator.validatePhone(field.value);
-            break;
-        case 'confirmPassword':
-            const password = document.getElementById('password').value;
-            if (field.value !== password) {
-                error = '密码不匹配';
-            }
-            break;
-    }
-    
-    if (error) {
-        UIUtils.showError(field, error);
-    } else {
-        UIUtils.showSuccess(field);
-    }
+    // 模拟API延迟
+    setTimeout(() => {
+        // 模拟注册成功
+        const user = {
+            id: 1,
+            username: username,
+            email: email,
+            role: 'manager',
+            avatar: 'assets/images/ui/default_avatar.png'
+        };
+        
+        // 保存用户信息到本地存储
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // 显示成功消息
+        showNotification('注册成功，正在跳转...', 'success');
+        
+        // 跳转到主页
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
+    }, 1500);
 }
 
 // 导出用户管理器供其他页面使用

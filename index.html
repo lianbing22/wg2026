@@ -1,83 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Management Game</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>物业管理模拟器</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-    <!-- Scenario Selector -->
-    <div id="scenario-selector">
-        <header>
-            <h1>Property Manager Simulator</h1>
-            <h2>Choose Your Scenario</h2>
-        </header>
-        <div id="scenario-list">
-            <!-- Scenarios will be loaded here dynamically -->
+    <!-- 页面过渡动画 -->
+    <div class="page-transition"></div>
+    
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="assets/images/ui/logo.png" alt="物业管理模拟器" class="logo">
+            <span class="app-title">物业管理模拟器</span>
         </div>
-        <button id="start-selected-scenario" disabled>Start Selected Scenario</button>
+        
+        <div class="nav-links">
+            <a href="#" class="nav-link active">场景选择</a>
+            <a href="#" class="nav-link">我的进度</a>
+            <a href="#" class="nav-link">排行榜</a>
+            <a href="#" class="nav-link">帮助中心</a>
+        </div>
+        
+        <div class="user-menu">
+            <img src="assets/images/ui/default_avatar.png" alt="用户头像" class="user-avatar">
+            <span class="user-name">陈经理</span>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="game-container">
+            <h1 class="page-title">物业管理模拟器</h1>
+            <p class="page-subtitle">选择您的场景，体验物业管理的挑战与乐趣</p>
+            
+            <!-- 场景卡片区域 -->
+            <div class="scenarios-container" id="scenariosContainer">
+                <!-- 场景卡片由JS动态生成 -->
+            </div>
+            
+            <!-- 场景为空状态 -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <img src="assets/images/ui/empty_state.png" alt="无可用场景" class="empty-illustration">
+                <h2 class="empty-title">暂无可用场景</h2>
+                <p class="empty-message">加载场景时出现错误，请稍后再试或联系管理员获取帮助。</p>
+                <button class="retry-btn" id="retryBtn">重新加载场景</button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 场景详情模态框 -->
+    <div class="scenario-details-modal" id="scenarioModal">
+        <div class="modal-content">
+            <div class="modal-close" id="modalClose">&times;</div>
+            
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">紧急电梯维修危机</h2>
+                <p class="modal-subtitle" id="modalSubtitle">应对突发电梯故障，平衡财务、租户满意度和维修效果</p>
+            </div>
+            
+            <div class="modal-body">
+                <img src="assets/images/locations/elevator_malfunction.png" alt="场景图片" class="scenario-image-large" id="modalImage">
+                
+                <div class="scenario-info">
+                    <div class="info-group">
+                        <p class="info-label">难度级别</p>
+                        <div class="difficulty-indicator" id="modalDifficulty">
+                            <span class="difficulty-dot active"></span>
+                            <span class="difficulty-dot active"></span>
+                            <span class="difficulty-dot"></span>
+                            <span class="difficulty-dot"></span>
+                            <span class="difficulty-dot"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <p class="info-label">预计时长</p>
+                        <p class="info-value" id="modalDuration">10-15分钟</p>
+                    </div>
+                    
+                    <div class="info-group">
+                        <p class="info-label">主要角色</p>
+                        <div class="character-icons" id="modalCharacters">
+                            <img src="assets/images/characters/staff_technician_wang.png" alt="王师傅" class="character-icon">
+                            <img src="assets/images/characters/tenant_elderly_liu.png" alt="刘奶奶" class="character-icon">
+                            <img src="assets/images/characters/young_family_wu.png" alt="吴家" class="character-icon">
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <p class="info-label">主要挑战</p>
+                        <p class="info-value" id="modalChallenge">紧急决策、财务管理、租户关系</p>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="scenario-description-full" id="modalDescription">
+                周一早高峰时段，小区电梯突然停止运行。多位租户被困在电梯内，其他人则无法上下楼。作为物业经理，您需要在保证安全的前提下，权衡维修成本、时间和租户满意度，做出最佳决策。您的选择将影响物业财务状况、与租户的关系以及长期设备管理策略。
+            </p>
+            
+            <div class="modal-footer">
+                <button class="modal-btn secondary" id="cancelBtn">返回选择</button>
+                <button class="modal-btn primary" id="startBtn">开始场景</button>
+            </div>
+        </div>
     </div>
-
-    <div id="game-container" style="display: none;">
-        <header id="game-header">
-            <h1>Property Manager Simulator</h1>
-            <div id="metrics-display">
-                <div class="metric">
-                    <span class="metric-label">Tenant Satisfaction:</span>
-                    <span id="tenantSatisfaction" class="metric-value">70</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">Manager Stress:</span>
-                    <span id="managerStress" class="metric-value">10</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">Building Condition:</span>
-                    <span id="buildingCondition" class="metric-value">80</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">Financial Health:</span>
-                    <span id="financialHealth" class="metric-value">5000</span>
-                </div>
-            </div>
-            <div id="npc-relationship-display" style="display: none;">
-                <h3>Current NPC Relationship</h3>
-                <div class="relationship-info">
-                    <span class="npc-name" id="npc-name">NPC Name</span>
-                    <span class="relationship-score" id="npc-relationship-score">0</span>
-                </div>
-            </div>
-        </header>
-
-        <main id="scenario-area">
-            <div id="image-container">
-                <img id="scenario-image" src="assets/images/placeholder.svg" alt="Scenario Image">
-                <img id="location-image" src="assets/images/placeholder_location.svg" alt="Location Image">
-            </div>
-            <div id="text-area">
-                <p id="scenario-text">Welcome to the Property Management Game!</p>
-            </div>
-
-            <!-- QTE Container -->
-            <div id="qte-container" style="display:none;">
-                <p id="qte-instruction-text">QTE Instructions Here</p>
-                <div id="qte-track">
-                    <div id="qte-target-zone"></div>
-                    <div id="qte-moving-bar"></div>
-                </div>
-                <button id="qte-action-button">Stop Bar</button>
-            </div>
-
-            <div id="choices-area">
-                <!-- Choices will be populated by JavaScript -->
-            </div>
-            <div id="scenario-feedback">
-                <p id="feedback-text"></p>
-            </div>
-        </main>
-    </div>
-
-    <script src="js/main.js"></script>
-    <script src="js/scenario_selector.js"></script>
+    
+    <!-- 加载脚本 -->
+    <script src="js/scenarios.js"></script>
+    <script src="js/scenario-loader.js"></script>
 </body>
 </html>
