@@ -524,6 +524,468 @@
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
+/* 节奏点击QTE */
+.qte-rhythm-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.qte-beat-indicator {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.qte-beat-indicator::before {
+    content: '♪';
+    font-size: 40px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.qte-beat-indicator.qte-beat-active {
+    transform: scale(1.2);
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+    animation: beatPulse 0.5s ease-in-out;
+}
+
+.qte-beat-indicator.qte-beat-success {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    animation: successFlash 0.3s ease;
+}
+
+.qte-beat-indicator.qte-beat-error {
+    background: linear-gradient(45deg, #F44336 0%, #d32f2f 100%);
+    animation: errorShake 0.3s ease;
+}
+
+.qte-rhythm-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #FF6B6B 0%, #ee5a52 100%);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.qte-rhythm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+/* 拖拽操作QTE */
+.qte-drag-container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    min-height: 300px;
+}
+
+.qte-items-area {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.qte-zones-area {
+    flex: 1;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.qte-drag-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: grab;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.qte-drag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.qte-drag-item.qte-dragging {
+    opacity: 0.7;
+    transform: rotate(5deg);
+    cursor: grabbing;
+}
+
+.qte-drag-item.qte-item-placed {
+    background: #4CAF50;
+    color: white;
+    cursor: default;
+}
+
+.qte-drop-zone {
+    background: rgba(255, 255, 255, 0.3);
+    border: 3px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.qte-drop-zone.qte-drop-hover {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: white;
+    transform: scale(1.05);
+}
+
+.qte-drop-zone.qte-drop-success {
+    background: rgba(76, 175, 80, 0.8);
+    border-color: #4CAF50;
+    animation: successPulse 0.5s ease;
+}
+
+.qte-drop-zone.qte-drop-error {
+    background: rgba(244, 67, 54, 0.8);
+    border-color: #F44336;
+    animation: errorShake 0.3s ease;
+}
+
+/* 旋转操作QTE */
+.qte-rotate-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    position: relative;
+}
+
+.qte-rotate-object {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #4ECDC4 0%, #44A08D 100%);
+    border-radius: 50%;
+    transition: transform 0.1s ease;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.qte-rotate-object.qte-rotate-success {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    animation: successSpin 1s ease;
+}
+
+.qte-target-indicator {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 3px dashed #FF6B6B;
+    border-radius: 50%;
+    opacity: 0.7;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.qte-target-indicator::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 45px;
+    width: 10px;
+    height: 10px;
+    background: #FF6B6B;
+    border-radius: 50%;
+}
+
+.qte-angle-display {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.qte-rotate-button {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #4ECDC4 0%, #44A08D 100%);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+}
+
+.qte-rotate-button.qte-rotating {
+    background: linear-gradient(45deg, #FF6B6B 0%, #ee5a52 100%);
+    transform: scale(1.1);
+}
+
+/* 记忆序列QTE */
+.qte-memory-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.qte-memory-status {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 30px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.qte-memory-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.qte-memory-button {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.qte-memory-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.qte-memory-button.qte-memory-highlight {
+    transform: scale(1.3);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+    animation: memoryHighlight 0.8s ease;
+}
+
+.qte-memory-button.qte-memory-clicked {
+    transform: scale(0.9);
+    animation: memoryClick 0.2s ease;
+}
+
+/* 精准点击QTE */
+.qte-precision-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.qte-precision-score {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.qte-precision-area {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.qte-precision-target {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #FF6B6B 0%, #ee5a52 100%);
+    border-radius: 50%;
+    cursor: crosshair;
+    animation: targetPulse 1s infinite ease-in-out;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
+
+.qte-precision-target.qte-target-hit {
+    background: radial-gradient(circle, #4CAF50 0%, #45a049 100%);
+    animation: targetHit 0.5s ease;
+    pointer-events: none;
+}
+
+.qte-precision-target.qte-target-missed {
+    background: radial-gradient(circle, #9E9E9E 0%, #757575 100%);
+    animation: targetMissed 0.5s ease;
+    pointer-events: none;
+}
+
+/* 多任务QTE */
+.qte-multi-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.qte-multi-task {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.qte-multi-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.qte-multi-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.qte-multi-button.qte-task-complete {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    cursor: default;
+}
+
+.qte-multi-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.qte-multi-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #4ECDC4 0%, #44A08D 100%);
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(78, 205, 196, 0.3);
+}
+
+.qte-multi-slider.qte-task-complete {
+    background: #4CAF50;
+}
+
+/* 新增动画效果 */
+@keyframes beatPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1.2); }
+}
+
+@keyframes successFlash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes successSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes memoryHighlight {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    50% { transform: scale(1.3); box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+}
+
+@keyframes memoryClick {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+@keyframes targetPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes targetHit {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes targetMissed {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.5); opacity: 0; }
+}
+
 /* 移动设备适配 */
 @media (max-width: 768px) {
     .qte-container {
@@ -552,4 +1014,44 @@
     .qte-result {
         font-size: 32px;
     }
-} 
+    
+    .qte-track {
+        height: 15px;
+    }
+    
+    .qte-moving-bar {
+        height: 15px;
+    }
+    
+    .qte-target-zone {
+        height: 15px;
+    }
+    
+    .qte-sequence-container {
+        gap: 10px;
+    }
+    
+    .qte-drag-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .qte-memory-buttons {
+        gap: 10px;
+    }
+    
+    .qte-memory-button {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+    
+    .qte-precision-area {
+        height: 250px;
+    }
+    
+    .qte-precision-target {
+        width: 25px;
+        height: 25px;
+    }
+}

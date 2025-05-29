@@ -540,3 +540,265 @@ document.addEventListener('DOMContentLoaded', () => {
     // 加载场景数据
     loadScenarioData();
 });
+
+// 游戏状态管理器类
+class GameStateManager {
+    constructor() {
+        this.saveSlots = ['auto', 'slot1', 'slot2', 'slot3'];
+        this.currentSlot = 'auto';
+    }
+
+    // 保存游戏状态
+    saveGame(slotId = 'auto', playerName = '物业经理') {
+        try {
+            const saveData = {
+                // 基础游戏状态
+                metrics: {...gameState.metrics},
+                relationshipScores: {...gameState.relationshipScores},
+                storyFlags: {...gameState.storyFlags},
+                
+                // 当前进度
+                currentScenarioId: currentScenario ? currentScenario.id : null,
+                currentNodeId: currentNodeId,
+                
+                // 元数据
+                playerName: playerName,
+                timestamp: Date.now(),
+                playTime: gameState.playTime || 0,
+                version: '1.0.0',
+                
+                // 统计数据
+                completedScenarios: gameState.completedScenarios || [],
+                totalChoicesMade: gameState.totalChoicesMade || 0,
+                qtesCompleted: gameState.qtesCompleted || 0,
+                qtesSuccessful: gameState.qtesSuccessful || 0
+            };
+            
+            localStorage.setItem(`propertyGame_${slotId}`, JSON.stringify(saveData));
+            
+            // 更新存档列表
+            this.updateSaveSlotInfo(slotId, saveData);
+            
+            // 显示保存成功提示
+            this.showSaveNotification('游戏已保存', 'success');
+            
+            return true;
+        } catch (error) {
+            console.error('保存游戏失败:', error);
+            this.showSaveNotification('保存失败，请重试', 'error');
+            return false;
+        }
+    }
+
+    // 加载游戏状态
+    loadGame(slotId = 'auto') {
+        try {
+            const saveDataStr = localStorage.getItem(`propertyGame_${slotId}`);
+            if (!saveDataStr) {
+                console.log('没有找到存档');
+                return false;
+            }
+            
+            const saveData = JSON.parse(saveDataStr);
+            
+            // 验证存档数据完整性
+            if (!this.validateSaveData(saveData)) {
+                console.error('存档数据损坏');
+                this.showSaveNotification('存档数据损坏，无法加载', 'error');
+                return false;
+            }
+            
+            // 恢复游戏状态
+            gameState.metrics = {...saveData.metrics};
+            gameState.relationshipScores = {...saveData.relationshipScores};
+            gameState.storyFlags = {...saveData.storyFlags};
+            gameState.playTime = saveData.playTime || 0;
+            gameState.completedScenarios = saveData.completedScenarios || [];
+            gameState.totalChoicesMade = saveData.totalChoicesMade || 0;
+            gameState.qtesCompleted = saveData.qtesCompleted || 0;
+            gameState.qtesSuccessful = saveData.qtesSuccessful || 0;
+            
+            // 更新UI显示
+            updateMetricsDisplay();
+            updateRelationshipDisplay();
+            updateStoryFlagsDisplay();
+            
+            // 如果有当前场景，加载它
+            if (saveData.currentScenarioId && saveData.currentNodeId) {
+                this.loadScenarioFromSave(saveData.currentScenarioId, saveData.currentNodeId);
+            }
+            
+            this.showSaveNotification('游戏已加载', 'success');
+            this.currentSlot = slotId;
+            
+            return true;
+        } catch (error) {
+            console.error('加载游戏失败:', error);
+            this.showSaveNotification('加载失败，存档可能已损坏', 'error');
+            return false;
+        }
+    }
+
+    // 从存档加载特定场景
+    async loadScenarioFromSave(scenarioId, nodeId) {
+        try {
+            // 加载场景数据
+            const response = await fetch(`data/${scenarioId.toLowerCase()}.json`);
+            if (!response.ok) {
+                throw new Error(`无法加载场景: ${scenarioId}`);
+            }
+            
+            currentScenario = await response.json();
+            currentNodeId = nodeId;
+            
+            // 渲染当前节点
+            renderNode(nodeId);
+            
+        } catch (error) {
+            console.error('从存档加载场景失败:', error);
+            // 如果加载失败，回到场景选择
+            window.location.href = 'index.html';
+        }
+    }
+
+    // 验证存档数据
+    validateSaveData(saveData) {
+        const requiredFields = ['metrics', 'relationshipScores', 'storyFlags', 'timestamp'];
+        return requiredFields.every(field => saveData.hasOwnProperty(field));
+    }
+
+    // 删除存档
+    deleteSave(slotId) {
+        try {
+            localStorage.removeItem(`propertyGame_${slotId}`);
+            localStorage.removeItem(`propertyGameInfo_${slotId}`);
+            this.showSaveNotification('存档已删除', 'success');
+            return true;
+        } catch (error) {
+            console.error('删除存档失败:', error);
+            this.showSaveNotification('删除失败', 'error');
+            return false;
+        }
+    }
+
+    // 获取所有存档信息
+    getAllSaves() {
+        const saves = {};
+        this.saveSlots.forEach(slotId => {
+            const saveData = localStorage.getItem(`propertyGame_${slotId}`);
+            if (saveData) {
+                try {
+                    const parsed = JSON.parse(saveData);
+                    saves[slotId] = {
+                        playerName: parsed.playerName || '物业经理',
+                        timestamp: parsed.timestamp,
+                        playTime: parsed.playTime || 0,
+                        currentScenario: parsed.currentScenarioId,
+                        progress: this.calculateProgress(parsed)
+                    };
+                } catch (error) {
+                    console.error(`解析存档 ${slotId} 失败:`, error);
+                }
+            }
+        });
+        return saves;
+    }
+
+    // 计算游戏进度
+    calculateProgress(saveData) {
+        const completedScenarios = saveData.completedScenarios || [];
+        const totalScenarios = 8; // 预计总场景数
+        return Math.round((completedScenarios.length / totalScenarios) * 100);
+    }
+
+    // 更新存档槽位信息
+    updateSaveSlotInfo(slotId, saveData) {
+        const slotInfo = {
+            playerName: saveData.playerName,
+            timestamp: saveData.timestamp,
+            playTime: saveData.playTime,
+            currentScenario: saveData.currentScenarioId,
+            progress: this.calculateProgress(saveData)
+        };
+        localStorage.setItem(`propertyGameInfo_${slotId}`, JSON.stringify(slotInfo));
+    }
+
+    // 显示保存/加载通知
+    showSaveNotification(message, type = 'info') {
+        // 创建通知元素
+        const notification = document.createElement('div');
+        notification.className = `save-notification ${type}`;
+        notification.textContent = message;
+        
+        // 添加样式
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
+        
+        // 根据类型设置颜色
+        switch (type) {
+            case 'success':
+                notification.style.backgroundColor = '#27AE60';
+                break;
+            case 'error':
+                notification.style.backgroundColor = '#E74C3C';
+                break;
+            default:
+                notification.style.backgroundColor = '#3498DB';
+        }
+        
+        document.body.appendChild(notification);
+        
+        // 显示动画
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // 自动隐藏
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // 自动保存
+    autoSave() {
+        this.saveGame('auto');
+    }
+
+    // 快速保存（快捷键）
+    quickSave() {
+        this.saveGame(this.currentSlot || 'slot1');
+    }
+
+    // 快速加载（快捷键）
+    quickLoad() {
+        this.loadGame(this.currentSlot || 'auto');
+    }
+}
+
+// 创建游戏状态管理器实例
+const gameStateManager = new GameStateManager();
+
+// 在gameState中添加新的属性
+gameState.playTime = 0;
+gameState.completedScenarios = [];
+gameState.totalChoicesMade = 0;
+gameState.qtesCompleted = 0;
+gameState.qtesSuccessful = 0;

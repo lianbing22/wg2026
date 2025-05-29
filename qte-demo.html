@@ -191,5 +191,69 @@ qteSystem.start(
     <!-- 加载QTE系统脚本 -->
     <script src="js/enhanced-qte-system.js"></script>
     <script src="js/qte-demo.js"></script>
+    <style>
+        .qte-draggable {
+            width: 50px;
+            height: 50px;
+            border: 2px solid orange;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .qte-drag-target {
+            border: 2px dashed lightblue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qte-drag-success-pulse {
+            animation: pulse 0.5s 2;
+        }
+        .qte-swipe-area {
+            width: 200px;
+            height: 150px;
+            border: 2px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.2em;
+            background-color: #f9f9f9;
+            position: relative; /* For arrow positioning */
+        }
+        .qte-swipe-arrow {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            position: absolute;
+            animation: qte-arrow-pulse 1s infinite;
+        }
+        .qte-swipe-arrow-up {
+            border-width: 0 15px 25px 15px;
+            border-color: transparent transparent #3498db transparent;
+            top: 10px;
+        }
+        .qte-swipe-arrow-down {
+            border-width: 25px 15px 0 15px;
+            border-color: #3498db transparent transparent transparent;
+            bottom: 10px;
+        }
+        .qte-swipe-arrow-left {
+            border-width: 15px 25px 15px 0;
+            border-color: transparent #3498db transparent transparent;
+            left: 10px;
+        }
+        .qte-swipe-arrow-right {
+            border-width: 15px 0 15px 25px;
+            border-color: transparent transparent transparent #3498db;
+            right: 10px;
+        }
+        @keyframes qte-arrow-pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+    </style>
 </body>
-</html> 
+</html>

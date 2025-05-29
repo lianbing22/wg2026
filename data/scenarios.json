@@ -1,6 +1,18 @@
 {
   "scenarios": [
     {
+      "id": "PET_CRISIS_MANAGEMENT",
+      "title": "宠物管理大作战",
+      "involvedNPCs": ["NPC_PET_OWNER_CHEN", "NPC_NEIGHBOR_ZHANG", "STAFF_SECURITY_LI"],
+      "startNode": "PET_COMPLAINT_START"
+    },
+    {
+      "id": "COMMUNITY_FESTIVAL_PLANNING",
+      "title": "社区嘉年华策划大挑战",
+      "involvedNPCs": ["NPC_ARTIST_WANG", "NPC_CHEF_LI", "NPC_FAMILY_ZHANG", "STAFF_MAINTENANCE_CHEN"],
+      "startNode": "FESTIVAL_PROPOSAL"
+    },
+    {
       "id": "TENANT_COMPLAINT_NOISE",
       "title": "Noise Complaint from Mrs. Davis",
       "involvedNPCs": ["NPC_MRS_DAVIS", "NPC_TENANT_UNIT_3B"],

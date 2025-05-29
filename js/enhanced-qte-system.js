@@ -16,6 +16,10 @@ class EnhancedQTESystem {
         this.currentConfig = null;
         this.animationId = null;
         
+        // 内存泄漏防护
+        this.activeTimers = [];
+        this.activeEventListeners = [];
+        
         // 对外暴露的回调函数
         this.onSuccess = null;
         this.onFailure = null;
@@ -134,7 +138,7 @@ class EnhancedQTESystem {
         this.addCountdownEffect();
         
         // 根据QTE类型启动相应功能
-        setTimeout(() => {
+        this.addTimer(setTimeout(() => {
             switch (this.currentConfig.type) {
                 case "StopTheMovingBar":
                     this.stopMovingBarQTE(this.currentConfig);
@@ -150,7 +154,7 @@ class EnhancedQTESystem {
                     this.end(false);
                     break;
             }
-        }, 1000); // 倒计时后开始QTE
+        }, 1000)); // 倒计时后开始QTE
     }
     
     /**
@@ -251,7 +255,7 @@ class EnhancedQTESystem {
         
         // 倒计时动画
         let count = 3;
-        const countInterval = setInterval(() => {
+        const countInterval = this.addTimer(setInterval(() => {
             count--;
             if (count > 0) {
                 countdownElement.textContent = count.toString();
@@ -263,11 +267,11 @@ class EnhancedQTESystem {
                 clearInterval(countInterval);
                 countdownElement.textContent = '开始!';
                 countdownElement.classList.add('go');
-                setTimeout(() => {
+                this.addTimer(setTimeout(() => {
                     countdownElement.remove();
-                }, 500);
+                }, 500));
             }
-        }, 800);
+        }, 800));
     }
     
     /**
@@ -314,6 +318,10 @@ class EnhancedQTESystem {
             this.animationId = null;
         }
         
+        // 清除所有定时器和事件监听器
+        this.clearAllTimers();
+        this.removeAllEventListeners();
+        
         // 更新动态难度
         this.updateDynamicDifficulty(success);
         
@@ -335,10 +343,10 @@ class EnhancedQTESystem {
         this.contentArea.appendChild(resultElement);
         
         // 延迟后隐藏QTE容器
-        setTimeout(() => {
+        this.addTimer(setTimeout(() => {
             this.container.style.animation = 'qte-disappear 0.3s ease-in forwards';
             
-            setTimeout(() => {
+            this.addTimer(setTimeout(() => {
                 // 隐藏QTE容器
                 this.container.style.display = 'none';
                 this.container.classList.remove('qte-success', 'qte-failure');
@@ -355,8 +363,59 @@ class EnhancedQTESystem {
                 this.currentConfig = null;
                 this.onSuccess = null;
                 this.onFailure = null;
-            }, 300);
-        }, 1000);
+                this.activeTimers = [];
+                this.activeEventListeners = [];
+            }, 300));
+        }, 1000));
+    }
+    
+    /**
+     * 清除所有定时器
+     */
+    clearAllTimers() {
+        if (this.activeTimers) {
+            this.activeTimers.forEach(timerId => {
+                clearTimeout(timerId);
+                clearInterval(timerId);
+            });
+            this.activeTimers = [];
+        }
+    }
+    
+    /**
+     * 移除所有事件监听器
+     */
+    removeAllEventListeners() {
+        if (this.activeEventListeners) {
+            this.activeEventListeners.forEach(({ element, event, handler }) => {
+                if (element && element.removeEventListener) {
+                    element.removeEventListener(event, handler);
+                }
+            });
+            this.activeEventListeners = [];
+        }
+    }
+    
+    /**
+     * 添加定时器到跟踪列表
+     */
+    addTimer(timerId) {
+        if (!this.activeTimers) {
+            this.activeTimers = [];
+        }
+        this.activeTimers.push(timerId);
+        return timerId;
+    }
+    
+    /**
+     * 添加事件监听器到跟踪列表
+     */
+    addEventListenerTracked(element, event, handler) {
+        if (!this.activeEventListeners) {
+            this.activeEventListeners = [];
+        }
+        element.addEventListener(event, handler);
+        this.activeEventListeners.push({ element, event, handler });
     }
     
     /**
@@ -424,7 +483,7 @@ class EnhancedQTESystem {
             }
             
             movingBarElement.style.left = `${barPosition}%`;
-            this.animationId = setTimeout(moveBar, speed);
+            this.animationId = this.addTimer(setTimeout(moveBar, speed));
         };
         
         // 设置时间限制
@@ -460,7 +519,7 @@ class EnhancedQTESystem {
         updateTimeBar();
         
         // 监听停止按钮点击
-        actionButton.addEventListener('click', () => {
+        const clickHandler = () => {
             if (!this.isActive) return;
             
             this.playSound('click');
@@ -495,10 +554,12 @@ class EnhancedQTESystem {
             }
             
             // 延迟结束QTE，给用户视觉反馈时间
-            setTimeout(() => {
+            this.addTimer(setTimeout(() => {
                 this.end(success);
-            }, 1000);
-        });
+            }, 1000));
+        };
+        
+        this.addEventListenerTracked(actionButton, 'click', clickHandler);
     }
     
     /**
@@ -554,7 +615,7 @@ class EnhancedQTESystem {
         this.contentArea.appendChild(timeDisplay);
         
         // 点击处理
-        clickButton.addEventListener('click', () => {
+        const clickHandler = () => {
             if (!this.isActive) return;
             
             this.playSound('click');
@@ -565,9 +626,9 @@ class EnhancedQTESystem {
             clickButton.appendChild(ripple);
             
             // 移除旧的涟漪效果
-            setTimeout(() => {
+            this.addTimer(setTimeout(() => {
                 ripple.remove();
-            }, 700);
+            }, 700));
             
             currentClicks++;
             counterText.textContent = `${currentClicks}/${targetClicks}`;
@@ -579,9 +640,9 @@ class EnhancedQTESystem {
             // 每完成25%闪烁一次
             if (currentClicks % (targetClicks / 4) === 0) {
                 progressFill.classList.add('qte-progress-flash');
-                setTimeout(() => {
+                this.addTimer(setTimeout(() => {
                     progressFill.classList.remove('qte-progress-flash');
-                }, 300);
+                }, 300));
             }
             
             // 检查是否达到目标
@@ -592,11 +653,13 @@ class EnhancedQTESystem {
                 clickButton.textContent = '成功!';
                 clickButton.style.backgroundColor = '#4CAF50';
                 
-                setTimeout(() => {
+                this.addTimer(setTimeout(() => {
                     this.end(true);
-                }, 1000);
+                }, 1000));
             }
-        });
+        };
+        
+        this.addEventListenerTracked(clickButton, 'click', clickHandler);
         
         // 设置时间限制和更新
         const startTime = Date.now();
@@ -629,9 +692,9 @@ class EnhancedQTESystem {
                 clickButton.textContent = '时间到!';
                 clickButton.style.backgroundColor = '#F44336';
                 
-                setTimeout(() => {
+                this.addTimer(setTimeout(() => {
                     this.end(false);
-                }, 1000);
+                }, 1000));
             } else {
                 requestAnimationFrame(updateTimer);
             }
@@ -697,7 +760,7 @@ class EnhancedQTESystem {
             sequenceContainer.appendChild(imageWrapper);
             
             // 添加点击事件
-            imageWrapper.addEventListener('click', () => {
+            const clickHandler = () => {
                 if (!this.isActive) return;
                 
                 this.playSound('click');
@@ -711,9 +774,9 @@ class EnhancedQTESystem {
                     const correctEffect = document.createElement('div');
                     correctEffect.className = 'qte-correct-click';
                     imageWrapper.appendChild(correctEffect);
-                    setTimeout(() => {
+                    this.addTimer(setTimeout(() => {
                         correctEffect.remove();
-                    }, 700);
+                    }, 700));
                     
                     currentIndex++;
                     sequenceIndicator.textContent = `进度: ${currentIndex}/${sequence.length}`;
@@ -728,27 +791,28 @@ class EnhancedQTESystem {
                         // 完成序列
                         sequenceContainer.classList.add('qte-sequence-complete');
                         
-                        setTimeout(() => {
+                        this.addTimer(setTimeout(() => {
                             this.end(true);
-                        }, 1000);
+                        }, 1000));
                     }
                 } else {
                     // 错误的点击
                     imageWrapper.classList.add('qte-sequence-error');
-                    
                     // 添加错误点击动画
                     const errorEffect = document.createElement('div');
                     errorEffect.className = 'qte-error-click';
                     imageWrapper.appendChild(errorEffect);
-                    setTimeout(() => {
+                    this.addTimer(setTimeout(() => {
                         errorEffect.remove();
-                    }, 700);
+                    }, 700));
                     
-                    setTimeout(() => {
+                    this.addTimer(setTimeout(() => {
                         this.end(false);
-                    }, 1000);
+                    }, 1000));
                 }
-            });
+            };
+            
+            this.addEventListenerTracked(imageWrapper, 'click', clickHandler);
         });
         
         this.contentArea.appendChild(timeIndicator);
@@ -777,9 +841,9 @@ class EnhancedQTESystem {
                 // 时间到，未完成
                 sequenceContainer.classList.add('qte-sequence-timeout');
                 
-                setTimeout(() => {
+                this.addTimer(setTimeout(() => {
                     this.end(false);
-                }, 1000);
+                }, 1000));
             } else {
                 requestAnimationFrame(updateTimeBar);
             }
@@ -787,7 +851,199 @@ class EnhancedQTESystem {
         
         updateTimeBar();
     }
-}
 
-// 导出增强型QTE系统
-window.EnhancedQTESystem = EnhancedQTESystem; 
+    /**
+     * "拖拽操作"类型QTE
+     * @param {Object} config - QTE配置
+     * @example
+     * qteSystem.start({
+     *   type: 'DragAndDrop',
+     *   parameters: {
+     *     draggableImagePath: 'path/to/draggable.png',
+     *     targetImagePath: 'path/to/target.png',
+     *     timeLimit: 5000, // 毫秒
+     *     targetArea: { x: 100, y: 100, width: 50, height: 50 } // 目标区域坐标和大小
+     *   },
+     *   onSuccess: () => console.log('拖拽成功!'),
+     *   onFailure: () => console.log('拖拽失败!')
+     * });
+     */
+    dragAndDropQTE(config) {
+        this.contentArea.innerHTML = ''; // 清空内容区域
+        const { draggableImagePath, targetImagePath, timeLimit = 5000, targetArea } = config.parameters;
+
+        if (!draggableImagePath || !targetImagePath || !targetArea) {
+            console.error('拖拽QTE缺少必要的参数: draggableImagePath, targetImagePath, 或 targetArea');
+            return this.end(false);
+        }
+
+        const draggableElement = document.createElement('img');
+        draggableElement.src = draggableImagePath;
+        draggableElement.className = 'qte-draggable';
+        draggableElement.style.position = 'absolute';
+        draggableElement.style.left = '50px'; // 初始位置
+        draggableElement.style.top = '50px';
+        draggableElement.style.cursor = 'grab';
+        draggableElement.ondragstart = () => false; // 防止浏览器默认拖拽行为
+
+        const targetElement = document.createElement('img');
+        targetElement.src = targetImagePath;
+        targetElement.className = 'qte-drag-target';
+        targetElement.style.position = 'absolute';
+        targetElement.style.left = `${targetArea.x}px`;
+        targetElement.style.top = `${targetArea.y}px`;
+        targetElement.style.width = `${targetArea.width}px`;
+        targetElement.style.height = `${targetArea.height}px`;
+
+        this.contentArea.appendChild(targetElement);
+        this.contentArea.appendChild(draggableElement);
+
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        const mousedownHandler = (e) => {
+            isDragging = true;
+            offsetX = e.clientX - draggableElement.getBoundingClientRect().left;
+            offsetY = e.clientY - draggableElement.getBoundingClientRect().top;
+            draggableElement.style.cursor = 'grabbing';
+            this.playSound('click');
+        };
+
+        const mousemoveHandler = (e) => {
+            if (!isDragging || !this.isActive) return;
+            draggableElement.style.left = `${e.clientX - offsetX - this.contentArea.getBoundingClientRect().left}px`;
+            draggableElement.style.top = `${e.clientY - offsetY - this.contentArea.getBoundingClientRect().top}px`;
+        };
+
+        const mouseupHandler = () => {
+            if (!isDragging || !this.isActive) return;
+            isDragging = false;
+            draggableElement.style.cursor = 'grab';
+
+            const dragRect = draggableElement.getBoundingClientRect();
+            const targetRect = targetElement.getBoundingClientRect();
+
+            // 检查是否拖拽到目标区域 (中心点判断)
+            const dragCenterX = dragRect.left + dragRect.width / 2;
+            const dragCenterY = dragRect.top + dragRect.height / 2;
+
+            const success = dragCenterX >= targetRect.left && dragCenterX <= targetRect.right &&
+                            dragCenterY >= targetRect.top && dragCenterY <= targetRect.bottom;
+
+            if (success) {
+                draggableElement.style.display = 'none'; // 或者移动到目标位置
+                targetElement.classList.add('qte-drag-success-pulse');
+            }
+            this.end(success);
+        };
+        
+        this.addEventListenerTracked(draggableElement, 'mousedown', mousedownHandler);
+        this.addEventListenerTracked(document, 'mousemove', mousemoveHandler);
+        this.addEventListenerTracked(document, 'mouseup', mouseupHandler);
+
+        // 时间限制
+        const timer = this.addTimer(setTimeout(() => {
+            if (this.isActive) {
+                this.end(false);
+            }
+        }, timeLimit));
+
+        this.animationId = timer; // Store timer to clear it in end()
+    }
+
+    /**
+     * "滑动手势"类型QTE
+     * @param {Object} config - QTE配置
+     * @example
+     * qteSystem.start({
+     *   type: 'SwipeGesture',
+     *   parameters: {
+     *     direction: 'right', // 'up', 'down', 'left', 'right'
+     *     timeLimit: 3000, // 毫秒
+     *     swipeThreshold: 50 // 滑动距离阈值 (像素)
+     *   },
+     *   onSuccess: () => console.log('滑动成功!'),
+     *   onFailure: () => console.log('滑动失败!')
+     * });
+     */
+    swipeGestureQTE(config) {
+        this.contentArea.innerHTML = ''; // 清空内容区域
+        const { direction, timeLimit = 3000, swipeThreshold = 50 } = config.parameters;
+
+        if (!direction) {
+            console.error('滑动手势QTE缺少必要的参数: direction');
+            return this.end(false);
+        }
+
+        const swipeArea = document.createElement('div');
+        swipeArea.className = 'qte-swipe-area';
+        swipeArea.innerHTML = `<p>向 ${this.getSwipeDirectionText(direction)} 滑动!</p><div class="qte-swipe-arrow qte-swipe-arrow-${direction}"></div>`;
+
+        this.contentArea.appendChild(swipeArea);
+
+        let startX, startY;
+        let isSwiping = false;
+
+        const handleTouchStart = (e) => {
+            const touch = e.touches ? e.touches[0] : e;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            isSwiping = true;
+            this.playSound('click');
+        };
+
+        const handleTouchMove = (e) => {
+            if (!isSwiping || !this.isActive) return;
+            // 可以在这里添加视觉反馈，比如跟随手指的元素
+        };
+
+        const handleTouchEnd = (e) => {
+            if (!isSwiping || !this.isActive) return;
+            isSwiping = false;
+            const touch = e.changedTouches ? e.changedTouches[0] : e;
+            const endX = touch.clientX;
+            const endY = touch.clientY;
+
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+            let swipedDirection = '';
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) { // 水平滑动
+                if (deltaX > swipeThreshold) swipedDirection = 'right';
+                else if (deltaX < -swipeThreshold) swipedDirection = 'left';
+            } else { // 垂直滑动
+                if (deltaY > swipeThreshold) swipedDirection = 'down';
+                else if (deltaY < -swipeThreshold) swipedDirection = 'up';
+            }
+            this.end(swipedDirection === direction);
+        };
+
+        this.addEventListenerTracked(swipeArea, 'mousedown', handleTouchStart);
+        this.addEventListenerTracked(swipeArea, 'mousemove', handleTouchMove); // mousemove for desktop
+        this.addEventListenerTracked(swipeArea, 'mouseup', handleTouchEnd);
+        this.addEventListenerTracked(swipeArea, 'mouseleave', () => { if(isSwiping) handleTouchEnd({clientX: startX, clientY: startY}); }); // Handle mouse leaving element
+
+        this.addEventListenerTracked(swipeArea, 'touchstart', handleTouchStart, { passive: true });
+        this.addEventListenerTracked(swipeArea, 'touchmove', handleTouchMove, { passive: true });
+        this.addEventListenerTracked(swipeArea, 'touchend', handleTouchEnd);
+
+        // 时间限制
+        const timer = this.addTimer(setTimeout(() => {
+            if (this.isActive) {
+                this.end(false);
+            }
+        }, timeLimit));
+        this.animationId = timer; // Store timer to clear it in end()
+    }
+
+    getSwipeDirectionText(direction) {
+        switch (direction) {
+            case 'up': return '上';
+            case 'down': return '下';
+            case 'left': return '左';
+            case 'right': return '右';
+            default: return '';
+        }
+    }
+
+window.EnhancedQTESystem = EnhancedQTESystem;

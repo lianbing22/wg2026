@@ -1,0 +1,449 @@
+{
+  "scenario": {
+    "id": "COMMUNITY_FESTIVAL_PLANNING",
+    "title": "社区嘉年华策划大挑战",
+    "involvedNPCs": ["NPC_ARTIST_WANG", "NPC_CHEF_LI", "NPC_FAMILY_ZHANG", "STAFF_MAINTENANCE_CHEN"],
+    "startNode": "FESTIVAL_PROPOSAL",
+    "nodes": [
+      {
+        "nodeId": "FESTIVAL_PROPOSAL",
+        "text": "春节临近，艺术家王女士兴奋地找到你：\"我们为什么不举办一个社区嘉年华呢？可以增进邻里感情，让孩子们也有个难忘的节日！\"厨师李师傅也表示愿意提供美食支持。但这需要大量的组织工作和资金投入。",
+        "image": "assets/images/characters/artist_excited.png",
+        "location_image": "assets/images/locations/community_courtyard.png",
+        "choices": [
+          {
+            "text": "全力支持，举办盛大的嘉年华",
+            "effects": {
+              "financialHealth": -200,
+              "tenantSatisfaction": 15,
+              "relationship_NPC_ARTIST_WANG": 8,
+              "managerStress": 10
+            },
+            "nextNode": "GRAND_FESTIVAL_PLANNING"
+          },
+          {
+            "text": "举办小规模的社区聚会",
+            "effects": {
+              "financialHealth": -80,
+              "tenantSatisfaction": 8,
+              "relationship_NPC_ARTIST_WANG": 3
+            },
+            "nextNode": "MODEST_GATHERING"
+          },
+          {
+            "text": "建议住户自发组织，物业提供场地支持",
+            "effects": {
+              "financialHealth": -20,
+              "tenantSatisfaction": 5,
+              "relationship_NPC_ARTIST_WANG": -2
+            },
+            "nextNode": "RESIDENT_ORGANIZED"
+          }
+        ]
+      },
+      {
+        "nodeId": "GRAND_FESTIVAL_PLANNING",
+        "text": "你决定全力支持这个想法！王女士激动地开始规划：\"我们可以有艺术展览、美食街、儿童游戏区、音乐表演...\"但随着计划的展开，你意识到需要协调的事情比想象中复杂得多。",
+        "image": "assets/images/characters/planning_session.png",
+        "location_image": "assets/images/locations/planning_room.png",
+        "qte": {
+          "type": "multi_task",
+          "config": {
+            "timeLimit": 50000,
+            "tasks": [
+              {"type": "button", "label": "联系供应商"},
+              {"type": "slider", "label": "预算分配", "target": 60},
+              {"type": "button", "label": "安排志愿者"},
+              {"type": "slider", "label": "时间安排", "target": 80}
+            ],
+            "description": "同时处理多个策划任务！"
+          }
+        },
+        "choices": [
+          {
+            "text": "重点打造艺术文化主题",
+            "effects": {
+              "relationship_NPC_ARTIST_WANG": 10,
+              "tenantSatisfaction": 12
+            },
+            "nextNode": "ART_THEME_FESTIVAL"
+          },
+          {
+            "text": "重点打造美食体验主题",
+            "effects": {
+              "relationship_NPC_CHEF_LI": 10,
+              "tenantSatisfaction": 15
+            },
+            "nextNode": "FOOD_THEME_FESTIVAL"
+          },
+          {
+            "text": "重点打造家庭亲子主题",
+            "effects": {
+              "relationship_NPC_FAMILY_ZHANG": 10,
+              "tenantSatisfaction": 18
+            },
+            "nextNode": "FAMILY_THEME_FESTIVAL"
+          }
+        ]
+      },
+      {
+        "nodeId": "ART_THEME_FESTIVAL",
+        "text": "你决定以艺术文化为主题。王女士兴奋地开始联系其他艺术家朋友，计划设置绘画工作坊、雕塑展示区、音乐演出舞台。但你需要确保活动的安全性和秩序。",
+        "image": "assets/images/characters/artist_organizing.png",
+        "location_image": "assets/images/locations/art_setup.png",
+        "qte": {
+          "type": "drag_drop",
+          "config": {
+            "timeLimit": 35000,
+            "items": ["画架", "音响设备", "展示台", "座椅"],
+            "zones": ["中央舞台", "展览区", "工作坊区", "休息区"],
+            "description": "合理布置艺术展览空间！"
+          }
+        },
+        "choices": [
+          {
+            "text": "邀请专业艺术家参与",
+            "effects": {
+              "financialHealth": -100,
+              "tenantSatisfaction": 20,
+              "relationship_NPC_ARTIST_WANG": 15
+            },
+            "nextNode": "PROFESSIONAL_ARTISTS"
+          },
+          {
+            "text": "重点展示住户的才艺",
+            "effects": {
+              "tenantSatisfaction": 25,
+              "relationship_NPC_ARTIST_WANG": 8
+            },
+            "nextNode": "RESIDENT_TALENTS"
+          },
+          {
+            "text": "设置互动艺术体验区",
+            "effects": {
+              "financialHealth": -50,
+              "tenantSatisfaction": 22,
+              "relationship_NPC_FAMILY_ZHANG": 8
+            },
+            "nextNode": "INTERACTIVE_ART"
+          }
+        ]
+      },
+      {
+        "nodeId": "FOOD_THEME_FESTIVAL",
+        "text": "李师傅听说要以美食为主题，立刻开始规划菜单：\"我们可以做传统年菜、各地特色小吃，还可以教大家包饺子！\"但食品安全和卫生管理是重大挑战。",
+        "image": "assets/images/characters/chef_planning.png",
+        "location_image": "assets/images/locations/kitchen_prep.png",
+        "qte": {
+          "type": "rhythm_click",
+          "config": {
+            "timeLimit": 40000,
+            "beatInterval": 1200,
+            "description": "跟着节拍协调厨房工作！"
+          }
+        },
+        "choices": [
+          {
+            "text": "设置专业厨房和用餐区",
+            "effects": {
+              "financialHealth": -150,
+              "tenantSatisfaction": 25,
+              "relationship_NPC_CHEF_LI": 15
+            },
+            "nextNode": "PROFESSIONAL_KITCHEN"
+          },
+          {
+            "text": "组织住户厨艺比赛",
+            "effects": {
+              "tenantSatisfaction": 20,
+              "relationship_NPC_CHEF_LI": 10
+            },
+            "nextNode": "COOKING_COMPETITION"
+          },
+          {
+            "text": "重点做传统文化美食体验",
+            "effects": {
+              "financialHealth": -80,
+              "tenantSatisfaction": 18,
+              "relationship_NPC_CHEF_LI": 12
+            },
+            "nextNode": "TRADITIONAL_FOOD"
+          }
+        ]
+      },
+      {
+        "nodeId": "FAMILY_THEME_FESTIVAL",
+        "text": "张家夫妇非常支持家庭主题：\"我们的孩子们需要更多交流机会！\"你开始规划儿童游戏区、家庭竞赛、亲子工作坊等活动。安全措施是首要考虑。",
+        "image": "assets/images/characters/family_excited.png",
+        "location_image": "assets/images/locations/family_area_setup.png",
+        "qte": {
+          "type": "precision_click",
+          "config": {
+            "timeLimit": 30000,
+            "targetCount": 10,
+            "description": "精确标记儿童安全区域！"
+          }
+        },
+        "choices": [
+          {
+            "text": "设置大型儿童游乐设施",
+            "effects": {
+              "financialHealth": -180,
+              "tenantSatisfaction": 30,
+              "relationship_NPC_FAMILY_ZHANG": 15
+            },
+            "nextNode": "PLAYGROUND_SETUP"
+          },
+          {
+            "text": "组织家庭才艺表演",
+            "effects": {
+              "tenantSatisfaction": 22,
+              "relationship_NPC_FAMILY_ZHANG": 12
+            },
+            "nextNode": "FAMILY_SHOW"
+          },
+          {
+            "text": "重点做亲子互动游戏",
+            "effects": {
+              "financialHealth": -60,
+              "tenantSatisfaction": 25,
+              "relationship_NPC_FAMILY_ZHANG": 10
+            },
+            "nextNode": "INTERACTIVE_GAMES"
+          }
+        ]
+      },
+      {
+        "nodeId": "MODEST_GATHERING",
+        "text": "你决定举办一个温馨的小规模聚会。虽然规模不大，但更容易管理，也能让大家有机会深入交流。王女士有些失望，但理解你的考虑。",
+        "image": "assets/images/characters/intimate_gathering.png",
+        "location_image": "assets/images/locations/cozy_meeting.png",
+        "qte": {
+          "type": "memory_sequence",
+          "config": {
+            "timeLimit": 25000,
+            "sequenceLength": 4,
+            "description": "记住每个住户的特殊需求！"
+          }
+        },
+        "choices": [
+          {
+            "text": "重点营造温馨氛围",
+            "effects": {
+              "tenantSatisfaction": 15,
+              "managerStress": -5
+            },
+            "nextNode": "COZY_ATMOSPHERE"
+          },
+          {
+            "text": "组织深度交流活动",
+            "effects": {
+              "tenantSatisfaction": 12,
+              "relationship_NPC_ARTIST_WANG": 5
+            },
+            "nextNode": "DEEP_COMMUNICATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "PROFESSIONAL_ARTISTS",
+        "text": "你邀请了几位专业艺术家参与活动。他们的作品质量很高，吸引了很多参观者。王女士兴奋地介绍着每一件作品，住户们也被艺术的魅力深深吸引。",
+        "image": "assets/images/characters/art_exhibition.png",
+        "location_image": "assets/images/locations/professional_art_show.png",
+        "qte": {
+          "type": "rotate",
+          "config": {
+            "timeLimit": 25000,
+            "targetAngle": 270,
+            "tolerance": 20,
+            "description": "调整艺术品的最佳展示角度！"
+          }
+        },
+        "storyFlags": {
+          "set": ["PROFESSIONAL_ART_EVENT", "HIGH_QUALITY_FESTIVAL"]
+        },
+        "effects": {
+          "tenantSatisfaction": 35,
+          "relationship_NPC_ARTIST_WANG": 20,
+          "managerStress": 5
+        },
+        "choices": [
+          {
+            "text": "计划定期举办艺术活动",
+            "effects": {
+              "tenantSatisfaction": 10,
+              "relationship_NPC_ARTIST_WANG": 8
+            },
+            "nextNode": "REGULAR_ART_EVENTS"
+          },
+          {
+            "text": "专注于本次活动的成功",
+            "nextNode": "FESTIVAL_SUCCESS"
+          }
+        ]
+      },
+      {
+        "nodeId": "COOKING_COMPETITION",
+        "text": "厨艺比赛非常成功！住户们展示了各自的拿手菜，李师傅担任评委，气氛热烈而友好。孩子们也参与了简单的烘焙活动，整个社区充满了美食的香味。",
+        "image": "assets/images/characters/cooking_contest.png",
+        "location_image": "assets/images/locations/cooking_competition.png",
+        "qte": {
+          "type": "click_sequence",
+          "config": {
+            "timeLimit": 35000,
+            "sequence": ["🔥", "🥘", "👨‍🍳", "🏆", "😋"],
+            "description": "按顺序完成烹饪步骤！"
+          }
+        },
+        "storyFlags": {
+          "set": ["COOKING_COMPETITION_SUCCESS", "COMMUNITY_BONDING"]
+        },
+        "effects": {
+          "tenantSatisfaction": 28,
+          "relationship_NPC_CHEF_LI": 18,
+          "relationship_NPC_FAMILY_ZHANG": 10
+        },
+        "choices": [
+          {
+            "text": "建立社区食谱分享平台",
+            "effects": {
+              "tenantSatisfaction": 8,
+              "relationship_NPC_CHEF_LI": 5
+            },
+            "nextNode": "RECIPE_SHARING"
+          },
+          {
+            "text": "组织获奖者分享经验",
+            "effects": {
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "WINNER_SHARING"
+          }
+        ]
+      },
+      {
+        "nodeId": "PLAYGROUND_SETUP",
+        "text": "大型游乐设施安装完成！孩子们兴奋地在新的滑梯、秋千和攀爬架上玩耍。家长们也很满意，纷纷表示这是给孩子们最好的节日礼物。安全措施得到了严格执行。",
+        "image": "assets/images/characters/children_playing.png",
+        "location_image": "assets/images/locations/playground_active.png",
+        "qte": {
+          "type": "precision_click",
+          "config": {
+            "timeLimit": 20000,
+            "targetCount": 6,
+            "description": "快速检查所有安全设施！"
+          }
+        },
+        "storyFlags": {
+          "set": ["PLAYGROUND_ESTABLISHED", "FAMILY_FRIENDLY_COMMUNITY"]
+        },
+        "effects": {
+          "tenantSatisfaction": 40,
+          "relationship_NPC_FAMILY_ZHANG": 20,
+          "managerStress": 8
+        },
+        "choices": [
+          {
+            "text": "制定游乐设施使用规则",
+            "effects": {
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "PLAYGROUND_RULES"
+          },
+          {
+            "text": "享受节日的成功",
+            "nextNode": "FESTIVAL_CELEBRATION"
+          }
+        ]
+      },
+      {
+        "nodeId": "RESIDENT_ORGANIZED",
+        "text": "住户们自发组织了一个简单但温馨的聚会。虽然你只提供了场地支持，但大家的热情很高。王女士虽然有些失望，但还是积极参与了组织工作。",
+        "image": "assets/images/characters/self_organized.png",
+        "location_image": "assets/images/locations/simple_gathering.png",
+        "qte": {
+          "type": "drag_drop",
+          "config": {
+            "timeLimit": 20000,
+            "items": ["桌子", "椅子", "音响", "装饰"],
+            "zones": ["入口", "中央", "角落", "舞台"],
+            "description": "帮助住户布置聚会场地！"
+          }
+        },
+        "effects": {
+          "tenantSatisfaction": 12,
+          "relationship_NPC_ARTIST_WANG": 2,
+          "managerStress": -8
+        },
+        "choices": [
+          {
+            "text": "提供更多支持帮助",
+            "effects": {
+              "financialHealth": -30,
+              "tenantSatisfaction": 8,
+              "relationship_NPC_ARTIST_WANG": 5
+            },
+            "nextNode": "ADDITIONAL_SUPPORT"
+          },
+          {
+            "text": "让住户完全自主管理",
+            "effects": {
+              "tenantSatisfaction": 5
+            },
+            "nextNode": "SELF_MANAGEMENT"
+          }
+        ]
+      },
+      {
+        "nodeId": "FESTIVAL_SUCCESS",
+        "text": "嘉年华活动圆满成功！整个社区洋溢着节日的欢乐气氛。住户们纷纷表示这是他们参加过的最棒的社区活动，你的组织能力得到了大家的一致认可。",
+        "image": "assets/images/characters/festival_success.png",
+        "location_image": "assets/images/locations/successful_festival.png",
+        "storyFlags": {
+          "set": ["FESTIVAL_GREAT_SUCCESS", "MANAGEMENT_EXCELLENCE"]
+        },
+        "effects": {
+          "tenantSatisfaction": 45,
+          "relationship_NPC_ARTIST_WANG": 25,
+          "relationship_NPC_CHEF_LI": 20,
+          "relationship_NPC_FAMILY_ZHANG": 22,
+          "relationship_STAFF_MAINTENANCE_CHEN": 15,
+          "managerStress": -10
+        },
+        "isEndNode": true
+      },
+      {
+        "nodeId": "FESTIVAL_CELEBRATION",
+        "text": "节日庆祝活动在欢声笑语中结束。孩子们不舍地离开游乐设施，大人们还在讨论着今天的精彩时刻。这次活动不仅成功举办，更重要的是增进了整个社区的凝聚力。",
+        "image": "assets/images/characters/happy_community.png",
+        "location_image": "assets/images/locations/celebration_end.png",
+        "storyFlags": {
+          "set": ["COMMUNITY_CELEBRATION_SUCCESS", "LASTING_MEMORIES"]
+        },
+        "effects": {
+          "tenantSatisfaction": 50,
+          "relationship_NPC_FAMILY_ZHANG": 25,
+          "relationship_NPC_ARTIST_WANG": 18,
+          "relationship_NPC_CHEF_LI": 15,
+          "managerStress": -15
+        },
+        "isEndNode": true
+      },
+      {
+        "nodeId": "SELF_MANAGEMENT",
+        "text": "住户们完全自主管理的聚会虽然简单，但充满了真诚的邻里情谊。大家分享食物、交流心得，孩子们也玩得很开心。这种自发的活动反而更有意义。",
+        "image": "assets/images/characters/authentic_gathering.png",
+        "location_image": "assets/images/locations/organic_community.png",
+        "storyFlags": {
+          "set": ["SELF_ORGANIZED_SUCCESS", "AUTHENTIC_COMMUNITY"]
+        },
+        "effects": {
+          "tenantSatisfaction": 20,
+          "relationship_NPC_ARTIST_WANG": 8,
+          "managerStress": -12
+        },
+        "isEndNode": true
+      }
+    ]
+  }
+}
