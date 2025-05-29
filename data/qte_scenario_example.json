@@ -1,0 +1,518 @@
+{
+  "id": "emergency_maintenance_crisis",
+  "title": "紧急维修危机",
+  "description": "小区水管突然爆裂，您需要迅速组织维修并安抚居民。",
+  "background": "assets/images/locations/plumbing_emergency.jpg",
+  "initialState": {
+    "playerStats": {
+      "reputation": 65,
+      "budget": 50000,
+      "stress": 40
+    },
+    "scenarioStats": {
+      "residentSatisfaction": 70,
+      "buildingIntegrity": 85,
+      "emergencyLevel": 90
+    },
+    "relationships": {
+      "residents": 60,
+      "maintenanceTeam": 75,
+      "propertyOwner": 80
+    }
+  },
+  "characters": [
+    {
+      "id": "resident_representative",
+      "name": "李大妈",
+      "role": "居民代表",
+      "description": "小区德高望重的居民代表，对物业要求严格",
+      "moods": [
+        {
+          "id": "angry",
+          "image": "assets/images/characters/resident_representative_angry.png"
+        },
+        {
+          "id": "neutral",
+          "image": "assets/images/characters/resident_representative_neutral.png"
+        },
+        {
+          "id": "happy",
+          "image": "assets/images/characters/resident_representative_happy.png"
+        }
+      ],
+      "initialMood": "angry"
+    },
+    {
+      "id": "maintenance_chief",
+      "name": "张师傅",
+      "role": "维修主管",
+      "description": "经验丰富的维修团队负责人",
+      "moods": [
+        {
+          "id": "stressed",
+          "image": "assets/images/characters/maintenance_chief_stressed.png"
+        },
+        {
+          "id": "neutral",
+          "image": "assets/images/characters/maintenance_chief_neutral.png"
+        },
+        {
+          "id": "confident",
+          "image": "assets/images/characters/maintenance_chief_confident.png"
+        }
+      ],
+      "initialMood": "stressed"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "scene",
+      "background": "assets/images/locations/property_office.jpg",
+      "dialogue": [
+        {
+          "character": "maintenance_chief",
+          "text": "【紧急】经理，三号楼的主水管爆裂了！整栋楼都在漏水，居民都急疯了！",
+          "mood": "stressed"
+        },
+        {
+          "character": "resident_representative",
+          "text": "我代表全体居民来投诉！这已经是今年第二次水管爆裂了，你们物业到底有没有尽责检查维护？",
+          "mood": "angry"
+        },
+        {
+          "text": "这是一场危机，您需要迅速应对这一紧急情况。"
+        }
+      ],
+      "next": "emergency_response"
+    },
+    {
+      "id": "emergency_response",
+      "type": "decision",
+      "text": "您将如何应对这一紧急情况？",
+      "options": [
+        {
+          "text": "立即组织维修团队前往现场，优先控制漏水",
+          "consequence": {
+            "scenarioStats": { "emergencyLevel": -20 },
+            "relationships": { "maintenanceTeam": 10 }
+          },
+          "next": "organize_maintenance"
+        },
+        {
+          "text": "先安抚居民情绪，解释情况并承诺尽快解决",
+          "consequence": {
+            "relationships": { "residents": 15 },
+            "playerStats": { "stress": 5 }
+          },
+          "next": "calm_residents"
+        },
+        {
+          "text": "联系外部专业紧急维修公司，请求支援",
+          "consequence": {
+            "playerStats": { "budget": -8000 },
+            "scenarioStats": { "emergencyLevel": -15 }
+          },
+          "next": "external_help"
+        }
+      ]
+    },
+    {
+      "id": "organize_maintenance",
+      "type": "scene",
+      "background": "assets/images/locations/plumbing_emergency.jpg",
+      "dialogue": [
+        {
+          "character": "maintenance_chief",
+          "text": "我已经集合了团队，需要您指导如何处理这次危机。水流压力很大，需要先关闭主阀门。",
+          "mood": "stressed"
+        },
+        {
+          "text": "您需要迅速关闭主阀门，这需要精确的操作。"
+        }
+      ],
+      "qte": {
+        "type": "StopTheMovingBar",
+        "instructionText": "在指定区域点击停止，准确关闭主阀门！",
+        "parameters": {
+          "targetZoneStart": 40,
+          "targetZoneEnd": 60,
+          "barSpeed": 40,
+          "timeLimit": 8000
+        },
+        "success": {
+          "next": "valve_closed_success",
+          "effects": {
+            "scenarioStats": { "emergencyLevel": -30, "buildingIntegrity": 5 },
+            "playerStats": { "reputation": 10 },
+            "characterAnimation": {
+              "maintenance_chief": "confident"
+            },
+            "notification": "成功关闭主阀门，控制了漏水！"
+          }
+        },
+        "failure": {
+          "next": "valve_closed_failure",
+          "effects": {
+            "scenarioStats": { "emergencyLevel": -10, "buildingIntegrity": -10 },
+            "playerStats": { "reputation": -5, "stress": 15 },
+            "characterAnimation": {
+              "maintenance_chief": "stressed",
+              "resident_representative": "angry"
+            },
+            "notification": "阀门关闭不及时，造成更多水损！"
+          }
+        }
+      }
+    },
+    {
+      "id": "valve_closed_success",
+      "type": "scene",
+      "background": "assets/images/locations/plumbing_emergency.jpg",
+      "dialogue": [
+        {
+          "character": "maintenance_chief",
+          "text": "干得好！主阀门已关闭，漏水暂时得到控制。接下来我们需要修复破损的管道。",
+          "mood": "confident"
+        },
+        {
+          "text": "水流已经停止，但居民们开始抱怨没有水用了。您需要平衡修复速度和居民需求。"
+        }
+      ],
+      "next": "repair_decision"
+    },
+    {
+      "id": "valve_closed_failure",
+      "type": "scene",
+      "background": "assets/images/locations/plumbing_emergency.jpg",
+      "dialogue": [
+        {
+          "character": "maintenance_chief",
+          "text": "阀门关闭不够及时，一楼已经积水严重！我们需要加派人手处理积水。",
+          "mood": "stressed"
+        },
+        {
+          "character": "resident_representative",
+          "text": "看看这一地的水！我家的地毯都泡烂了！物业必须负责赔偿！",
+          "mood": "angry"
+        }
+      ],
+      "next": "damage_control"
+    },
+    {
+      "id": "calm_residents",
+      "type": "scene",
+      "background": "assets/images/locations/community_gathering.jpg",
+      "dialogue": [
+        {
+          "text": "您召集了受影响的居民，准备安抚他们的情绪。"
+        },
+        {
+          "character": "resident_representative",
+          "text": "大家都很愤怒，您需要给我们一个合理的解释和补偿方案！",
+          "mood": "angry"
+        }
+      ],
+      "qte": {
+        "type": "ButtonMash",
+        "instructionText": "快速点击按钮，努力说服居民！",
+        "parameters": {
+          "targetClicks": 25,
+          "timeLimit": 6000
+        },
+        "success": {
+          "next": "residents_convinced",
+          "effects": {
+            "relationships": { "residents": 20 },
+            "playerStats": { "reputation": 15 },
+            "characterAnimation": {
+              "resident_representative": "neutral"
+            },
+            "notification": "成功安抚了居民情绪！"
+          }
+        },
+        "failure": {
+          "next": "residents_upset",
+          "effects": {
+            "relationships": { "residents": -10 },
+            "playerStats": { "reputation": -10, "stress": 20 },
+            "characterAnimation": {
+              "resident_representative": "angry"
+            },
+            "notification": "居民情绪未得到有效安抚，投诉升级！"
+          }
+        }
+      }
+    },
+    {
+      "id": "residents_convinced",
+      "type": "scene",
+      "background": "assets/images/locations/community_gathering.jpg",
+      "dialogue": [
+        {
+          "character": "resident_representative",
+          "text": "您的解释很有诚意，我们理解紧急情况。但希望能尽快恢复供水。",
+          "mood": "neutral"
+        },
+        {
+          "text": "您成功地安抚了居民情绪，现在可以集中精力解决维修问题了。"
+        }
+      ],
+      "next": "organize_maintenance"
+    },
+    {
+      "id": "residents_upset",
+      "type": "scene",
+      "background": "assets/images/locations/community_gathering.jpg",
+      "dialogue": [
+        {
+          "character": "resident_representative",
+          "text": "您的解释太牵强了！我们要向上级部门投诉，要求更换物业公司！",
+          "mood": "angry"
+        },
+        {
+          "text": "居民情绪激动，您需要先处理水管爆裂问题，再想办法补救关系。"
+        }
+      ],
+      "next": "organize_maintenance"
+    },
+    {
+      "id": "external_help",
+      "type": "scene",
+      "background": "assets/images/locations/emergency_service.jpg",
+      "dialogue": [
+        {
+          "text": "您联系了专业紧急维修公司。他们很快到达现场，但需要您协助提供小区的管道布局图。"
+        }
+      ],
+      "qte": {
+        "type": "ClickSequence",
+        "instructionText": "按照正确顺序点击管道图上的连接点！",
+        "parameters": {
+          "timeLimit": 10000,
+          "sequence": [
+            { "image": "assets/images/qte/pipe_connector_1.png" },
+            { "image": "assets/images/qte/pipe_connector_2.png" },
+            { "image": "assets/images/qte/pipe_connector_3.png" },
+            { "image": "assets/images/qte/pipe_connector_4.png" },
+            { "image": "assets/images/qte/pipe_connector_5.png" }
+          ]
+        },
+        "success": {
+          "next": "repair_efficient",
+          "effects": {
+            "scenarioStats": { "emergencyLevel": -40, "buildingIntegrity": 10 },
+            "playerStats": { "reputation": 20 },
+            "notification": "专业团队高效修复了管道！"
+          }
+        },
+        "failure": {
+          "next": "repair_delayed",
+          "effects": {
+            "scenarioStats": { "emergencyLevel": -20 },
+            "playerStats": { "budget": -5000, "reputation": -5 },
+            "notification": "管道图解读错误，维修延迟且额外付费！"
+          }
+        }
+      }
+    },
+    {
+      "id": "repair_efficient",
+      "type": "scene",
+      "background": "assets/images/locations/repaired_plumbing.jpg",
+      "dialogue": [
+        {
+          "text": "专业团队迅速定位并修复了问题。居民们对快速恢复供水感到满意。"
+        },
+        {
+          "character": "resident_representative",
+          "text": "虽然花了不少钱，但处理得很及时专业，居民们都很满意。",
+          "mood": "happy"
+        }
+      ],
+      "next": "crisis_resolved"
+    },
+    {
+      "id": "repair_delayed",
+      "type": "scene",
+      "background": "assets/images/locations/emergency_service.jpg",
+      "dialogue": [
+        {
+          "text": "由于管道图解读错误，维修团队需要重新探测管道位置，造成了延误。"
+        },
+        {
+          "character": "resident_representative",
+          "text": "都这么久了还没修好？居民们都没水用，生活受到很大影响！",
+          "mood": "angry"
+        }
+      ],
+      "next": "damage_control"
+    },
+    {
+      "id": "repair_decision",
+      "type": "decision",
+      "text": "您将如何安排管道修复工作？",
+      "options": [
+        {
+          "text": "暂时安装临时管道，保证居民基本用水，然后慢慢彻底修复",
+          "consequence": {
+            "relationships": { "residents": 15 },
+            "scenarioStats": { "buildingIntegrity": -5 }
+          },
+          "next": "temporary_solution"
+        },
+        {
+          "text": "集中力量彻底修复，暂时安排送水车为居民提供用水",
+          "consequence": {
+            "playerStats": { "budget": -5000 },
+            "scenarioStats": { "buildingIntegrity": 15 }
+          },
+          "next": "thorough_repair"
+        }
+      ]
+    },
+    {
+      "id": "damage_control",
+      "type": "decision",
+      "text": "面对严重漏水和居民投诉，您将如何进行危机处理？",
+      "options": [
+        {
+          "text": "承诺对受损住户进行适当赔偿，同时加紧修复",
+          "consequence": {
+            "playerStats": { "budget": -12000, "reputation": 10 },
+            "relationships": { "residents": 15 }
+          },
+          "next": "compensate_residents"
+        },
+        {
+          "text": "组织志愿者帮助居民清理积水，同时进行管道修复",
+          "consequence": {
+            "playerStats": { "stress": 10 },
+            "relationships": { "residents": 8, "maintenanceTeam": 5 }
+          },
+          "next": "community_effort"
+        }
+      ]
+    },
+    {
+      "id": "temporary_solution",
+      "type": "scene",
+      "background": "assets/images/locations/temporary_plumbing.jpg",
+      "dialogue": [
+        {
+          "character": "maintenance_chief",
+          "text": "临时管道已安装完毕，居民可以恢复基本用水了。但这只是权宜之计，我们需要一周时间彻底修复。",
+          "mood": "neutral"
+        },
+        {
+          "character": "resident_representative",
+          "text": "能有水用就好，希望正式修复时不要再出问题。",
+          "mood": "neutral"
+        }
+      ],
+      "next": "crisis_managed"
+    },
+    {
+      "id": "thorough_repair",
+      "type": "scene",
+      "background": "assets/images/locations/water_delivery.jpg",
+      "dialogue": [
+        {
+          "text": "您安排了送水车为居民提供临时用水，同时维修团队专注于彻底修复管道。"
+        },
+        {
+          "character": "maintenance_chief",
+          "text": "多亏能专心修复，我们用了最好的材料重建了这段管网，以后应该不会再有类似问题了。",
+          "mood": "confident"
+        },
+        {
+          "character": "resident_representative",
+          "text": "虽然这两天不太方便，但听说修好后会更可靠，我们也能接受。",
+          "mood": "neutral"
+        }
+      ],
+      "next": "crisis_resolved"
+    },
+    {
+      "id": "compensate_residents",
+      "type": "scene",
+      "background": "assets/images/locations/resident_meeting.jpg",
+      "dialogue": [
+        {
+          "text": "您召开居民会议，宣布了赔偿方案。受损住户对赔偿表示满意。"
+        },
+        {
+          "character": "resident_representative",
+          "text": "物业的态度还是很诚恳的，能及时赔偿也让大家心里好受些。",
+          "mood": "neutral"
+        }
+      ],
+      "next": "crisis_managed"
+    },
+    {
+      "id": "community_effort",
+      "type": "scene",
+      "background": "assets/images/locations/community_cleanup.jpg",
+      "dialogue": [
+        {
+          "text": "您组织了员工和部分热心居民一起清理积水，增强了社区凝聚力。"
+        },
+        {
+          "character": "resident_representative",
+          "text": "大家一起出力，情况比我想象的好多了。不过物业还是应该检讨为什么会发生这种事。",
+          "mood": "neutral"
+        }
+      ],
+      "next": "crisis_managed"
+    },
+    {
+      "id": "crisis_managed",
+      "type": "ending",
+      "title": "危机得到控制",
+      "description": "您成功处理了紧急情况，虽然还有改进空间，但基本维持了小区正常运转。",
+      "outcomes": [
+        "居民对您的危机处理能力有了基本认可",
+        "需要关注管道系统的全面维护，预防类似事件再次发生",
+        "物业团队在压力下展现了专业素质"
+      ],
+      "stats": {
+        "playerStats": {
+          "reputation": 5,
+          "experience": 20
+        }
+      }
+    },
+    {
+      "id": "crisis_resolved",
+      "type": "ending",
+      "title": "危机圆满解决",
+      "description": "您出色地处理了这次紧急事件，赢得了居民的信任和尊重。",
+      "outcomes": [
+        "您的决策大大提升了物业在居民心中的形象",
+        "维修团队的专业能力得到了展示和锻炼",
+        "这次经验为未来处理紧急情况提供了宝贵借鉴"
+      ],
+      "stats": {
+        "playerStats": {
+          "reputation": 15,
+          "experience": 30
+        }
+      }
+    }
+  ],
+  "qteSequences": {
+    "pipeSystem": [
+      { "image": "assets/images/qte/pipe_connector_1.png" },
+      { "image": "assets/images/qte/pipe_connector_2.png" },
+      { "image": "assets/images/qte/pipe_connector_3.png" },
+      { "image": "assets/images/qte/pipe_connector_4.png" },
+      { "image": "assets/images/qte/pipe_connector_5.png" }
+    ],
+    "electricSystem": [
+      { "image": "assets/images/qte/electric_switch_1.png" },
+      { "image": "assets/images/qte/electric_switch_2.png" },
+      { "image": "assets/images/qte/electric_switch_3.png" },
+      { "image": "assets/images/qte/electric_fuse.png" }
+    ]
+  }
+} 

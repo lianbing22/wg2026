@@ -1,0 +1,555 @@
+/**
+ * 物业管理模拟器 - 增强型QTE系统样式
+ * 包含基础QTE样式的增强版本，增加了更多动画效果和视觉反馈
+ */
+
+/* 基础QTE容器 */
+.qte-container {
+    background-color: rgba(0,0,0,0.85);
+    padding: 25px;
+    border-radius: 15px;
+    margin: 20px 0;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    z-index: 1000;
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    border: 2px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+/* QTE出现和消失动画 */
+@keyframes qte-appear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+        filter: blur(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+        filter: blur(0);
+    }
+}
+
+@keyframes qte-disappear {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+        filter: blur(0);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+        filter: blur(5px);
+    }
+}
+
+/* QTE成功和失败的视觉状态 */
+.qte-container.qte-success {
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+    border: 2px solid rgba(76, 175, 80, 0.5);
+}
+
+.qte-container.qte-failure {
+    box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+    border: 2px solid rgba(244, 67, 54, 0.5);
+}
+
+.qte-instruction {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.qte-content-area {
+    margin: 20px 0;
+    position: relative;
+    min-height: 100px;
+}
+
+/* 倒计时效果 */
+.qte-countdown {
+    font-size: 80px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    font-weight: 900;
+    text-shadow: 0 0 15px rgba(255,255,255,0.7);
+    opacity: 0.9;
+    transition: all 0.2s ease;
+}
+
+.qte-countdown.pulse {
+    animation: countdown-pulse 0.8s ease-out;
+}
+
+.qte-countdown.go {
+    color: #4CAF50;
+    animation: countdown-go 0.5s ease-out;
+    font-size: 60px;
+}
+
+@keyframes countdown-pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.7; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+}
+
+@keyframes countdown-go {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.3); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* 结果显示 */
+.qte-result {
+    font-size: 40px;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    animation: result-appear 0.5s ease-out;
+}
+
+.qte-result.success {
+    color: #4CAF50;
+}
+
+.qte-result.failure {
+    color: #F44336;
+}
+
+@keyframes result-appear {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    70% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* 时间指示器 */
+.qte-time-indicator {
+    height: 8px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.qte-time-bar {
+    height: 100%;
+    background-color: #2196F3;
+    border-radius: 4px;
+    width: 100%;
+    transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+.qte-time-bar.pulse-warning {
+    animation: pulse-warning 1s infinite;
+}
+
+@keyframes pulse-warning {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.qte-time-display {
+    color: white;
+    font-size: 16px;
+    margin: 10px 0;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.qte-time-display.qte-time-warning {
+    color: #F44336;
+    transform: scale(1.1);
+    text-shadow: 0 0 8px rgba(244, 67, 54, 0.8);
+}
+
+/* 停止移动条QTE */
+.qte-track {
+    height: 40px;
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    position: relative;
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.qte-target-zone {
+    position: absolute;
+    height: 100%;
+    background-color: rgba(76, 175, 80, 0.4);
+    border: 2px solid rgba(76, 175, 80, 0.6);
+    border-radius: 20px;
+    z-index: 1;
+    box-sizing: border-box;
+}
+
+.qte-moving-bar {
+    position: absolute;
+    width: 5%;
+    height: 100%;
+    background-color: white;
+    border-radius: 20px;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* 移动条脉冲效果 */
+.qte-pulse-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 5px rgba(255,255,255,0.8);
+    animation: pulse-effect 1.5s infinite;
+}
+
+@keyframes pulse-effect {
+    0% { box-shadow: 0 0 5px rgba(255,255,255,0.8); }
+    50% { box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+    100% { box-shadow: 0 0 5px rgba(255,255,255,0.8); }
+}
+
+/* 成功和失败效果 */
+.qte-success-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+    animation: success-effect 1s;
+}
+
+.qte-failure-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.8);
+    animation: failure-effect 1s;
+}
+
+@keyframes success-effect {
+    0% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); }
+}
+
+@keyframes failure-effect {
+    0% { box-shadow: 0 0 5px rgba(244, 67, 54, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(244, 67, 54, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(244, 67, 54, 0.5); }
+}
+
+.qte-button {
+    background-color: var(--primary-color, #3F51B5);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.qte-button:hover {
+    background-color: #3a5fc4;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.qte-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.qte-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 按钮涟漪效果 */
+.qte-button-ripple {
+    position: absolute;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    width: 100px;
+    height: 100px;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* 连续按钮点击QTE */
+.qte-progress-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.qte-progress-bar {
+    height: 25px;
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 12.5px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.qte-progress-fill {
+    height: 100%;
+    background-color: var(--primary-color, #3F51B5);
+    border-radius: 12.5px;
+    width: 0%;
+    transition: width 0.2s ease, background-color 0.3s ease;
+    box-shadow: 0 0 10px rgba(63, 81, 181, 0.5);
+}
+
+.qte-progress-fill.qte-progress-flash {
+    animation: progress-flash 0.3s;
+}
+
+@keyframes progress-flash {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+/* 进度标记 */
+.qte-progress-marker {
+    position: absolute;
+    width: 2px;
+    height: 25px;
+    background-color: rgba(255,255,255,0.5);
+    top: 0;
+}
+
+.qte-counter {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    margin: 15px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 图像点击序列QTE */
+.qte-sequence-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.qte-sequence-indicator {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.qte-sequence-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.qte-sequence-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.qte-sequence-order {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 25px;
+    height: 25px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 3;
+}
+
+.qte-sequence-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--primary-color, #3F51B5);
+    box-sizing: border-box;
+    border-radius: 7px;
+    animation: sequence-pulse 1.5s infinite;
+    z-index: 2;
+}
+
+@keyframes sequence-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(63, 81, 181, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(63, 81, 181, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(63, 81, 181, 0); }
+}
+
+.qte-sequence-item:hover {
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.6);
+}
+
+.qte-sequence-item:hover img {
+    filter: brightness(1.2);
+}
+
+.qte-sequence-correct {
+    border-color: #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+}
+
+.qte-sequence-error {
+    border-color: #F44336;
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.5);
+    animation: shake 0.5s;
+}
+
+/* 正确和错误点击动画 */
+.qte-correct-click {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(76, 175, 80, 0.3);
+    animation: correct-click 0.7s forwards;
+    z-index: 3;
+}
+
+.qte-error-click {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(244, 67, 54, 0.3);
+    animation: error-click 0.7s forwards;
+    z-index: 3;
+}
+
+@keyframes correct-click {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes error-click {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.qte-sequence-complete {
+    animation: success-flash 1s;
+}
+
+.qte-sequence-timeout {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+    transition: all 0.5s ease;
+}
+
+@keyframes success-flash {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    50% { box-shadow: 0 0 20px 10px rgba(76, 175, 80, 0.7); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .qte-container {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .qte-instruction {
+        font-size: 18px;
+    }
+    
+    .qte-button {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+    
+    .qte-sequence-item {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .qte-countdown {
+        font-size: 60px;
+    }
+    
+    .qte-result {
+        font-size: 32px;
+    }
+} 

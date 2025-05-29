@@ -1,0 +1,308 @@
+{
+  "id": "RENTAL_DISPUTE_SCENARIO",
+  "title": "租金纠纷调解",
+  "description": "一位资深租户与新业主之间发生租金争议，你需要作为物业经理进行调解，平衡双方利益。",
+  "initialState": {
+    "tenantSatisfaction": 65,
+    "managerStress": 25,
+    "buildingCondition": 80,
+    "financialHealth": 4500
+  },
+  "involvedNPCs": ["NPC_ELDERLY_TENANT_CHEN", "NPC_NEW_OWNER_ZHAO", "NPC_NEIGHBOR_REPRESENTATIVE_LI"],
+  "startNode": "DISPUTE_NOTIFICATION",
+  "nodes": {
+    "DISPUTE_NOTIFICATION": {
+      "text": "周一早晨，陈奶奶来到物业办公室，情绪激动：\u201C小赵买下这房子才几个月，就要涨我的租金，涨了足足30%！我住这儿都十五年了，以前老房东从不这样。这不合理！\u201D",
+      "image": "assets/images/characters/elderly_tenant_upset.png",
+      "locationImage": "assets/images/locations/property_office.png",
+      "speaker": "陈奶奶",
+      "effects": {
+        "managerStress": 10
+      },
+      "choices": [
+        {
+          "text": "先安抚陈奶奶情绪，详细了解情况",
+          "nextNode": "CALM_TENANT_FIRST",
+          "effects": {
+            "relationship_NPC_ELDERLY_TENANT_CHEN": 3
+          }
+        },
+        {
+          "text": "立即联系新业主赵先生，了解他的立场",
+          "nextNode": "CONTACT_OWNER_FIRST",
+          "effects": {
+            "relationship_NPC_NEW_OWNER_ZHAO": 2,
+            "relationship_NPC_ELDERLY_TENANT_CHEN": -1
+          }
+        },
+        {
+          "text": "查阅租赁合同和相关法规，了解双方权利义务",
+          "nextNode": "CHECK_CONTRACTS",
+          "effects": {
+            "managerStress": 5
+          }
+        }
+      ]
+    },
+    "CALM_TENANT_FIRST": {
+      "text": "你给陈奶奶倒了杯热茶，耐心听她讲述情况。她说：\u201C我是退休教师，就靠退休金生活。这么大幅度涨租，我真的付不起。我对这里很有感情，邻居们都很照顾我...\u201D她的眼眶湿润了。",
+      "image": "assets/images/characters/elderly_tenant_sad.png",
+      "locationImage": "assets/images/locations/property_office_meeting.png",
+      "speaker": "陈奶奶",
+      "effects": {
+        "relationship_NPC_ELDERLY_TENANT_CHEN": 2
+      },
+      "choices": [
+        {
+          "text": "承诺会和赵先生沟通，寻求合理解决方案",
+          "nextNode": "PROMISE_MEDIATION",
+          "effects": {
+            "relationship_NPC_ELDERLY_TENANT_CHEN": 3
+          }
+        },
+        {
+          "text": "建议陈奶奶考虑搬到价格更合适的房子",
+          "nextNode": "SUGGEST_MOVING",
+          "effects": {
+            "relationship_NPC_ELDERLY_TENANT_CHEN": -5,
+            "tenantSatisfaction": -3
+          }
+        }
+      ]
+    },
+    "CONTACT_OWNER_FIRST": {
+      "text": "你联系了赵先生，他很快赶来了物业办公室。他解释道：\u201C我理解陈奶奶的情况，但我刚买这房子贷款压力很大。市场租金都涨了，她付的租金比市场价低太多了。我也是小投资者，需要合理回报。\u201D",
+      "image": "assets/images/characters/new_owner_explaining.png",
+      "locationImage": "assets/images/locations/property_office_serious.png",
+      "speaker": "赵先生",
+      "choices": [
+        {
+          "text": "建议小幅度增加租金，分几次逐步调整",
+          "nextNode": "SUGGEST_GRADUAL_INCREASE",
+          "effects": {
+            "relationship_NPC_NEW_OWNER_ZHAO": -1,
+            "relationship_NPC_ELDERLY_TENANT_CHEN": 2
+          }
+        },
+        {
+          "text": "支持业主有权按市场价调整租金",
+          "nextNode": "SUPPORT_OWNER_RIGHTS",
+          "effects": {
+            "relationship_NPC_NEW_OWNER_ZHAO": 4,
+            "relationship_NPC_ELDERLY_TENANT_CHEN": -4,
+            "tenantSatisfaction": -5
+          }
+        }
+      ]
+    },
+    "CHECK_CONTRACTS": {
+      "text": "你仔细查阅了租赁合同和相关法规。合同上确实规定业主可以调整租金，但需提前一个月通知。而地方法规建议住房租金年涨幅不超过5-10%。",
+      "image": "assets/images/characters/property_manager_researching.png",
+      "locationImage": "assets/images/locations/document_review.png",
+      "speaker": "旁白",
+      "hasQTE": true,
+      "qteData": {
+        "type": "ClickSequence",
+        "instructionText": "快速找出合同中的关键条款！按正确顺序点击文件区域。",
+        "parameters": {
+          "sequence": [
+            {"image": "assets/images/qte/contract_header.png"},
+            {"image": "assets/images/qte/rental_terms.png"},
+            {"image": "assets/images/qte/adjustment_clause.png"},
+            {"image": "assets/images/qte/signatures.png"}
+          ],
+          "timeLimit": 8000
+        },
+        "successNode": "CONTRACT_REVIEW_SUCCESS",
+        "failureNode": "CONTRACT_REVIEW_FAILURE"
+      }
+    },
+    "CONTRACT_REVIEW_SUCCESS": {
+      "text": "你敏锐地发现合同中有一条特殊条款：\u201C对于连续租住超过10年的老租户，租金调整幅度每年不应超过15%，且业主应提供至少两个月的书面通知期。\u201D这是前业主特别添加的条款！",
+      "image": "assets/images/characters/property_manager_discovery.png",
+      "locationImage": "assets/images/locations/important_document.png",
+      "speaker": "你",
+      "effects": {
+        "managerStress": -5
+      },
+      "choices": [
+        {
+          "text": "召集双方当面协商，出示这一条款",
+          "nextNode": "ARRANGE_MEETING",
+          "effects": {
+            "relationship_NPC_ELDERLY_TENANT_CHEN": 3
+          }
+        },
+        {
+          "text": "先私下联系赵先生，告知他这一条款的约束",
+          "nextNode": "INFORM_OWNER_PRIVATELY",
+          "effects": {
+            "relationship_NPC_NEW_OWNER_ZHAO": -2
+          }
+        }
+      ]
+    },
+    "CONTRACT_REVIEW_FAILURE": {
+      "text": "你查阅了大量文件，但未能找到明确限制租金上涨的具体条款。这使得调解工作变得更加困难，只能依靠双方的善意和一般性法规来协商。",
+      "image": "assets/images/characters/property_manager_frustrated.png",
+      "locationImage": "assets/images/locations/messy_documents.png",
+      "speaker": "你",
+      "effects": {
+        "managerStress": 8
+      },
+      "choices": [
+        {
+          "text": "建议双方参考当地租金指导价格进行协商",
+          "nextNode": "SUGGEST_GUIDELINE_PRICE",
+          "effects": {
+            "tenantSatisfaction": 2
+          }
+        },
+        {
+          "text": "请社区居委会出面协调，寻求社区和谐",
+          "nextNode": "INVOLVE_COMMUNITY_COMMITTEE",
+          "effects": {
+            "relationship_NPC_NEIGHBOR_REPRESENTATIVE_LI": 4
+          }
+        }
+      ]
+    },
+    "ARRANGE_MEETING": {
+      "text": "你安排了一次三方会谈。当你出示特殊条款时，赵先生显得很惊讶：\u201C卖房时没人告诉我这个条款！\u201D陈奶奶则松了口气：\u201C老房东说过会保护我的租住权益，原来是写在合同里的。\u201D",
+      "image": "assets/images/characters/three_way_meeting.png",
+      "locationImage": "assets/images/locations/negotiation_table.png",
+      "speaker": "旁白",
+      "hasQTE": true,
+      "qteData": {
+        "type": "StopTheMovingBar",
+        "instructionText": "把握恰当时机介入对话，稳定双方情绪！",
+        "parameters": {
+          "targetZoneStart": 45,
+          "targetZoneEnd": 55,
+          "barSpeed": 40
+        },
+        "successNode": "MEDIATION_SUCCESS",
+        "failureNode": "MEDIATION_FAILURE"
+      }
+    },
+    "MEDIATION_SUCCESS": {
+      "text": "你恰到好处的调解让双方情绪平静下来。赵先生思考片刻后说：\u201C我会遵守合同精神，租金调整控制在15%以内，并给予三个月缓冲期。\u201D陈奶奶也表示理解业主的处境，愿意接受合理调整。",
+      "image": "assets/images/characters/handshake_agreement.png",
+      "locationImage": "assets/images/locations/peaceful_resolution.png",
+      "speaker": "旁白",
+      "effects": {
+        "tenantSatisfaction": 10,
+        "relationship_NPC_ELDERLY_TENANT_CHEN": 5,
+        "relationship_NPC_NEW_OWNER_ZHAO": 3,
+        "managerStress": -10
+      },
+      "choices": [
+        {
+          "text": "提议制定长期租约，明确未来几年的租金调整计划",
+          "nextNode": "PROPOSE_LONG_TERM_PLAN",
+          "effects": {
+            "tenantSatisfaction": 5
+          }
+        },
+        {
+          "text": "建议社区为经济困难的老年租户设立帮扶基金",
+          "nextNode": "SUGGEST_SUPPORT_FUND",
+          "effects": {
+            "tenantSatisfaction": 8,
+            "financialHealth": -100
+          }
+        }
+      ]
+    },
+    "MEDIATION_FAILURE": {
+      "text": "谈判气氛逐渐紧张。赵先生认为前业主没有权力限制他的权益：\u201C我购房时完全不知情，这对我不公平！\u201D陈奶奶则激动地表示会寻求法律援助。双方争执不下。",
+      "image": "assets/images/characters/tense_argument.png",
+      "locationImage": "assets/images/locations/heated_discussion.png",
+      "speaker": "旁白",
+      "effects": {
+        "tenantSatisfaction": -8,
+        "managerStress": 15
+      },
+      "choices": [
+        {
+          "text": "建议暂停谈判，各自冷静几天后再议",
+          "nextNode": "PAUSE_NEGOTIATION",
+          "effects": {
+            "managerStress": -5
+          }
+        },
+        {
+          "text": "提议请专业调解人介入，避免矛盾升级",
+          "nextNode": "PROFESSIONAL_MEDIATOR",
+          "effects": {
+            "financialHealth": -150
+          }
+        }
+      ]
+    },
+    "PROPOSE_LONG_TERM_PLAN": {
+      "text": "在你的建议下，双方达成了为期三年的租约协议。第一年涨幅10%，之后两年每年涨幅不超过8%。这给了陈奶奶稳定的预期，也让赵先生获得了合理回报。小区其他租户得知此事后，对物业的公平调解表示赞赏。",
+      "image": "assets/images/characters/signing_agreement.png",
+      "locationImage": "assets/images/locations/contract_signing.png",
+      "speaker": "旁白",
+      "effects": {
+        "tenantSatisfaction": 12,
+        "relationship_NPC_ELDERLY_TENANT_CHEN": 5,
+        "relationship_NPC_NEW_OWNER_ZHAO": 5
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "睿智调解者",
+        "description": "你成功地平衡了老租户和新业主的利益，创造了双赢局面。你的专业调解能力和对合同细节的把握赢得了社区各方的尊重，提升了物业在租户中的声誉。",
+        "metrics": {
+          "tenantSatisfaction": 15,
+          "reputation": 10,
+          "communityHarmony": 8
+        }
+      }
+    },
+    "SUGGEST_SUPPORT_FUND": {
+      "text": "你提议物业牵头设立"睦邻互助基金"，为经济困难的长期老租户提供租金补贴。这一创新提议获得了社区广泛支持，多位业主自愿捐款。李代表特别赞赏这一举措，认为体现了社区的人文关怀。",
+      "image": "assets/images/characters/community_meeting.png",
+      "locationImage": "assets/images/locations/donation_ceremony.png",
+      "speaker": "李代表",
+      "effects": {
+        "relationship_NPC_NEIGHBOR_REPRESENTATIVE_LI": 10,
+        "tenantSatisfaction": 15,
+        "financialHealth": -200
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "社区建设先锋",
+        "description": "你不仅解决了具体的租金纠纷，还创新性地建立了长效机制，增强了社区凝聚力。这种超越物业基本职责的做法，展现了你对社区建设的远见和责任感。",
+        "metrics": {
+          "tenantSatisfaction": 20,
+          "communityHarmony": 15,
+          "financialPressure": 5
+        }
+      }
+    },
+    "PROFESSIONAL_MEDIATOR": {
+      "text": "你聘请了一位资深的房地产调解专家介入。在他的专业引导下，双方冷静分析了各自权益和义务。最终达成折中方案：租金上调18%，但分两次执行，并由物业提供一次性200元的搬家补贴给陈奶奶。",
+      "image": "assets/images/characters/professional_mediation.png",
+      "locationImage": "assets/images/locations/formal_mediation.png",
+      "speaker": "专业调解人",
+      "effects": {
+        "tenantSatisfaction": 5,
+        "relationship_NPC_ELDERLY_TENANT_CHEN": 2,
+        "relationship_NPC_NEW_OWNER_ZHAO": 2,
+        "financialHealth": -200
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "务实解决者",
+        "description": "在复杂纠纷面前，你懂得寻求专业帮助，体现了务实的管理风格。虽然结果不尽完美，但有效避免了矛盾升级，维护了社区的基本和谐。",
+        "metrics": {
+          "tenantSatisfaction": 5,
+          "conflictResolution": 10,
+          "financialImpact": -5
+        }
+      }
+    }
+  }
+} 

@@ -1,0 +1,403 @@
+{
+  "id": "COMMUNITY_EPIDEMIC_MANAGEMENT",
+  "title": "小区疫情防控危机",
+  "description": "社区突发传染病疫情，作为物业经理，你需要迅速采取措施，平衡防疫需求和居民生活便利，同时维护社区秩序。",
+  "initialState": {
+    "tenantSatisfaction": 60,
+    "managerStress": 30,
+    "buildingCondition": 85,
+    "financialHealth": 4200
+  },
+  "involvedNPCs": ["NPC_COMMUNITY_DOCTOR_WU", "NPC_RESIDENT_COMMITTEE_ZHANG", "NPC_ANXIOUS_FAMILY_LIU", "NPC_ELDERLY_RESIDENT_HUANG"],
+  "startNode": "EPIDEMIC_ALERT",
+  "nodes": {
+    "EPIDEMIC_ALERT": {
+      "text": "周一早晨，你接到社区卫生站吴医生的电话：\u201C小区内已确认3例传染病病例，情况紧急。社区需要立即启动防疫预案，物业必须配合采取措施。\u201D",
+      "image": "assets/images/characters/community_doctor_serious.png",
+      "locationImage": "assets/images/locations/community_health_center.png",
+      "speaker": "吴医生",
+      "effects": {
+        "managerStress": 20
+      },
+      "choices": [
+        {
+          "text": "立即召开物业紧急会议，制定防疫行动方案",
+          "nextNode": "EMERGENCY_MEETING",
+          "effects": {
+            "managerStress": 5
+          }
+        },
+        {
+          "text": "先通知全体居民，发布防疫预警信息",
+          "nextNode": "NOTIFY_RESIDENTS",
+          "effects": {
+            "tenantSatisfaction": -5,
+            "relationship_NPC_ANXIOUS_FAMILY_LIU": -2
+          }
+        },
+        {
+          "text": "联系居委会张主任，共同商议应对策略",
+          "nextNode": "CONTACT_COMMITTEE",
+          "effects": {
+            "relationship_NPC_RESIDENT_COMMITTEE_ZHANG": 3
+          }
+        }
+      ]
+    },
+    "EMERGENCY_MEETING": {
+      "text": "你迅速召集物业团队开会。讨论中，有人主张严格管控人员进出，有人担忧过严措施会引发居民不满。关键是找到平衡点，既要防疫有效，又要尽量减少对居民生活的影响。",
+      "image": "assets/images/characters/property_team_meeting.png",
+      "locationImage": "assets/images/locations/property_office_emergency.png",
+      "speaker": "旁白",
+      "choices": [
+        {
+          "text": "制定严格的出入管理规定，实行24小时值守",
+          "nextNode": "STRICT_CONTROL",
+          "effects": {
+            "tenantSatisfaction": -10,
+            "managerStress": 10,
+            "relationship_NPC_ELDERLY_RESIDENT_HUANG": -3
+          },
+          "storyFlagSet": {
+            "IMPLEMENTED_STRICT_CONTROL": true
+          }
+        },
+        {
+          "text": "采取适度防控措施，保障基本生活物资配送",
+          "nextNode": "MODERATE_MEASURES",
+          "effects": {
+            "tenantSatisfaction": -3,
+            "managerStress": 5
+          }
+        },
+        {
+          "text": "以宣传教育为主，鼓励居民自我防护",
+          "nextNode": "EDUCATION_FIRST",
+          "effects": {
+            "tenantSatisfaction": 5,
+            "relationship_NPC_COMMUNITY_DOCTOR_WU": -5
+          }
+        }
+      ]
+    },
+    "STRICT_CONTROL": {
+      "text": "你决定实施严格管控：小区封闭管理，居民非必要不外出，外来人员一律不得入内，快递外卖集中放置在门口，由物业配送到各单元。这引发了一些居民的抱怨。",
+      "image": "assets/images/characters/guard_checking.png",
+      "locationImage": "assets/images/locations/community_gate_closed.png",
+      "speaker": "旁白",
+      "hasQTE": true,
+      "qteData": {
+        "type": "ButtonMash",
+        "instructionText": "紧急组织防疫物资分发！快速点击完成任务！",
+        "parameters": {
+          "targetClicks": 20,
+          "timeLimit": 6000
+        },
+        "successNode": "RESOURCE_DISTRIBUTION_SUCCESS",
+        "failureNode": "RESOURCE_DISTRIBUTION_FAILURE"
+      }
+    },
+    "RESOURCE_DISTRIBUTION_SUCCESS": {
+      "text": "在你的高效组织下，防疫物资迅速分发到每个家庭。口罩、消毒液和防疫指南一应俱全。尽管管控严格，但充足的物资供应和周到的服务减轻了居民的不满。",
+      "image": "assets/images/characters/property_staff_distributing.png",
+      "locationImage": "assets/images/locations/supplies_distribution.png",
+      "speaker": "旁白",
+      "effects": {
+        "tenantSatisfaction": 8,
+        "managerStress": -5
+      },
+      "choices": [
+        {
+          "text": "建立线上社区群，及时回应居民需求",
+          "nextNode": "ONLINE_COMMUNITY_GROUP",
+          "effects": {
+            "tenantSatisfaction": 5,
+            "managerStress": 3
+          }
+        },
+        {
+          "text": "重点关注老人和儿童家庭，提供特别帮助",
+          "nextNode": "SPECIAL_CARE",
+          "effects": {
+            "relationship_NPC_ELDERLY_RESIDENT_HUANG": 8,
+            "relationship_NPC_ANXIOUS_FAMILY_LIU": 5
+          }
+        }
+      ]
+    },
+    "RESOURCE_DISTRIBUTION_FAILURE": {
+      "text": "物资分发过程混乱，有些家庭领到了过多物资，而另一些却没有及时获得。刘家的孩子需要药物，但迟迟拿不到配送。这引发了一些居民的强烈不满。",
+      "image": "assets/images/characters/anxious_family_upset.png",
+      "locationImage": "assets/images/locations/chaotic_distribution.png",
+      "speaker": "刘先生",
+      "effects": {
+        "tenantSatisfaction": -12,
+        "relationship_NPC_ANXIOUS_FAMILY_LIU": -8
+      },
+      "choices": [
+        {
+          "text": "亲自上门为受影响家庭道歉并补发物资",
+          "nextNode": "PERSONAL_APOLOGY",
+          "effects": {
+            "tenantSatisfaction": 5,
+            "relationship_NPC_ANXIOUS_FAMILY_LIU": 4,
+            "managerStress": 5
+          }
+        },
+        {
+          "text": "紧急改进配送系统，增加志愿者支持",
+          "nextNode": "IMPROVE_SYSTEM",
+          "effects": {
+            "tenantSatisfaction": 3,
+            "financialHealth": -100
+          }
+        }
+      ]
+    },
+    "MODERATE_MEASURES": {
+      "text": "你决定采取适度的防控措施：测温进出，访客需登记，公共区域定时消毒，鼓励居民减少外出，并组织物资集中采购配送服务。大多数居民对此表示理解。",
+      "image": "assets/images/characters/temperature_check.png",
+      "locationImage": "assets/images/locations/community_entrance_check.png",
+      "speaker": "旁白",
+      "choices": [
+        {
+          "text": "加强对确诊患者所在单元的消毒和监测",
+          "nextNode": "FOCUSED_PREVENTION",
+          "effects": {
+            "buildingCondition": 5,
+            "relationship_NPC_COMMUNITY_DOCTOR_WU": 5
+          },
+          "hasQTE": true,
+          "qteData": {
+            "type": "ClickSequence",
+            "instructionText": "按正确顺序点击需要重点消毒的区域！",
+            "parameters": {
+              "sequence": [
+                {"image": "assets/images/qte/elevator_buttons.png"},
+                {"image": "assets/images/qte/door_handles.png"},
+                {"image": "assets/images/qte/stair_railings.png"},
+                {"image": "assets/images/qte/mailboxes.png"}
+              ],
+              "timeLimit": 7000
+            },
+            "successNode": "DISINFECTION_SUCCESS",
+            "failureNode": "DISINFECTION_FAILURE"
+          }
+        },
+        {
+          "text": "组织志愿者团队，帮助特殊需求家庭",
+          "nextNode": "VOLUNTEER_TEAM",
+          "effects": {
+            "tenantSatisfaction": 8,
+            "relationship_NPC_ELDERLY_RESIDENT_HUANG": 5
+          }
+        }
+      ]
+    },
+    "DISINFECTION_SUCCESS": {
+      "text": "在你的精准指导下，物业团队对重点区域进行了彻底消毒。特别是电梯按钮、门把手等高频接触表面。吴医生检查后非常满意：\u201C做得很专业，这样能有效降低传播风险。\u201D",
+      "image": "assets/images/characters/community_doctor_approving.png",
+      "locationImage": "assets/images/locations/thorough_disinfection.png",
+      "speaker": "吴医生",
+      "effects": {
+        "buildingCondition": 8,
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": 5
+      },
+      "choices": [
+        {
+          "text": "建立定期消毒机制，由专业团队执行",
+          "nextNode": "REGULAR_DISINFECTION",
+          "effects": {
+            "financialHealth": -150,
+            "buildingCondition": 10
+          }
+        },
+        {
+          "text": "培训居民自行消毒，发放消毒用品",
+          "nextNode": "RESIDENT_TRAINING",
+          "effects": {
+            "financialHealth": -50,
+            "tenantSatisfaction": 5
+          }
+        }
+      ]
+    },
+    "DISINFECTION_FAILURE": {
+      "text": "消毒工作不够彻底，几个关键区域被遗漏。几天后，确诊病例增加了2例，都来自同一单元。吴医生严肃地指出：\u201C消毒工作必须更加彻底，否则会加剧疫情蔓延。\u201D",
+      "image": "assets/images/characters/community_doctor_worried.png",
+      "locationImage": "assets/images/locations/new_cases_report.png",
+      "speaker": "吴医生",
+      "effects": {
+        "tenantSatisfaction": -8,
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": -5
+      },
+      "choices": [
+        {
+          "text": "聘请专业消毒公司进行全面消毒",
+          "nextNode": "PROFESSIONAL_DISINFECTION",
+          "effects": {
+            "financialHealth": -300,
+            "buildingCondition": 15
+          }
+        },
+        {
+          "text": "加强内部培训，改进消毒流程",
+          "nextNode": "IMPROVE_PROCEDURES",
+          "effects": {
+            "managerStress": 10,
+            "buildingCondition": 5
+          }
+        }
+      ]
+    },
+    "EDUCATION_FIRST": {
+      "text": "你选择以教育和宣传为主要策略，向居民分发防疫知识手册，在公共区域张贴提示，并通过社区广播定时播放防疫知识。吴医生对这种宽松管理表示担忧。",
+      "image": "assets/images/characters/community_doctor_concerned.png",
+      "locationImage": "assets/images/locations/information_board.png",
+      "speaker": "吴医生",
+      "effects": {
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": -3
+      },
+      "choices": [
+        {
+          "text": "增加测温点和消毒措施，加强基本防护",
+          "nextNode": "ADD_BASIC_MEASURES",
+          "effects": {
+            "buildingCondition": 3,
+            "relationship_NPC_COMMUNITY_DOCTOR_WU": 5
+          }
+        },
+        {
+          "text": "坚持宽松管理，强调居民自律",
+          "nextNode": "CONTINUE_LOOSE_MANAGEMENT",
+          "effects": {
+            "tenantSatisfaction": 8,
+            "managerStress": -5,
+            "relationship_NPC_COMMUNITY_DOCTOR_WU": -8
+          },
+          "storyFlagSet": {
+            "PERSISTED_WITH_LOOSE_MANAGEMENT": true
+          }
+        }
+      ]
+    },
+    "CONTINUE_LOOSE_MANAGEMENT": {
+      "text": "你决定坚持宽松管理方针。一周后，小区内确诊病例增加到12例，疫情明显扩散。卫生部门对社区防疫工作提出严厉批评，居委会紧急介入，要求物业立即加强管控。",
+      "image": "assets/images/characters/resident_committee_angry.png",
+      "locationImage": "assets/images/locations/emergency_intervention.png",
+      "speaker": "张主任",
+      "storyFlagCondition": {
+        "PERSISTED_WITH_LOOSE_MANAGEMENT": true
+      },
+      "effects": {
+        "tenantSatisfaction": -15,
+        "relationship_NPC_RESIDENT_COMMITTEE_ZHANG": -10,
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": -10
+      },
+      "choices": [
+        {
+          "text": "承认错误，立即实施严格管控措施",
+          "nextNode": "ADMIT_MISTAKE",
+          "effects": {
+            "managerStress": 15
+          }
+        },
+        {
+          "text": "辩解防疫策略，但被迫接受上级指导",
+          "nextNode": "RELUCTANT_COMPLIANCE",
+          "effects": {
+            "relationship_NPC_RESIDENT_COMMITTEE_ZHANG": -5
+          }
+        }
+      ]
+    },
+    "SPECIAL_CARE": {
+      "text": "你组织团队特别关注老人、儿童和行动不便的居民，为他们提供上门服务。黄爷爷感动地说：\u201C谢谢你们想到我们这些老人，这几天真不知道怎么办才好呢。\u201D",
+      "image": "assets/images/characters/elderly_resident_grateful.png",
+      "locationImage": "assets/images/locations/home_service.png",
+      "speaker": "黄爷爷",
+      "effects": {
+        "tenantSatisfaction": 10,
+        "relationship_NPC_ELDERLY_RESIDENT_HUANG": 10
+      },
+      "choices": [
+        {
+          "text": "设立24小时热线，随时响应特殊需求",
+          "nextNode": "HOTLINE_SERVICE",
+          "effects": {
+            "managerStress": 8,
+            "tenantSatisfaction": 5
+          }
+        },
+        {
+          "text": "邀请社区医生为高风险人群提供健康指导",
+          "nextNode": "HEALTH_GUIDANCE",
+          "effects": {
+            "relationship_NPC_COMMUNITY_DOCTOR_WU": 8
+          }
+        }
+      ]
+    },
+    "HEALTH_GUIDANCE": {
+      "text": "你邀请吴医生通过线上方式为社区高风险人群提供健康指导。吴医生耐心解答了居民的各种疑问，并提供专业建议。这大大减轻了居民的焦虑，也赢得了医生的赞赏。",
+      "image": "assets/images/characters/community_doctor_teaching.png",
+      "locationImage": "assets/images/locations/online_consultation.png",
+      "speaker": "吴医生",
+      "effects": {
+        "tenantSatisfaction": 12,
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": 10
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "社区健康守护者",
+        "description": "你成功地平衡了严格防疫和人性化服务，特别关注了弱势群体的需求。通过与医疗专业人士的合作，不仅控制了疫情蔓延，还提升了社区健康意识，赢得了居民的信任和尊重。",
+        "metrics": {
+          "tenantSatisfaction": 15,
+          "communityHarmony": 12,
+          "publicHealth": 18
+        }
+      }
+    },
+    "PROFESSIONAL_DISINFECTION": {
+      "text": "你聘请了专业消毒公司对整个社区进行彻底消毒。虽然花费不小，但效果显著。之后两周内，小区未出现新增病例。吴医生和张主任都对你的决断表示肯定。",
+      "image": "assets/images/characters/professional_team_working.png",
+      "locationImage": "assets/images/locations/full_disinfection.png",
+      "speaker": "旁白",
+      "effects": {
+        "buildingCondition": 15,
+        "relationship_NPC_COMMUNITY_DOCTOR_WU": 8,
+        "relationship_NPC_RESIDENT_COMMITTEE_ZHANG": 8
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "果断的危机管理者",
+        "description": "面对疫情危机，你做出了投入资源换取安全的决定。专业的消毒措施有效控制了疫情扩散，虽然增加了财务压力，但保障了居民健康和社区安全，体现了优秀的风险管理能力。",
+        "metrics": {
+          "tenantSatisfaction": 10,
+          "financialPressure": 8,
+          "crisisManagement": 15
+        }
+      }
+    },
+    "RELUCTANT_COMPLIANCE": {
+      "text": "你试图为自己的策略辩护，但证据显示宽松管理导致疫情扩散。最终你被迫接受上级部门的指导，实施严格管控。这一过程损害了你与居委会的关系，也降低了物业在居民心中的专业形象。",
+      "image": "assets/images/characters/property_manager_embarrassed.png",
+      "locationImage": "assets/images/locations/strict_measures_imposed.png",
+      "speaker": "旁白",
+      "effects": {
+        "tenantSatisfaction": -10,
+        "managerStress": 20
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "危机判断失误",
+        "description": "在疫情防控中，你低估了风险，坚持宽松管理导致疫情扩散。被迫接受干预后的被动应对，不仅损害了物业声誉，也影响了与相关部门的合作关系。这提醒我们在公共健康危机中谨慎决策的重要性。",
+        "metrics": {
+          "tenantSatisfaction": -15,
+          "professionalReputation": -20,
+          "publicHealth": -10
+        }
+      }
+    }
+  }
+} 
