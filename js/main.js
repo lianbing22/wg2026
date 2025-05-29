@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Game State Variables
+    // 初始化QTE系统
+    const qteSystem = new QTESystem();
+    
+    // 游戏状态变量
     let currentScenario;
     let currentNodeId;
     let scenariosData;
-    let activeQTE = false; // Flag to indicate if a QTE is active
-
-    // Initial Game State
+    let activeQTE = false; // 标记QTE是否激活
+    
+    // 初始游戏状态
     let gameState = {
         metrics: {
             tenantSatisfaction: 70,
@@ -13,318 +16,527 @@ document.addEventListener('DOMContentLoaded', () => {
             buildingCondition: 80,
             financialHealth: 5000
         },
-        relationshipScores: {} // E.g., { "NPC_MRS_DAVIS": 0, "NPC_TENANT_LEAKY_SINK": 0 }
+        relationshipScores: {}, // 例如: { "NPC_MRS_DAVIS": 0, "NPC_TENANT_LEAKY_SINK": 0 }
+        storyFlags: {}  // 故事标记系统，用于跟踪游戏进程和条件分支
     };
-
-    // UI Elements
+    
+    // UI元素
     const scenarioTextElement = document.getElementById('scenario-text');
+    const feedbackTextElement = document.getElementById('feedback-text');
     const scenarioImageElement = document.getElementById('scenario-image');
     const locationImageElement = document.getElementById('location-image');
     const choicesAreaElement = document.getElementById('choices-area');
-    const feedbackTextElement = document.getElementById('feedback-text');
-
-    // Metrics Display Elements
-    const tenantSatisfactionDisplay = document.getElementById('tenantSatisfaction');
-    const managerStressDisplay = document.getElementById('managerStress');
-    const buildingConditionDisplay = document.getElementById('buildingCondition');
-    const financialHealthDisplay = document.getElementById('financialHealth');
-
-    // Relationship Score Display Elements
-    const npcRelationshipContainer = document.getElementById('npc-relationship-display');
-    const npcNameDisplay = document.getElementById('npc-name');
-    const npcRelationshipScoreDisplay = document.getElementById('npc-relationship-score');
-
-    // QTE UI Elements
-    const qteContainer = document.getElementById('qte-container');
-    const qteInstructionTextElement = document.getElementById('qte-instruction-text');
-    const qteTrackElement = document.getElementById('qte-track'); // Renamed for clarity
-    const qteMovingBarElement = document.getElementById('qte-moving-bar');
-    const qteTargetZoneElement = document.getElementById('qte-target-zone');
-    const qteActionButton = document.getElementById('qte-action-button');
-    let qteAnimationId;
-    let qteCurrentPosition = 0;
-    let qteDirection = 1; // 1 for right, -1 for left
-
-
-    // Function to update metrics display
-    function updateMetricsDisplay() {
-        tenantSatisfactionDisplay.textContent = gameState.metrics.tenantSatisfaction;
-        managerStressDisplay.textContent = gameState.metrics.managerStress;
-        buildingConditionDisplay.textContent = gameState.metrics.buildingCondition;
-        financialHealthDisplay.textContent = gameState.metrics.financialHealth;
-    }
-
-    // Function to update relationship score display
-    function updateRelationshipDisplay(npcId) {
-        if (npcId && gameState.relationshipScores.hasOwnProperty(npcId)) {
-            npcNameDisplay.textContent = npcId.replace("NPC_", "").replace("_", " "); // Basic formatting
-            npcRelationshipScoreDisplay.textContent = gameState.relationshipScores[npcId];
-            npcRelationshipContainer.style.display = 'block';
-        } else {
-            npcRelationshipContainer.style.display = 'none';
+    const npcRelationshipDisplay = document.getElementById('npc-relationship-display');
+    const npcNameElement = document.getElementById('npc-name');
+    const npcRelationshipScore = document.getElementById('npc-relationship-score');
+    const npcRelationshipFill = npcRelationshipDisplay.querySelector('.relationship-fill');
+    const storyFlagsDisplay = document.getElementById('story-flags-display');
+    const storyFlagsList = document.getElementById('story-flags-list');
+    
+    // 指标元素
+    const metricsElements = {
+        tenantSatisfaction: document.getElementById('tenantSatisfaction'),
+        managerStress: document.getElementById('managerStress'),
+        buildingCondition: document.getElementById('buildingCondition'),
+        financialHealth: document.getElementById('financialHealth')
+    };
+    
+    // 加载场景数据
+    async function loadScenarioData() {
+        try {
+            // 从URL参数获取场景ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const scenarioId = urlParams.get('id') || 'PROPERTY_FLOOD_EMERGENCY'; // 默认场景
+            
+            // 加载场景数据
+            const response = await fetch(`data/${scenarioId.toLowerCase()}.json`);
+            if (!response.ok) {
+                // 如果特定场景不存在，尝试从演示场景加载
+                const demoResponse = await fetch('data/demo_scenario_with_qte.json');
+                if (!demoResponse.ok) {
+                    throw new Error('无法加载任何场景数据');
+                }
+                currentScenario = await demoResponse.json();
+            } else {
+                currentScenario = await response.json();
+            }
+            
+            // 初始化游戏状态
+            if (currentScenario.initialState) {
+                gameState.metrics = {...currentScenario.initialState};
+            }
+            
+            // 初始化NPC关系
+            if (currentScenario.involvedNPCs && currentScenario.involvedNPCs.length > 0) {
+                currentScenario.involvedNPCs.forEach(npcId => {
+                    gameState.relationshipScores[npcId] = 0;
+                });
+            }
+            
+            // 开始场景
+            startScenario();
+        } catch (error) {
+            console.error('加载场景数据失败:', error);
+            feedbackTextElement.textContent = '加载场景数据失败，请重试';
         }
     }
     
-    // Function to initialize NPCs in relationshipScores
-    function initializeScenarioNPCs(scenario) {
-        if (scenario.involvedNPCs && Array.isArray(scenario.involvedNPCs)) {
-            scenario.involvedNPCs.forEach(npcId => {
-                if (!gameState.relationshipScores.hasOwnProperty(npcId)) {
-                    gameState.relationshipScores[npcId] = 0; // Default to neutral
-                }
-            });
-            // Display first NPC's relationship by default if involved
-            if (scenario.involvedNPCs.length > 0) {
-                updateRelationshipDisplay(scenario.involvedNPCs[0]);
-            } else {
-                 updateRelationshipDisplay(null); // Hide if no NPCs
-            }
-        } else {
-            updateRelationshipDisplay(null); // Hide if no involvedNPCs array
-        }
-    }
-
-
-    // Function to load scenarios from JSON
-    async function loadScenarios() {
-        try {
-            const response = await fetch('data/scenarios.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            scenariosData = await response.json();
-            startGame();
-        } catch (error) {
-            console.error("Could not load scenarios:", error);
-            scenarioTextElement.textContent = "Error loading game scenarios. Please try again later.";
-        }
-    }
-
-    // Function to start the game
-    function startGame() {
-        activeQTE = false; // Reset QTE flag
-        qteContainer.style.display = 'none'; // Hide QTE container
-
-        if (scenariosData && scenariosData.scenarios && scenariosData.scenarios.length > 0) {
-            currentScenario = scenariosData.scenarios[0]; // Start with the first scenario for now
-            currentNodeId = currentScenario.startNode;
-            initializeScenarioNPCs(currentScenario);
-            renderNode(currentNodeId);
-            feedbackTextElement.textContent = ""; 
-        } else {
-            scenarioTextElement.textContent = "No scenarios found.";
-        }
-        updateMetricsDisplay();
-    }
-
-    // Function to start game with a specific scenario (called from scenario selector)
-    window.startGameWithScenario = function(scenarioId) {
-        activeQTE = false;
-        qteContainer.style.display = 'none';
+    // 开始场景
+    function startScenario() {
+        // 更新页面标题
+        document.title = `物业管理模拟器 - ${currentScenario.title}`;
         
-        if (scenariosData && scenariosData.scenarios) {
-            const selectedScenario = scenariosData.scenarios.find(s => s.id === scenarioId);
-            if (selectedScenario) {
-                currentScenario = selectedScenario;
-                currentNodeId = currentScenario.startNode;
-                initializeScenarioNPCs(currentScenario);
-                renderNode(currentNodeId);
-                feedbackTextElement.textContent = "";
-                updateMetricsDisplay();
-            } else {
-                scenarioTextElement.textContent = "Selected scenario not found.";
-            }
-        } else {
-            scenarioTextElement.textContent = "No scenarios loaded.";
-        }
-    };
-
-    // Function to render a scenario node
-    function renderNode(nodeId) {
-        const node = currentScenario.nodes.find(n => n.nodeId === nodeId);
+        // 更新指标显示
+        updateMetricsDisplay();
+        
+        // 加载起始节点
+        loadNode(currentScenario.startNode);
+    }
+    
+    // 加载节点
+    function loadNode(nodeId) {
+        // 清除之前的选择
+        choicesAreaElement.innerHTML = '';
+        
+        // 获取当前节点
+        currentNodeId = nodeId;
+        const node = currentScenario.nodes[nodeId];
+        
         if (!node) {
-            console.error("Node not found:", nodeId);
-            scenarioTextElement.textContent = "Error: Scenario progression error.";
+            console.error(`节点不存在: ${nodeId}`);
             return;
         }
-
-        currentNodeId = nodeId;
+        
+        // 更新节点内容
+        updateNodeContent(node);
+        
+        // 检查故事标记条件
+        if (node.storyFlagCondition && !checkStoryFlagCondition(node.storyFlagCondition)) {
+            // 如果标记条件不满足，可以跳转到另一个节点或显示替代内容
+            feedbackTextElement.textContent = "这个选择不可用，请选择其他选项";
+            return;
+        }
+        
+        // 应用节点效果
+        if (node.effects) {
+            applyEffects(node.effects);
+        }
+        
+        // 设置故事标记
+        if (node.storyFlagSet) {
+            setStoryFlags(node.storyFlagSet);
+        }
+        
+        // 检查是否有QTE
+        if (node.hasQTE && node.qteData) {
+            // 短暂延迟后启动QTE，给玩家时间阅读文本
+            setTimeout(() => {
+                startQTE(node.qteData);
+            }, 2000);
+        } else if (node.choices && node.choices.length > 0) {
+            // 如果没有QTE但有选择，显示选择
+            displayChoices(node.choices);
+        } else if (node.endsScenario) {
+            // 如果场景结束，显示结果
+            endScenario(node.endResult);
+        }
+        
+        // 更新故事标记显示（调试模式）
+        updateStoryFlagsDisplay();
+    }
+    
+    // 更新节点内容
+    function updateNodeContent(node) {
+        // 更新文本
         scenarioTextElement.textContent = node.text;
         
-        scenarioImageElement.src = node.image || 'assets/images/placeholder.svg';
-        scenarioImageElement.alt = node.image || "Scenario Image";
-        locationImageElement.src = node.location_image || 'assets/images/placeholder_location.svg';
-        locationImageElement.alt = node.location_image || "Location Image";
-        
-        // Update relationship display if primary NPC changes or is notable for this node
-        // For simplicity, using the first involved NPC of the scenario. Could be more specific.
-        if (currentScenario.involvedNPCs && currentScenario.involvedNPCs.length > 0) {
-            updateRelationshipDisplay(currentScenario.involvedNPCs[0]);
+        // 更新图像（如果有）
+        if (node.image) {
+            scenarioImageElement.src = node.image;
+            scenarioImageElement.style.opacity = 1;
         } else {
-            updateRelationshipDisplay(null);
+            scenarioImageElement.style.opacity = 0;
         }
-
-
-        choicesAreaElement.innerHTML = ''; 
-
-        if (node.qte) {
-            activeQTE = true;
-            startQTE(node.qte);
-        } else {
-            activeQTE = false;
-            qteContainer.style.display = 'none';
-            if (node.endsScenario) {
-                feedbackTextElement.textContent = node.endText || "Scenario Ended.";
-                const restartButton = document.createElement('button');
-                restartButton.textContent = "Choose Another Scenario";
-                restartButton.addEventListener('click', () => {
-                    // Reset game state
-                    gameState.metrics = {
-                        tenantSatisfaction: 70,
-                        managerStress: 10,
-                        buildingCondition: 80,
-                        financialHealth: 5000
-                    };
-                    gameState.relationshipScores = {};
-                    updateMetricsDisplay();
-                    updateRelationshipDisplay(null);
-                    
-                    // Show scenario selector
-                    if (window.showScenarioSelector) {
-                        window.showScenarioSelector();
-                    }
-                });
-                choicesAreaElement.appendChild(restartButton);
-            } else if (node.choices && node.choices.length > 0) {
-                node.choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.textContent = choice.text;
-                    button.addEventListener('click', () => handleChoice(choice));
-                    choicesAreaElement.appendChild(button);
-                });
-                feedbackTextElement.textContent = ""; 
-            } else {
-                 feedbackTextElement.textContent = "Scenario ended or no choices available.";
+        
+        // 更新位置图像（如果有）
+        if (node.locationImage) {
+            locationImageElement.src = node.locationImage;
+        }
+        
+        // 更新说话者（如果有）
+        if (node.speaker) {
+            const speakerNameElement = document.querySelector('.speaker-name');
+            const speakerAvatarElement = document.querySelector('.speaker-avatar');
+            
+            if (speakerNameElement) {
+                speakerNameElement.textContent = node.speaker;
             }
+            
+            // 更新说话者头像（如果有指定）
+            if (node.speakerAvatar) {
+                speakerAvatarElement.src = node.speakerAvatar;
+            } else if (node.image && node.image.includes('characters')) {
+                // 如果没有指定头像但有角色图像，可以使用角色图像
+                speakerAvatarElement.src = node.image;
+            }
+        }
+        
+        // 更新NPC关系显示（如果相关）
+        updateNPCRelationshipDisplay(node);
+    }
+    
+    // 显示选择
+    function displayChoices(choices) {
+        choices.forEach(choice => {
+            // 检查此选择是否有故事标记条件
+            if (choice.storyFlagCondition && !checkStoryFlagCondition(choice.storyFlagCondition)) {
+                // 跳过不满足条件的选择
+                return;
+            }
+            
+            const button = document.createElement('button');
+            button.className = 'choice-button';
+            button.textContent = choice.text;
+            
+            // 添加高亮效果元素
+            const highlight = document.createElement('div');
+            highlight.className = 'choice-highlight';
+            button.appendChild(highlight);
+            
+            // 如果选择有效果，显示效果提示
+            if (choice.effects) {
+                const effectsDiv = document.createElement('div');
+                effectsDiv.className = 'choice-effects';
+                
+                Object.entries(choice.effects).forEach(([key, value]) => {
+                    const effectSpan = document.createElement('span');
+                    
+                    // 确定效果类型（正面/负面/中性）
+                    let effectClass = 'neutral';
+                    if (value > 0) effectClass = 'positive';
+                    else if (value < 0) effectClass = 'negative';
+                    
+                    effectSpan.className = `choice-effect ${effectClass}`;
+                    
+                    // 处理特殊键名（如关系分数）
+                    let displayKey = key;
+                    if (key.startsWith('relationship_')) {
+                        const npcId = key.replace('relationship_', '');
+                        displayKey = `与${getNPCName(npcId)}关系`;
+                    }
+                    
+                    // 设置效果文本
+                    effectSpan.textContent = `${displayKey}: ${value > 0 ? '+' : ''}${value}`;
+                    effectsDiv.appendChild(effectSpan);
+                });
+                
+                button.appendChild(effectsDiv);
+            }
+            
+            // 添加点击事件
+            button.addEventListener('click', () => {
+                // 应用效果
+                if (choice.effects) {
+                    applyEffects(choice.effects);
+                }
+                
+                // 设置故事标记
+                if (choice.storyFlagSet) {
+                    setStoryFlags(choice.storyFlagSet);
+                }
+                
+                // 加载下一个节点
+                loadNode(choice.nextNode);
+            });
+            
+            choicesAreaElement.appendChild(button);
+        });
+    }
+    
+    // 应用效果到游戏状态
+    function applyEffects(effects) {
+        Object.entries(effects).forEach(([key, value]) => {
+            if (key.startsWith('relationship_')) {
+                // 处理NPC关系效果
+                const npcId = key.replace('relationship_', '');
+                if (gameState.relationshipScores[npcId] === undefined) {
+                    gameState.relationshipScores[npcId] = 0;
+                }
+                gameState.relationshipScores[npcId] += value;
+                
+                // 更新关系显示（如果当前显示的是该NPC）
+                if (npcRelationshipDisplay.style.display !== 'none' && 
+                    npcNameElement.textContent === getNPCName(npcId)) {
+                    updateNPCRelationshipDisplay({ speaker: getNPCName(npcId) });
+                }
+            } else {
+                // 处理指标效果
+                if (gameState.metrics[key] !== undefined) {
+                    gameState.metrics[key] += value;
+                    
+                    // 更新显示
+                    updateMetricsDisplay();
+                }
+            }
+        });
+    }
+    
+    // 更新指标显示
+    function updateMetricsDisplay() {
+        Object.entries(gameState.metrics).forEach(([key, value]) => {
+            const element = metricsElements[key];
+            if (element) {
+                element.textContent = value;
+                
+                // 添加动画效果
+                element.classList.add('update-pulse');
+                setTimeout(() => element.classList.remove('update-pulse'), 500);
+            }
+        });
+    }
+    
+    // 更新NPC关系显示
+    function updateNPCRelationshipDisplay(node) {
+        if (!node.speaker || node.speaker === '旁白' || node.speaker === '你') {
+            // 如果没有说话者或是旁白/玩家，隐藏关系显示
+            npcRelationshipDisplay.style.display = 'none';
+            return;
+        }
+        
+        // 查找当前说话者的NPC ID
+        const npcId = findNPCIdByName(node.speaker);
+        if (!npcId) {
+            npcRelationshipDisplay.style.display = 'none';
+            return;
+        }
+        
+        // 显示并更新关系显示
+        npcRelationshipDisplay.style.display = 'block';
+        npcNameElement.textContent = node.speaker;
+        
+        const relationshipScore = gameState.relationshipScores[npcId] || 0;
+        npcRelationshipScore.textContent = relationshipScore;
+        
+        // 计算关系条宽度（-10到+10范围映射到0-100%）
+        const relationshipWidth = Math.min(Math.max((relationshipScore + 10) * 5, 0), 100);
+        npcRelationshipFill.style.width = `${relationshipWidth}%`;
+        
+        // 根据关系值设置颜色
+        if (relationshipScore > 5) {
+            npcRelationshipFill.style.backgroundColor = 'var(--success-color)';
+        } else if (relationshipScore < -5) {
+            npcRelationshipFill.style.backgroundColor = 'var(--danger-color)';
+        } else {
+            npcRelationshipFill.style.backgroundColor = 'var(--warning-color)';
         }
     }
     
-    // Function to apply effects (for choices and QTEs)
-    function applyEffects(effects) {
-        if (effects) {
-            for (const key in effects) {
-                if (gameState.metrics.hasOwnProperty(key)) {
-                    gameState.metrics[key] += effects[key];
-                } else if (key.startsWith("relationship_")) {
-                    const npcId = key.substring("relationship_".length);
-                    if (gameState.relationshipScores.hasOwnProperty(npcId)) {
-                        gameState.relationshipScores[npcId] += effects[key];
-                    } else {
-                        // Initialize if somehow not pre-initialized
-                        gameState.relationshipScores[npcId] = effects[key];
-                    }
-                    // Update display if this NPC is the one currently shown
-                    if (npcRelationshipContainer.style.display === 'block' && npcNameDisplay.textContent === npcId.replace("NPC_", "").replace("_", " ")) {
-                         updateRelationshipDisplay(npcId);
-                    }
-                } else {
-                    console.warn(`Unknown metric or effect key: ${key}`);
-                }
-            }
-            updateMetricsDisplay();
-        }
+    // 设置故事标记
+    function setStoryFlags(flags) {
+        Object.entries(flags).forEach(([key, value]) => {
+            gameState.storyFlags[key] = value;
+        });
     }
-
-    // Function to handle a player's choice
-    function handleChoice(choice) {
-        if (activeQTE) return; // Prevent choices during QTE
-
-        applyEffects(choice.effects);
-
-        if (choice.nextNode) {
-            renderNode(choice.nextNode);
-        } else if (!currentScenario.nodes.find(n => n.nodeId === currentNodeId).endsScenario) {
-            console.error("Choice does not lead to a next node and is not an end node:", choice);
-            feedbackTextElement.textContent = "Error in scenario flow.";
-        }
+    
+    // 检查故事标记条件
+    function checkStoryFlagCondition(conditions) {
+        // 检查所有条件是否满足
+        return Object.entries(conditions).every(([flagName, requiredValue]) => {
+            return gameState.storyFlags[flagName] === requiredValue;
+        });
     }
-
-    // --- QTE Engine ("StopTheMovingBar") ---
-    let qteConfig; // To store current QTE settings
-
-    function startQTE(qteData) {
-        qteConfig = qteData; // Store QTE data
-        qteContainer.style.display = 'block';
-        choicesAreaElement.innerHTML = ''; // Hide standard choices
-        feedbackTextElement.textContent = "";
-
-        qteInstructionTextElement.textContent = qteConfig.instructionText || "Stop the bar in the target zone!";
+    
+    // 更新故事标记显示（调试用）
+    function updateStoryFlagsDisplay() {
+        // 如果故事标记显示是隐藏的，不需要更新
+        if (storyFlagsDisplay.style.display === 'none') return;
         
-        // Set up target zone visuals (example positioning)
-        const targetStartPercent = qteConfig.parameters.targetZoneStart || 30;
-        const targetEndPercent = qteConfig.parameters.targetZoneEnd || 70;
-        qteTargetZoneElement.style.left = `${targetStartPercent}%`;
-        qteTargetZoneElement.style.width = `${targetEndPercent - targetStartPercent}%`;
-
-        qteMovingBarElement.style.left = '0%';
-        qteCurrentPosition = 0;
-        qteDirection = 1;
-
-        qteActionButton.onclick = () => stopBar(); // Assign click handler
-
-        // Start the animation loop
-        moveBar();
+        // 清空当前列表
+        storyFlagsList.innerHTML = '';
+        
+        // 添加所有故事标记
+        Object.entries(gameState.storyFlags).forEach(([flagName, value]) => {
+            const flagItem = document.createElement('div');
+            flagItem.className = 'story-flag-item';
+            
+            const flagNameSpan = document.createElement('span');
+            flagNameSpan.className = 'story-flag-name';
+            flagNameSpan.textContent = flagName;
+            
+            const flagValueSpan = document.createElement('span');
+            flagValueSpan.className = `story-flag-value ${value ? 'true' : 'false'}`;
+            flagValueSpan.textContent = value ? '是' : '否';
+            
+            flagItem.appendChild(flagNameSpan);
+            flagItem.appendChild(flagValueSpan);
+            storyFlagsList.appendChild(flagItem);
+        });
     }
-
-    function moveBar() {
-        if (!activeQTE) return; // Stop animation if QTE is no longer active
-
-        const speed = qteConfig.parameters.barSpeed || 50; // Higher is slower (delay in ms)
-        qteCurrentPosition += qteDirection * 2; // Move 2% each step
-
-        if (qteCurrentPosition >= 100-5) { // 100% minus bar width (assuming 5%)
-            qteCurrentPosition = 100-5;
-            qteDirection = -1;
-        } else if (qteCurrentPosition <= 0) {
-            qteCurrentPosition = 0;
-            qteDirection = 1;
+    
+    // 启动QTE
+    function startQTE(qteData) {
+        activeQTE = true;
+        
+        // 使用QTE系统启动QTE
+        qteSystem.start(
+            qteData,
+            // 成功回调
+            () => {
+                activeQTE = false;
+                feedbackTextElement.textContent = "成功!";
+                feedbackTextElement.style.color = 'var(--success-color)';
+                
+                // 加载成功节点
+                setTimeout(() => {
+                    feedbackTextElement.textContent = "";
+                    loadNode(qteData.successNode);
+                }, 1500);
+            },
+            // 失败回调
+            () => {
+                activeQTE = false;
+                feedbackTextElement.textContent = "失败!";
+                feedbackTextElement.style.color = 'var(--danger-color)';
+                
+                // 加载失败节点
+                setTimeout(() => {
+                    feedbackTextElement.textContent = "";
+                    loadNode(qteData.failureNode);
+                }, 1500);
+            }
+        );
+    }
+    
+    // 获取NPC名称
+    function getNPCName(npcId) {
+        // 简单的NPC ID到名称映射
+        const npcNames = {
+            'NPC_MAINTENANCE_ZHANG': '张师傅',
+            'NPC_LUXURY_CAR_OWNER_LIN': '林先生',
+            'NPC_ELDERLY_COUPLE_WANG': '王老夫妇'
+            // 可以根据需要添加更多
+        };
+        
+        return npcNames[npcId] || npcId;
+    }
+    
+    // 根据名称查找NPC ID
+    function findNPCIdByName(name) {
+        // 简单的名称到NPC ID映射
+        const nameToId = {
+            '张师傅': 'NPC_MAINTENANCE_ZHANG',
+            '林先生': 'NPC_LUXURY_CAR_OWNER_LIN',
+            '王先生': 'NPC_ELDERLY_COUPLE_WANG',
+            '王老夫妇': 'NPC_ELDERLY_COUPLE_WANG'
+            // 可以根据需要添加更多
+        };
+        
+        return nameToId[name];
+    }
+    
+    // 结束场景
+    function endScenario(endResult) {
+        if (!endResult) return;
+        
+        // 显示结果消息
+        feedbackTextElement.textContent = "场景结束!";
+        feedbackTextElement.style.color = 'var(--primary-color)';
+        
+        // 创建结果显示
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'scenario-result';
+        
+        const resultTitle = document.createElement('h3');
+        resultTitle.className = 'result-title';
+        resultTitle.textContent = endResult.title || "完成";
+        
+        const resultDescription = document.createElement('p');
+        resultDescription.className = 'result-description';
+        resultDescription.textContent = endResult.description || "你已完成此场景。";
+        
+        resultDiv.appendChild(resultTitle);
+        resultDiv.appendChild(resultDescription);
+        
+        // 添加指标变化
+        if (endResult.metrics) {
+            const metricsDiv = document.createElement('div');
+            metricsDiv.className = 'result-metrics';
+            
+            Object.entries(endResult.metrics).forEach(([key, value]) => {
+                const metricItem = document.createElement('div');
+                metricItem.className = 'result-metric-item';
+                
+                const metricName = document.createElement('span');
+                metricName.className = 'result-metric-name';
+                metricName.textContent = key;
+                
+                const metricValue = document.createElement('span');
+                metricValue.className = `result-metric-value ${value >= 0 ? 'positive' : 'negative'}`;
+                metricValue.textContent = `${value >= 0 ? '+' : ''}${value}`;
+                
+                metricItem.appendChild(metricName);
+                metricItem.appendChild(metricValue);
+                metricsDiv.appendChild(metricItem);
+            });
+            
+            resultDiv.appendChild(metricsDiv);
         }
-        qteMovingBarElement.style.left = `${qteCurrentPosition}%`;
-        qteAnimationId = setTimeout(moveBar, speed); // Using setTimeout for speed control
+        
+        // 添加返回按钮
+        const returnButton = document.createElement('button');
+        returnButton.className = 'choice-button return-button';
+        returnButton.textContent = "返回首页";
+        returnButton.addEventListener('click', () => {
+            window.location.href = "index.html";
+        });
+        
+        // 添加重新开始按钮
+        const restartButton = document.createElement('button');
+        restartButton.className = 'choice-button restart-button';
+        restartButton.textContent = "重新开始";
+        restartButton.addEventListener('click', () => {
+            // 重置游戏状态
+            if (currentScenario.initialState) {
+                gameState.metrics = {...currentScenario.initialState};
+            } else {
+                gameState.metrics = {
+                    tenantSatisfaction: 70,
+                    managerStress: 10,
+                    buildingCondition: 80,
+                    financialHealth: 5000
+                };
+            }
+            gameState.relationshipScores = {};
+            gameState.storyFlags = {};
+            
+            // 重新初始化NPC关系
+            if (currentScenario.involvedNPCs && currentScenario.involvedNPCs.length > 0) {
+                currentScenario.involvedNPCs.forEach(npcId => {
+                    gameState.relationshipScores[npcId] = 0;
+                });
+            }
+            
+            // 更新显示
+            updateMetricsDisplay();
+            updateStoryFlagsDisplay();
+            
+            // 重新加载起始节点
+            feedbackTextElement.textContent = "";
+            loadNode(currentScenario.startNode);
+        });
+        
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'result-buttons';
+        buttonContainer.appendChild(restartButton);
+        buttonContainer.appendChild(returnButton);
+        
+        resultDiv.appendChild(buttonContainer);
+        
+        // 显示结果
+        choicesAreaElement.innerHTML = '';
+        choicesAreaElement.appendChild(resultDiv);
     }
-
-    function stopBar() {
-        if (!activeQTE) return;
-        clearTimeout(qteAnimationId); // Stop animation
-
-        const barFinalPosition = qteCurrentPosition; // Percentage
-        const targetStart = qteConfig.parameters.targetZoneStart;
-        const targetEnd = qteConfig.parameters.targetZoneEnd -5; // Adjust for bar width (5%)
-
-        let success = (barFinalPosition >= targetStart && barFinalPosition <= targetEnd);
-
-        // For simplicity, using only one attempt as per updated scenario
-        // qteConfig.parameters.attempts = (qteConfig.parameters.attempts || 1) - 1;
-
-        if (success) {
-            feedbackTextElement.textContent = "Success!";
-            applyEffects(qteConfig.successEffects);
-            renderNode(qteConfig.successNextNode);
-        } else {
-            feedbackTextElement.textContent = "Missed!";
-             // if (qteConfig.parameters.attempts > 0) {
-            //    qteInstructionTextElement.textContent = `Missed! ${qteConfig.parameters.attempts} attempts left. Try again!`;
-            //    moveBar(); // Restart bar for another attempt
-            // } else {
-            applyEffects(qteConfig.failureEffects);
-            renderNode(qteConfig.failureNextNode);
-            // }
-        }
-        activeQTE = false; // QTE concluded
-        // qteContainer.style.display = 'none'; // Hide QTE on conclusion, handled by renderNode
-    }
-
-    // Initialize the game
-    loadScenarios();
+    
+    // 加载场景数据
+    loadScenarioData();
 });
-```

@@ -95,6 +95,25 @@ const SCENARIOS = {
             'assets/images/characters/tenant_elderly_liu.png'
         ],
         fullDescription: '随着环保意识的提高和政府绿色建筑政策的推进，您正考虑对物业进行环保改造。专业工程师向您介绍了多种可行方案，从全面的绿色改造到最低限度的符合性改造。您需要在初期投入、长期节约、物业形象和租户满意度之间做出平衡。'
+    },
+    
+    // 场景6: 地下车库洪水紧急事件
+    'PROPERTY_FLOOD_EMERGENCY': {
+        id: 'PROPERTY_FLOOD_EMERGENCY',
+        title: '地下车库洪水紧急事件',
+        description: '应对暴雨导致的地下车库积水，平衡各方利益和危机处理',
+        image: 'assets/images/locations/flooded_garage.png',
+        difficulty: '中等',
+        duration: '15-20分钟',
+        category: '紧急处理',
+        challenge: '危机管理、资源调配、租户关系',
+        characters: [
+            'assets/images/characters/maintenance_zhang_panic.png',
+            'assets/images/characters/luxury_car_owner_angry.png',
+            'assets/images/characters/elderly_couple_worried.png'
+        ],
+        fullDescription: '凌晨三点，一场暴雨导致地下车库积水，排水系统堵塞使水位不断上升。多辆车已被水淹，车主们将非常不满。作为物业经理，您需要快速决策，既要控制灾情，又要安抚车主情绪，同时还要考虑财务成本和长期预防措施。您的决策将直接影响租户满意度、物业声誉和未来类似情况的应对能力。',
+        isNew: true
     }
 };
 

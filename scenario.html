@@ -446,10 +446,136 @@
                 font-size: 14px;
             }
         }
+        
+        /* 关系和故事标记指示器 */
+        .indicators-container {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            z-index: 50;
+        }
+        
+        .relationship-indicator-container {
+            background-color: rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .relationship-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .relationship-bar {
+            height: 8px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .relationship-fill {
+            position: absolute;
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .relationship-value {
+            font-size: 12px;
+            text-align: right;
+            margin-top: 3px;
+        }
+        
+        .story-flags-container {
+            background-color: rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 10px;
+            width: 200px;
+            max-height: 150px;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .story-flags-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .story-flag-item {
+            font-size: 12px;
+            padding: 3px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .story-flag-name {
+            opacity: 0.8;
+        }
+        
+        .story-flag-value {
+            font-weight: 500;
+        }
+        
+        .story-flag-value.true {
+            color: var(--success-color);
+        }
+        
+        .story-flag-value.false {
+            color: var(--danger-color);
+        }
+        
+        /* QTE相关样式 */
+        .qte-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .qte-instruction-text {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .qte-content-area {
+            width: 100%;
+        }
+        
+        #feedback-text {
+            text-align: center;
+            font-size: 16px;
+            margin: 15px 0;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <!-- 页面过渡动画 -->
+    <!-- 页面过渡效果 -->
     <div class="page-transition"></div>
     
     <!-- 游戏主容器 -->
@@ -457,458 +583,117 @@
         <!-- 顶部状态栏 -->
         <div class="status-bar">
             <a href="index.html" class="back-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span>返回场景选择</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                返回主菜单
             </a>
             
-            <div class="scenario-title" id="scenarioTitle">紧急电梯维修危机</div>
+            <div class="scenario-title">物业管理模拟器</div>
             
+            <!-- 状态指标 -->
             <div class="metrics-container">
+                <!-- 租户满意度 -->
                 <div class="metric">
                     <div class="metric-icon">😊</div>
-                    <div class="metric-value" id="tenantSatisfactionValue">75</div>
+                    <div class="metric-value" id="tenantSatisfaction">70</div>
                     <div class="metric-label">租户满意度</div>
                 </div>
                 
+                <!-- 经理压力 -->
                 <div class="metric">
-                    <div class="metric-icon">💰</div>
-                    <div class="metric-value" id="financialHealthValue">5000</div>
-                    <div class="metric-label">财务健康</div>
+                    <div class="metric-icon">😓</div>
+                    <div class="metric-value" id="managerStress">10</div>
+                    <div class="metric-label">经理压力</div>
                 </div>
                 
+                <!-- 建筑状况 -->
                 <div class="metric">
                     <div class="metric-icon">🏢</div>
-                    <div class="metric-value" id="buildingConditionValue">80</div>
+                    <div class="metric-value" id="buildingCondition">80</div>
                     <div class="metric-label">建筑状况</div>
                 </div>
                 
+                <!-- 财务健康 -->
                 <div class="metric">
-                    <div class="metric-icon">😓</div>
-                    <div class="metric-value" id="managerStressValue">25</div>
-                    <div class="metric-label">经理压力</div>
+                    <div class="metric-icon">💰</div>
+                    <div class="metric-value" id="financialHealth">5000</div>
+                    <div class="metric-label">财务健康</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 关系和故事标记指示器 -->
+        <div class="indicators-container">
+            <!-- NPC关系指示器 -->
+            <div class="relationship-indicator-container" id="npc-relationship-display" style="display: none;">
+                <div class="relationship-title">与<span id="npc-name">角色</span>的关系</div>
+                <div class="relationship-bar">
+                    <div class="relationship-fill" style="width: 50%;"></div>
+                </div>
+                <div class="relationship-value">当前值: <span id="npc-relationship-score">0</span></div>
+            </div>
+            
+            <!-- 故事标记显示（调试用，可隐藏） -->
+            <div class="story-flags-container" id="story-flags-display" style="display: none;">
+                <div class="story-flags-title">故事标记</div>
+                <div id="story-flags-list">
+                    <!-- 故事标记将在JavaScript中动态添加 -->
                 </div>
             </div>
         </div>
         
         <!-- 场景主要区域 -->
         <div class="scene-container">
-            <!-- 场景图片容器 -->
+            <!-- 场景图片区域 -->
             <div class="scene-image-container">
-                <img src="assets/images/locations/elevator_malfunction.png" alt="电梯故障" class="location-image" id="locationImage">
-                <img src="assets/images/characters/staff_technician_wang_worried.png" alt="王师傅" class="character-image active" id="characterImage">
+                <img id="location-image" src="assets/images/placeholder_location.svg" alt="场景位置" class="location-image">
+                <img id="scenario-image" src="assets/images/placeholder.svg" alt="场景角色" class="character-image active">
             </div>
             
             <!-- 对话和选择区域 -->
             <div class="dialogue-container">
                 <div class="dialogue-header">
-                    <img src="assets/images/characters/staff_technician_wang.png" alt="王师傅" class="speaker-avatar" id="speakerAvatar">
-                    <div class="speaker-name" id="speakerName">王师傅</div>
+                    <img src="assets/images/placeholder.svg" alt="说话者" class="speaker-avatar">
+                    <div class="speaker-name">物业经理</div>
                 </div>
                 
-                <p class="dialogue-text" id="dialogueText">
-                    周一早高峰时段，电梯突然停止运行。多位租户被困在电梯内，其他人则无法上下楼。王师傅迅速赶到现场，对你说："电梯控制系统出现严重故障，需要立即处理。我们有几种选择，但都各有利弊。"
-                </p>
+                <div id="scenario-text" class="dialogue-text">
+                    欢迎来到物业管理模拟器。您将面临各种物业管理场景，做出决策，并处理各种紧急情况。您的选择将影响租户满意度、建筑状况和财务健康。
+                </div>
                 
-                <div class="choices-container" id="choicesContainer">
-                    <button class="choice-button" data-next-node="PROFESSIONAL_REPAIR">
-                        立即请专业电梯公司紧急维修（成本高但速度快）
-                        <div class="choice-effects">
-                            <span class="choice-effect negative">财务健康 -100</span>
-                            <span class="choice-effect positive">租户满意度 +5</span>
-                            <span class="choice-effect negative">与王师傅关系 -1</span>
-                        </div>
-                    </button>
-                    
-                    <button class="choice-button" data-next-node="INTERNAL_REPAIR_ATTEMPT">
-                        让王师傅和内部团队尝试修复（成本低但可能需要更长时间）
-                        <div class="choice-effects">
-                            <span class="choice-effect negative">财务健康 -30</span>
-                            <span class="choice-effect negative">租户满意度 -5</span>
-                            <span class="choice-effect positive">与王师傅关系 +3</span>
-                        </div>
-                    </button>
-                    
-                    <button class="choice-button" data-next-node="DELAYED_REPAIR">
-                        临时关闭电梯，等到非高峰时段再维修（最省钱但会严重影响租户）
-                        <div class="choice-effects">
-                            <span class="choice-effect negative">财务健康 -20</span>
-                            <span class="choice-effect negative">租户满意度 -15</span>
-                        </div>
-                    </button>
+                <div id="feedback-text" class="feedback-text"></div>
+                
+                <div id="choices-area" class="choices-container">
+                    <button class="choice-button">开始场景</button>
                 </div>
             </div>
         </div>
         
-        <!-- 场景转换效果 -->
-        <div class="scene-transition" id="sceneTransition"></div>
-    </div>
-    
-    <!-- 结果显示 -->
-    <div class="result-overlay" id="resultOverlay">
-        <div class="result-container">
-            <h2 class="result-title">场景完成！</h2>
-            <p class="result-description" id="resultDescription">
-                你成功处理了电梯维修危机，做出了符合物业长期利益的决策。你的选择既照顾了租户需求，又考虑了财务健康。
-            </p>
-            
-            <div class="result-stats">
-                <div class="result-stat">
-                    <div class="result-stat-value" id="finalTenantSatisfaction">80</div>
-                    <div class="result-stat-label">租户满意度</div>
-                </div>
-                
-                <div class="result-stat">
-                    <div class="result-stat-value" id="finalFinancialHealth">4800</div>
-                    <div class="result-stat-label">财务健康</div>
-                </div>
-                
-                <div class="result-stat">
-                    <div class="result-stat-value" id="finalReputation">90</div>
-                    <div class="result-stat-label">声誉</div>
-                </div>
-            </div>
-            
-            <div class="result-buttons">
-                <button class="result-button secondary" id="restartButton">重新开始</button>
-                <button class="result-button primary" id="continueButton">返回选择</button>
+        <!-- QTE容器 -->
+        <div id="qte-container" class="qte-container">
+            <div id="qte-instruction-text" class="qte-instruction-text">完成快速时间事件!</div>
+            <div id="qte-content-area" class="qte-content-area">
+                <!-- QTE内容将在JavaScript中动态生成 -->
             </div>
         </div>
     </div>
     
+    <!-- JavaScript引入 -->
+    <script src="js/qte-system.js"></script>
+    <script src="js/main.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 获取URL参数中的场景ID
+        // 页面加载完成后移除过渡效果
+        window.addEventListener('load', function() {
+            const transition = document.querySelector('.page-transition');
+            transition.classList.add('exit');
+            
+            // 显示/隐藏故事标记显示（开发模式）
             const urlParams = new URLSearchParams(window.location.search);
-            const scenarioId = urlParams.get('id') || 'EMERGENCY_ELEVATOR_REPAIR'; // 默认使用电梯维修场景
-            
-            // 显示页面
-            setTimeout(() => {
-                document.querySelector('.page-transition').classList.add('exit');
-            }, 500);
-            
-            // 游戏状态
-            const gameState = {
-                tenantSatisfaction: 75,
-                financialHealth: 5000,
-                buildingCondition: 80,
-                managerStress: 25,
-                relationships: {
-                    'STAFF_TECHNICIAN_WANG': 5,
-                    'NPC_ELDERLY_LIU': 5,
-                    'NPC_YOUNG_FAMILY_WU': 5
-                },
-                currentNode: 'ELEVATOR_FAILURE_START',
-                flags: []
-            };
-            
-            // 更新游戏状态显示
-            function updateMetrics() {
-                document.getElementById('tenantSatisfactionValue').textContent = gameState.tenantSatisfaction;
-                document.getElementById('financialHealthValue').textContent = gameState.financialHealth;
-                document.getElementById('buildingConditionValue').textContent = gameState.buildingCondition;
-                document.getElementById('managerStressValue').textContent = gameState.managerStress;
+            if (urlParams.get('debug') === 'true') {
+                document.getElementById('story-flags-display').style.display = 'block';
             }
-            
-            // 模拟场景数据（实际应该从API或JSON文件加载）
-            const scenarioData = {
-                "id": "EMERGENCY_ELEVATOR_REPAIR",
-                "title": "紧急电梯维修危机",
-                "nodes": {
-                    "ELEVATOR_FAILURE_START": {
-                        "text": "周一早高峰时段，电梯突然停止运行。多位租户被困在电梯内，其他人则无法上下楼。王师傅迅速赶到现场，对你说："电梯控制系统出现严重故障，需要立即处理。我们有几种选择，但都各有利弊。"",
-                        "image": "assets/images/characters/staff_technician_wang_worried.png",
-                        "location_image": "assets/images/locations/elevator_malfunction.png",
-                        "speaker": "王师傅",
-                        "choices": [
-                            {
-                                "text": "立即请专业电梯公司紧急维修（成本高但速度快）",
-                                "effects": {
-                                    "financialHealth": -100,
-                                    "tenantSatisfaction": 5,
-                                    "relationship_STAFF_TECHNICIAN_WANG": -1
-                                },
-                                "nextNode": "PROFESSIONAL_REPAIR"
-                            },
-                            {
-                                "text": "让王师傅和内部团队尝试修复（成本低但可能需要更长时间）",
-                                "effects": {
-                                    "financialHealth": -30,
-                                    "tenantSatisfaction": -5,
-                                    "relationship_STAFF_TECHNICIAN_WANG": 3
-                                },
-                                "nextNode": "INTERNAL_REPAIR_ATTEMPT"
-                            },
-                            {
-                                "text": "临时关闭电梯，等到非高峰时段再维修（最省钱但会严重影响租户）",
-                                "effects": {
-                                    "financialHealth": -20,
-                                    "tenantSatisfaction": -15
-                                },
-                                "nextNode": "DELAYED_REPAIR"
-                            }
-                        ]
-                    },
-                    "PROFESSIONAL_REPAIR": {
-                        "text": "你联系了专业电梯维修公司，他们派遣技术团队紧急处理。四小时后，电梯恢复运行。刘奶奶向你表示感谢："谢谢你这么快解决问题，对我们老年人来说爬楼梯很困难。"虽然花费不菲，但租户们对快速响应感到满意。",
-                        "image": "assets/images/characters/tenant_happy_elderly.png",
-                        "location_image": "assets/images/locations/elevator_repair.png",
-                        "speaker": "刘奶奶",
-                        "effects": {
-                            "relationship_NPC_ELDERLY_LIU": 3
-                        },
-                        "choices": [
-                            {
-                                "text": "讨论进一步升级电梯系统的可能性",
-                                "nextNode": "DISCUSS_UPGRADE"
-                            },
-                            {
-                                "text": "开始制定预防性维护计划",
-                                "nextNode": "PREVENTIVE_MAINTENANCE"
-                            }
-                        ]
-                    },
-                    "INTERNAL_REPAIR_ATTEMPT": {
-                        "text": "王师傅和他的团队开始维修工作。虽然他们尽力而为，但故障比预期更复杂。八小时后，电梯终于恢复运行。期间，一些租户表达了不满，特别是吴家的孩子和刘奶奶。",
-                        "image": "assets/images/characters/staff_technician_wang_working.png",
-                        "location_image": "assets/images/locations/elevator_repair_internal.png",
-                        "speaker": "旁白",
-                        "effects": {
-                            "relationship_NPC_ELDERLY_LIU": -2,
-                            "relationship_NPC_YOUNG_FAMILY_WU": -1
-                        },
-                        "choices": [
-                            {
-                                "text": "向租户道歉并提供小补偿（如减免当月物业费）",
-                                "effects": {
-                                    "financialHealth": -30,
-                                    "tenantSatisfaction": 5
-                                },
-                                "nextNode": "APOLOGIZE_COMPENSATE"
-                            },
-                            {
-                                "text": "向租户解释内部维修如何节省长期成本",
-                                "nextNode": "EXPLAIN_COST_SAVING"
-                            }
-                        ]
-                    },
-                    "DELAYED_REPAIR": {
-                        "text": "你决定暂时关闭电梯，等到晚上人流减少时再进行维修。这一决定引起了强烈不满，多位租户向你投诉。刘奶奶特别失望："我膝盖不好，没有电梯几乎无法出门。"吴家的孩子们因为上学迟到而父母非常生气。",
-                        "image": "assets/images/characters/tenants_upset.png",
-                        "location_image": "assets/images/locations/elevator_out_of_service.png",
-                        "speaker": "刘奶奶",
-                        "effects": {
-                            "relationship_NPC_ELDERLY_LIU": -5,
-                            "relationship_NPC_YOUNG_FAMILY_WU": -4
-                        },
-                        "choices": [
-                            {
-                                "text": "认识到错误并立即联系专业维修",
-                                "effects": {
-                                    "financialHealth": -100,
-                                    "tenantSatisfaction": -5
-                                },
-                                "nextNode": "CORRECT_MISTAKE"
-                            },
-                            {
-                                "text": "坚持原计划，晚上进行维修",
-                                "effects": {
-                                    "tenantSatisfaction": -10
-                                },
-                                "nextNode": "STICK_TO_PLAN"
-                            }
-                        ]
-                    },
-                    "COMPLETE_REPLACEMENT": {
-                        "text": "你决定投资全面更换电梯系统。新电梯不仅更快、更安静，还提高了能源效率。租户们对这一改进非常满意，特别是刘奶奶："新电梯太棒了，感谢物业的用心。"",
-                        "image": "assets/images/characters/tenant_happy_elderly.png",
-                        "location_image": "assets/images/locations/new_elevator.png",
-                        "speaker": "刘奶奶",
-                        "effects": {
-                            "tenantSatisfaction": 15,
-                            "relationship_NPC_ELDERLY_LIU": 5,
-                            "relationship_NPC_YOUNG_FAMILY_WU": 3
-                        },
-                        "endsScenario": true,
-                        "endText": "场景结束：你通过全面更换电梯系统彻底解决了问题，提高了物业价值和租户满意度，尽管花费了大量资金。"
-                    }
-                    // 其他节点数据...
-                }
-            };
-            
-            // 加载当前节点
-            function loadNode(nodeId) {
-                const node = scenarioData.nodes[nodeId];
-                if (!node) {
-                    console.error(`Node ${nodeId} not found!`);
-                    return;
-                }
-                
-                // 更新当前节点
-                gameState.currentNode = nodeId;
-                
-                // 场景转换效果
-                const sceneTransition = document.getElementById('sceneTransition');
-                sceneTransition.classList.add('active');
-                
-                setTimeout(() => {
-                    // 更新图片
-                    if (node.location_image) {
-                        document.getElementById('locationImage').src = node.location_image;
-                    }
-                    
-                    const characterImage = document.getElementById('characterImage');
-                    if (node.image) {
-                        characterImage.src = node.image;
-                        characterImage.classList.add('active');
-                    } else {
-                        characterImage.classList.remove('active');
-                    }
-                    
-                    // 更新对话
-                    const dialogueText = document.getElementById('dialogueText');
-                    dialogueText.innerHTML = node.text;
-                    
-                    // 更新说话者
-                    if (node.speaker) {
-                        document.getElementById('speakerName').textContent = node.speaker;
-                        // 这里应该更新说话者头像，但为简化示例，使用固定头像
-                    }
-                    
-                    // 应用效果
-                    if (node.effects) {
-                        applyEffects(node.effects);
-                    }
-                    
-                    // 添加选项
-                    const choicesContainer = document.getElementById('choicesContainer');
-                    choicesContainer.innerHTML = '';
-                    
-                    if (node.endsScenario) {
-                        // 如果是结束节点，显示结果
-                        setTimeout(() => {
-                            showResult(node.endText);
-                        }, 3000); // 给玩家时间阅读最后的文本
-                    } else if (node.choices && node.choices.length > 0) {
-                        // 添加选择按钮
-                        node.choices.forEach(choice => {
-                            const button = document.createElement('button');
-                            button.className = 'choice-button';
-                            button.dataset.nextNode = choice.nextNode;
-                            
-                            let buttonText = choice.text;
-                            button.innerHTML = buttonText;
-                            
-                            // 添加效果提示
-                            if (choice.effects) {
-                                const effectsDiv = document.createElement('div');
-                                effectsDiv.className = 'choice-effects';
-                                
-                                Object.entries(choice.effects).forEach(([key, value]) => {
-                                    const effectSpan = document.createElement('span');
-                                    const effectClass = value > 0 ? 'positive' : (value < 0 ? 'negative' : 'neutral');
-                                    effectSpan.className = `choice-effect ${effectClass}`;
-                                    
-                                    let displayKey = key;
-                                    if (key.startsWith('relationship_')) {
-                                        const npcId = key.replace('relationship_', '');
-                                        displayKey = `与${getNPCName(npcId)}关系`;
-                                    }
-                                    
-                                    effectSpan.textContent = `${displayKey} ${value > 0 ? '+' : ''}${value}`;
-                                    effectsDiv.appendChild(effectSpan);
-                                });
-                                
-                                button.appendChild(effectsDiv);
-                            }
-                            
-                            button.addEventListener('click', () => {
-                                // 应用选择效果
-                                if (choice.effects) {
-                                    applyEffects(choice.effects);
-                                }
-                                
-                                // 加载下一个节点
-                                loadNode(choice.nextNode);
-                            });
-                            
-                            choicesContainer.appendChild(button);
-                        });
-                    }
-                    
-                    // 完成场景切换
-                    setTimeout(() => {
-                        sceneTransition.classList.remove('active');
-                    }, 500);
-                    
-                }, 500); // 半秒后更新内容
-            }
-            
-            // 应用效果到游戏状态
-            function applyEffects(effects) {
-                Object.entries(effects).forEach(([key, value]) => {
-                    if (key.startsWith('relationship_')) {
-                        const npcId = key.replace('relationship_', '');
-                        gameState.relationships[npcId] = (gameState.relationships[npcId] || 0) + value;
-                    } else {
-                        gameState[key] = (gameState[key] || 0) + value;
-                    }
-                });
-                
-                // 更新显示
-                updateMetrics();
-            }
-            
-            // 获取NPC名称
-            function getNPCName(npcId) {
-                const npcNames = {
-                    'STAFF_TECHNICIAN_WANG': '王师傅',
-                    'NPC_ELDERLY_LIU': '刘奶奶',
-                    'NPC_YOUNG_FAMILY_WU': '吴家'
-                };
-                
-                return npcNames[npcId] || npcId;
-            }
-            
-            // 显示结果
-            function showResult(endText) {
-                document.getElementById('resultDescription').textContent = endText;
-                document.getElementById('finalTenantSatisfaction').textContent = gameState.tenantSatisfaction;
-                document.getElementById('finalFinancialHealth').textContent = gameState.financialHealth;
-                document.getElementById('finalReputation').textContent = Math.round((gameState.tenantSatisfaction + 
-                    Object.values(gameState.relationships).reduce((sum, val) => sum + val, 0)) / 2);
-                
-                document.getElementById('resultOverlay').classList.add('active');
-            }
-            
-            // 重新开始按钮
-            document.getElementById('restartButton').addEventListener('click', function() {
-                // 重置游戏状态
-                gameState.tenantSatisfaction = 75;
-                gameState.financialHealth = 5000;
-                gameState.buildingCondition = 80;
-                gameState.managerStress = 25;
-                gameState.relationships = {
-                    'STAFF_TECHNICIAN_WANG': 5,
-                    'NPC_ELDERLY_LIU': 5,
-                    'NPC_YOUNG_FAMILY_WU': 5
-                };
-                gameState.flags = [];
-                
-                // 隐藏结果显示
-                document.getElementById('resultOverlay').classList.remove('active');
-                
-                // 加载起始节点
-                loadNode('ELEVATOR_FAILURE_START');
-            });
-            
-            // 返回选择按钮
-            document.getElementById('continueButton').addEventListener('click', function() {
-                window.location.href = 'index.html';
-            });
-            
-            // 初始化加载
-            document.getElementById('scenarioTitle').textContent = scenarioData.title;
-            loadNode('ELEVATOR_FAILURE_START');
         });
     </script>
 </body>

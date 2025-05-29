@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
             simulateLogin(username, password);
         });
     }
-    
+
     // 注册表单提交
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
@@ -410,7 +410,7 @@ function showNotification(message, type = 'success') {
     `;
     
     document.body.appendChild(notification);
-    
+
     // 添加样式
     notification.style.position = 'fixed';
     notification.style.top = '20px';
@@ -440,7 +440,7 @@ function showNotification(message, type = 'success') {
         notification.style.opacity = '1';
         notification.style.transform = 'translateY(0)';
     }, 10);
-    
+            
     // 点击关闭按钮移除通知
     const closeBtn = notification.querySelector('.notification-close');
     closeBtn.style.marginLeft = '10px';
@@ -493,7 +493,7 @@ function simulateLogin(username, password) {
         // 跳转到主页
         setTimeout(() => {
             window.location.href = 'index.html';
-        }, 1000);
+    }, 1000);
     }, 1500);
 }
 

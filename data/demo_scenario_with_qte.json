@@ -1,0 +1,362 @@
+{
+  "id": "PROPERTY_FLOOD_EMERGENCY",
+  "title": "地下车库洪水紧急事件",
+  "description": "一场暴雨导致地下车库积水，你需要快速处理这一紧急情况，同时平衡各方利益。",
+  "initialState": {
+    "tenantSatisfaction": 70,
+    "managerStress": 20,
+    "buildingCondition": 75,
+    "financialHealth": 5000
+  },
+  "involvedNPCs": ["NPC_MAINTENANCE_ZHANG", "NPC_LUXURY_CAR_OWNER_LIN", "NPC_ELDERLY_COUPLE_WANG"],
+  "startNode": "FLOOD_DISCOVERY",
+  "nodes": {
+    "FLOOD_DISCOVERY": {
+      "text": "凌晨三点，你接到紧急电话。张师傅焦急地说：\u201C经理，不好了！地下车库进水了，水位还在上升。暴雨太大，排水系统可能堵塞了。已经有几辆车泡在水里了，车主肯定会很生气！\u201D",
+      "image": "assets/images/characters/maintenance_zhang_panic.png",
+      "locationImage": "assets/images/locations/flooded_garage.png",
+      "speaker": "张师傅",
+      "effects": {
+        "managerStress": 15
+      },
+      "choices": [
+        {
+          "text": "立即赶到现场，组织应急小组处理",
+          "nextNode": "ARRIVE_AT_SCENE",
+          "effects": {
+            "managerStress": 5,
+            "relationship_NPC_MAINTENANCE_ZHANG": 2
+          }
+        },
+        {
+          "text": "远程指挥张师傅，让他先采取紧急措施",
+          "nextNode": "REMOTE_COMMAND",
+          "effects": {
+            "managerStress": -3,
+            "relationship_NPC_MAINTENANCE_ZHANG": -1
+          }
+        },
+        {
+          "text": "通知所有车主立即转移车辆，然后再处理洪水",
+          "nextNode": "NOTIFY_CAR_OWNERS",
+          "effects": {
+            "tenantSatisfaction": -5
+          },
+          "storyFlagSet": {
+            "PRIORITIZED_CAR_OWNERS": true
+          }
+        }
+      ]
+    },
+    "ARRIVE_AT_SCENE": {
+      "text": "你迅速赶到现场，地下车库已经积水30厘米，水位仍在上升。张师傅和两名保安正在尝试疏通排水系统。一位车主林先生已经来到现场，正焦急地看着他的豪车泡在水中。",
+      "image": "assets/images/characters/luxury_car_owner_angry.png",
+      "locationImage": "assets/images/locations/flooded_garage_severe.png",
+      "speaker": "旁白",
+      "choices": [
+        {
+          "text": "优先疏通排水系统，减缓水位上升",
+          "nextNode": "UNBLOCK_DRAINAGE"
+        },
+        {
+          "text": "先帮助林先生抢救他的豪车",
+          "nextNode": "HELP_LIN_FIRST",
+          "effects": {
+            "relationship_NPC_LUXURY_CAR_OWNER_LIN": 5
+          },
+          "storyFlagSet": {
+            "HELPED_LIN_FIRST": true
+          }
+        },
+        {
+          "text": "分头行动：一边排水，一边通知所有车主",
+          "nextNode": "PARALLEL_ACTION",
+          "effects": {
+            "managerStress": 10
+          }
+        }
+      ]
+    },
+    "UNBLOCK_DRAINAGE": {
+      "text": "你和张师傅集中精力疏通排水系统。这项工作十分困难，需要在及腰深的脏水中操作。林先生越来越不耐烦：\u201C我的车都快泡汤了，你们还在搞这个？\u201D",
+      "image": "assets/images/characters/maintenance_zhang_working.png",
+      "locationImage": "assets/images/locations/drainage_work.png",
+      "speaker": "张师傅",
+      "hasQTE": true,
+      "qteData": {
+        "type": "StopTheMovingBar",
+        "instructionText": "快速按下按钮，准确找到排水口堵塞点！",
+        "parameters": {
+          "targetZoneStart": 40,
+          "targetZoneEnd": 60,
+          "barSpeed": 30
+        },
+        "successNode": "DRAINAGE_SUCCESS",
+        "failureNode": "DRAINAGE_FAILURE"
+      }
+    },
+    "DRAINAGE_SUCCESS": {
+      "text": "在你的精准操作下，排水系统很快被疏通了！水位开始下降，情况得到控制。张师傅对你竖起大拇指：\u201C厉害啊经理，这手艺比我还专业！\u201D",
+      "image": "assets/images/characters/maintenance_zhang_thumbsup.png",
+      "locationImage": "assets/images/locations/drainage_success.png",
+      "speaker": "张师傅",
+      "effects": {
+        "buildingCondition": 5,
+        "relationship_NPC_MAINTENANCE_ZHANG": 3
+      },
+      "choices": [
+        {
+          "text": "现在去帮助林先生挽救他的车",
+          "nextNode": "HELP_CAR_OWNERS",
+          "storyFlagSet": {
+            "DRAINAGE_BEFORE_CARS": true
+          }
+        },
+        {
+          "text": "组织人手清理车库，评估受损情况",
+          "nextNode": "ASSESS_DAMAGE"
+        }
+      ]
+    },
+    "DRAINAGE_FAILURE": {
+      "text": "你尝试了很久，但排水系统的堵塞点太难处理了。水位继续上升，林先生愤怒地大喊：\u201C你们是故意的吗？我的车都要报废了！\u201D",
+      "image": "assets/images/characters/luxury_car_owner_furious.png",
+      "locationImage": "assets/images/locations/rising_water.png",
+      "speaker": "林先生",
+      "effects": {
+        "tenantSatisfaction": -10,
+        "relationship_NPC_LUXURY_CAR_OWNER_LIN": -5
+      },
+      "choices": [
+        {
+          "text": "立即呼叫专业排水公司紧急处理",
+          "nextNode": "CALL_PROFESSIONALS",
+          "effects": {
+            "financialHealth": -200
+          }
+        },
+        {
+          "text": "先尝试挽救车辆，再处理排水问题",
+          "nextNode": "HELP_CAR_OWNERS",
+          "effects": {
+            "relationship_NPC_LUXURY_CAR_OWNER_LIN": 2
+          }
+        }
+      ]
+    },
+    "HELP_LIN_FIRST": {
+      "text": "你决定先帮助林先生抢救他的豪车。林先生非常感激：\u201C谢谢你优先考虑我的情况。\u201D然而，这段时间水位又上升了不少，情况变得更加严峻。",
+      "image": "assets/images/characters/luxury_car_owner_grateful.png",
+      "locationImage": "assets/images/locations/car_rescue.png",
+      "speaker": "林先生",
+      "hasQTE": true,
+      "qteData": {
+        "type": "ButtonMash",
+        "instructionText": "快速点击以推动车辆脱离水域！",
+        "parameters": {
+          "targetClicks": 15,
+          "timeLimit": 6000
+        },
+        "successNode": "CAR_RESCUE_SUCCESS",
+        "failureNode": "CAR_RESCUE_FAILURE"
+      }
+    },
+    "CAR_RESCUE_SUCCESS": {
+      "text": "在你们的共同努力下，林先生的车被成功推到了斜坡上，避免了严重损失。林先生激动地握住你的手：\u201C太感谢了！我会记住你的帮助。\u201D",
+      "image": "assets/images/characters/luxury_car_owner_happy.png",
+      "locationImage": "assets/images/locations/car_saved.png",
+      "speaker": "林先生",
+      "effects": {
+        "relationship_NPC_LUXURY_CAR_OWNER_LIN": 8,
+        "tenantSatisfaction": 5
+      },
+      "choices": [
+        {
+          "text": "现在必须处理排水系统问题",
+          "nextNode": "FOCUS_ON_DRAINAGE",
+          "storyFlagCondition": {
+            "HELPED_LIN_FIRST": true
+          }
+        },
+        {
+          "text": "继续帮助其他车主抢救车辆",
+          "nextNode": "HELP_OTHER_OWNERS"
+        }
+      ]
+    },
+    "CAR_RESCUE_FAILURE": {
+      "text": "尽管你们努力尝试，但水流太强，无法将车推到安全区域。林先生的车受到了严重损坏。他失望地摇头：\u201C我早该自己想办法的。\u201D",
+      "image": "assets/images/characters/luxury_car_owner_disappointed.png",
+      "locationImage": "assets/images/locations/car_damaged.png",
+      "speaker": "林先生",
+      "effects": {
+        "relationship_NPC_LUXURY_CAR_OWNER_LIN": -3,
+        "tenantSatisfaction": -5
+      },
+      "choices": [
+        {
+          "text": "承诺赔偿部分损失",
+          "nextNode": "PROMISE_COMPENSATION",
+          "effects": {
+            "financialHealth": -300,
+            "relationship_NPC_LUXURY_CAR_OWNER_LIN": 4
+          }
+        },
+        {
+          "text": "建议走保险流程，现在必须处理排水问题",
+          "nextNode": "FOCUS_ON_DRAINAGE",
+          "effects": {
+            "relationship_NPC_LUXURY_CAR_OWNER_LIN": -2
+          }
+        }
+      ]
+    },
+    "ASSESS_DAMAGE": {
+      "text": "水位逐渐下降，你开始评估损失情况。车库内多辆车受损，电力系统也有问题。王老夫妇来到车库查看他们的车，看起来很担忧。",
+      "image": "assets/images/characters/elderly_couple_worried.png",
+      "locationImage": "assets/images/locations/damage_assessment.png",
+      "speaker": "王先生",
+      "storyFlagCondition": {
+        "DRAINAGE_BEFORE_CARS": true
+      },
+      "choices": [
+        {
+          "text": "详细记录每位车主的损失，承诺协助处理保险",
+          "nextNode": "DETAILED_RECORD",
+          "effects": {
+            "tenantSatisfaction": 8,
+            "managerStress": 5
+          }
+        },
+        {
+          "text": "召开紧急会议，向所有受影响租户解释情况",
+          "nextNode": "EMERGENCY_MEETING",
+          "effects": {
+            "tenantSatisfaction": 5
+          }
+        },
+        {
+          "text": "优先帮助王老夫妇处理他们的车",
+          "nextNode": "HELP_ELDERLY",
+          "effects": {
+            "relationship_NPC_ELDERLY_COUPLE_WANG": 5
+          },
+          "hasQTE": true,
+          "qteData": {
+            "type": "ClickSequence",
+            "instructionText": "按正确顺序点击检查车辆各部位的受损情况!",
+            "parameters": {
+              "sequence": [
+                {"image": "assets/images/qte/car_engine.png"},
+                {"image": "assets/images/qte/car_battery.png"},
+                {"image": "assets/images/qte/car_electronics.png"},
+                {"image": "assets/images/qte/car_interior.png"}
+              ],
+              "timeLimit": 8000
+            },
+            "successNode": "ELDERLY_HELP_SUCCESS",
+            "failureNode": "ELDERLY_HELP_FAILURE"
+          }
+        }
+      ]
+    },
+    "EMERGENCY_MEETING": {
+      "text": "你在大厅召集了所有受影响的车主。你详细解释了洪水发生的原因，以及物业采取的应对措施。大多数业主对你的坦诚和处理方式表示理解，但林先生仍然很不满。",
+      "image": "assets/images/characters/property_manager_addressing.png",
+      "locationImage": "assets/images/locations/tenant_meeting.png",
+      "speaker": "你",
+      "choices": [
+        {
+          "text": "提出免除所有受影响车主一个月物业费",
+          "nextNode": "WAIVE_FEES",
+          "effects": {
+            "financialHealth": -300,
+            "tenantSatisfaction": 15,
+            "relationship_NPC_LUXURY_CAR_OWNER_LIN": 3,
+            "relationship_NPC_ELDERLY_COUPLE_WANG": 4
+          }
+        },
+        {
+          "text": "承诺升级排水系统，防止未来再发生类似事件",
+          "nextNode": "UPGRADE_PROMISE",
+          "effects": {
+            "tenantSatisfaction": 10
+          },
+          "storyFlagSet": {
+            "PROMISED_DRAINAGE_UPGRADE": true
+          }
+        }
+      ]
+    },
+    "UPGRADE_PROMISE": {
+      "text": "你郑重承诺将升级整个小区的排水系统。这是一项重大工程，需要投入大量资金，但能有效预防未来的洪水问题。多数业主对这一长期解决方案表示满意。",
+      "image": "assets/images/characters/property_manager_promising.png",
+      "locationImage": "assets/images/locations/blueprint_review.png",
+      "speaker": "你",
+      "choices": [
+        {
+          "text": "立即启动排水系统升级项目",
+          "nextNode": "START_UPGRADE",
+          "effects": {
+            "financialHealth": -1000,
+            "buildingCondition": 20,
+            "tenantSatisfaction": 10
+          }
+        },
+        {
+          "text": "逐步实施升级计划，分散财务压力",
+          "nextNode": "GRADUAL_UPGRADE",
+          "effects": {
+            "financialHealth": -200,
+            "buildingCondition": 5,
+            "tenantSatisfaction": -5
+          },
+          "storyFlagSet": {
+            "GRADUAL_DRAINAGE_UPGRADE": true
+          }
+        }
+      ]
+    },
+    "START_UPGRADE": {
+      "text": "你迅速启动了排水系统升级项目。工程团队立即开始工作，整个过程预计需要两周完成。尽管这是一笔不小的支出，但租户们看到物业的高效行动都很满意。王老先生微笑着对你说：\u201C这才是负责任的物业管理。\u201D",
+      "image": "assets/images/characters/elderly_man_satisfied.png",
+      "locationImage": "assets/images/locations/construction_site.png",
+      "speaker": "王先生",
+      "effects": {
+        "relationship_NPC_ELDERLY_COUPLE_WANG": 5
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "基础设施提升者",
+        "description": "你成功处理了洪水危机，并通过升级排水系统从根本上解决了问题。虽然这对财务造成了压力，但极大地提高了小区的安全性和住户满意度。你展现了卓越的危机管理能力和长远规划视野。",
+        "metrics": {
+          "tenantSatisfaction": 20,
+          "buildingCondition": 20,
+          "reputation": 15
+        }
+      }
+    },
+    "GRADUAL_UPGRADE": {
+      "text": "你决定分阶段实施排水系统升级，先处理最关键的部分，然后逐步完成其余工作。这降低了立即的财务压力，但也延长了整个项目的完成时间。一个月后，一场小雨再次导致车库积水，尽管程度较轻。",
+      "image": "assets/images/characters/maintenance_zhang_concerned.png",
+      "locationImage": "assets/images/locations/minor_flooding.png",
+      "speaker": "张师傅",
+      "storyFlagCondition": {
+        "GRADUAL_DRAINAGE_UPGRADE": true
+      },
+      "effects": {
+        "tenantSatisfaction": -10
+      },
+      "endsScenario": true,
+      "endResult": {
+        "title": "谨慎的平衡者",
+        "description": "你在处理洪水危机时选择了财务上更谨慎的方法。虽然避免了巨大的财务支出，但延迟升级导致了后续的小问题，让一些租户感到失望。这反映了物业管理中常见的资源分配困境。",
+        "metrics": {
+          "tenantSatisfaction": -5,
+          "buildingCondition": 5,
+          "financialHealth": 10
+        }
+      }
+    }
+  }
+} 
