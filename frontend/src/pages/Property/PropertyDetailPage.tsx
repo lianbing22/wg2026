@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, Descriptions, Spin, Alert, Typography, Tag, Row, Col, Button, Image } from 'antd';
 import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
 import { propertyService } from '../../services/propertyService';
-import { Property } from '../../types/property';
+import type { Property } from '../../types/property';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const PropertyDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

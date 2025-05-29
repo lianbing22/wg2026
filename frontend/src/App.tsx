@@ -1,6 +1,6 @@
 import './App.css';
 import AppRoutes from './routes';
-import { Layout, Menu } from 'antd'; // Import Menu
+import { Layout, Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom'; // Import Link and useLocation
 
 const { Header, Content, Footer } = Layout;

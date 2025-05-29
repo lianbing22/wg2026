@@ -1,8 +1,10 @@
 // routes/index.tsx
 import { Routes, Route, Navigate } from 'react-router-dom';
+import type { ReactNode } from 'react'; // Import ReactNode for children prop
 import LoginPage from '../pages/Auth/LoginPage';
 import DashboardPage from '../pages/DashboardPage'; // Import the actual DashboardPage
 import PropertyListPage from '../pages/Property/PropertyListPage'; // 新增物业列表页面导入
+import PropertyDetailPage from '../pages/Property/PropertyDetailPage'; // 新增物业详情页面导入
 
 // Mock authentication check
 const isAuthenticated = () => {
@@ -10,7 +12,7 @@ const isAuthenticated = () => {
   return localStorage.getItem('authToken') !== null;
 };
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
@@ -34,6 +36,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <PropertyListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/properties/:id"
+        element={
+          <ProtectedRoute>
+            <PropertyDetailPage />
           </ProtectedRoute>
         }
       />

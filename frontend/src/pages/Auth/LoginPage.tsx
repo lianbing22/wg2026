@@ -1,6 +1,6 @@
 // LoginPage.tsx
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, message } from 'antd';
+import { Form, Input, Button, Card, message as antdMessage } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService'; // Assuming authService is set up
 
@@ -14,14 +14,14 @@ export default function LoginPage() {
       const response = await login(); // Mock login from authService
       if (response.success) {
         localStorage.setItem('authToken', 'fake-jwt-token'); // Store a mock token
-        message.success('登录成功!');
+        antdMessage.success('登录成功!');
         navigate('/');
       } else {
-        message.error('登录失败，请检查您的凭据。');
+        antdMessage.error('登录失败，请检查您的凭据。');
       }
     } catch (error) {
       console.error('Login error:', error);
-      message.error('登录过程中发生错误。');
+      antdMessage.error('登录过程中发生错误。');
     }
   };
 

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Typography, Tag, Space, Button, Card, Row, Col, Spin, Alert } from 'antd';
 import { EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { propertyService } from '../../services/propertyService';
-import { Property } from '../../types/property';
+import type { Property } from '../../types/property';
 import { Link } from 'react-router-dom';
 
 const { Title } = Typography;
