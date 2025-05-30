@@ -13,7 +13,7 @@ export default function LoginPage() {
       // Replace with actual API call
       const response = await login(); // Mock login from authService
       if (response.success) {
-        localStorage.setItem('authToken', 'fake-jwt-token'); // Store a mock token
+        localStorage.setItem('token', 'fake-jwt-token'); // Store a mock token
         antdMessage.success('登录成功!');
         navigate('/');
       } else {

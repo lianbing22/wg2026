@@ -4,33 +4,32 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Card,
-  Form,
   Switch,
   Slider,
   Select,
   Button,
-  Row,
-  Col,
+  Form,
   Typography,
   Space,
   Divider,
+  message,
+  Row,
+  Col,
   Alert,
-  Modal,
-  message
+  Modal
 } from 'antd';
+import { ArrowLeftOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { useGame } from '../../contexts/GameContext';
+import { useNavigate } from 'react-router-dom';
 import {
-  SettingOutlined,
   SoundOutlined,
   BulbOutlined,
   SaveOutlined,
   ReloadOutlined,
-  ExclamationCircleOutlined,
-  ArrowLeftOutlined
+  SettingOutlined
 } from '@ant-design/icons';
-import { useGame } from '../../contexts/GameContext';
 import './GameSettingsPage.css';
 
 const { Title, Text } = Typography;

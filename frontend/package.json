@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://lianbing22.github.io/wg2025-1",
+  "homepage": "https://lianbing22.github.io/wg2026",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

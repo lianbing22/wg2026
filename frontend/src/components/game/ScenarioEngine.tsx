@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Typography, Space, Image, Alert } from 'antd';
 import { SoundOutlined, MutedOutlined } from '@ant-design/icons';
-import { Scenario, ScenarioNode, ScenarioChoice, GameEffect } from '../../types/game';
+import { Scenario, ScenarioNode, ScenarioChoice, GameEffect, QTEResult } from '../../types/game';
 import { useGame } from '../../contexts/GameContext';
 import QTEContainer from './QTEContainer';
 import './ScenarioEngine.css';
@@ -46,12 +46,12 @@ export default function ScenarioEngine({
     setCurrentScenario(scenario.id, currentNodeId);
   }, [scenario.id, currentNodeId, setCurrentScenario]);
 
-  // 应用节点的自动效果
+  // 应用节点的自动效果 - 使用节点ID避免无限循环
   useEffect(() => {
     if (currentNode?.autoEffects) {
       applyEffects(currentNode.autoEffects);
     }
-  }, [currentNode, applyEffects]);
+  }, [currentNodeId, applyEffects]); // 只依赖节点ID，避免currentNode对象引用变化
 
   // 播放背景音乐和音效
   useEffect(() => {
@@ -165,14 +165,57 @@ export default function ScenarioEngine({
   };
 
   // QTE完成处理
-  const handleQTEComplete = useCallback((success: boolean, _result: any) => {
+  const handleQTEComplete = useCallback((success: boolean, result: QTEResult) => {
+    console.log('QTE完成:', { success, result });
+    const { accuracy } = result;
+    
     setShowQTE(false);
 
     // 应用QTE结果效果
     if (success && qteConfig?.successEffects) {
-      applyEffects(qteConfig.successEffects);
+      const effects = qteConfig.successEffects;
+      
+      // 根据准确度调整效果强度
+      if (accuracy !== undefined) {
+        const adjustedEffects = { ...effects };
+        
+        // 根据准确度调整数值效果
+        if (adjustedEffects.stats) {
+          Object.keys(adjustedEffects.stats).forEach(key => {
+            const originalValue = adjustedEffects.stats![key as keyof typeof adjustedEffects.stats];
+            if (typeof originalValue === 'number') {
+              // 准确度越高，效果越好
+              const multiplier = 0.5 + (accuracy / 100) * 0.5; // 将百分比转换为0-1范围
+              (adjustedEffects.stats as any)[key] = Math.round(originalValue * multiplier);
+            }
+          });
+        }
+        
+        applyEffects(adjustedEffects);
+      } else {
+        applyEffects(effects);
+      }
     } else if (!success && qteConfig?.failureEffects) {
-      applyEffects(qteConfig.failureEffects);
+      const effects = qteConfig.failureEffects;
+      
+      // 失败时也可以根据准确度调整效果
+      if (accuracy !== undefined) {
+        const adjustedEffects = { ...effects };
+        
+        if (adjustedEffects.stats) {
+          Object.keys(adjustedEffects.stats).forEach(key => {
+            const originalValue = adjustedEffects.stats![key as keyof typeof adjustedEffects.stats];
+            if (typeof originalValue === 'number') {
+              const multiplier = 0.3 + accuracy * 0.2;
+              (adjustedEffects.stats as any)[key] = Math.round(originalValue * multiplier);
+            }
+          });
+        }
+        
+        applyEffects(adjustedEffects);
+      } else {
+        applyEffects(effects);
+      }
     }
 
     // 应用选择效果
@@ -180,15 +223,26 @@ export default function ScenarioEngine({
       applyEffects(choiceEffects);
     }
 
+    // 显示QTE结果反馈
+    const resultMessage = success 
+      ? `QTE成功！得分: ${result.extraData?.score || 0}${accuracy ? ` (准确度: ${Math.round(accuracy)}%)` : ''}` 
+      : `QTE失败，得分: ${result.extraData?.score || 0}`;
+    
+    console.log(resultMessage);
+
     // 跳转到下一个节点
     const nextNode = success ? 
       (qteConfig?.successNode || nextNodeAfterQTE) : 
       (qteConfig?.failureNode || nextNodeAfterQTE);
 
     if (nextNode) {
-      setCurrentNodeId(nextNode);
+      setTimeout(() => {
+        setCurrentNodeId(nextNode);
+      }, 1500); // 延迟切换，让用户看到结果
     } else {
-      handleScenarioEnd(success ? 'qte_success_ending' : 'qte_failure_ending');
+      setTimeout(() => {
+        handleScenarioEnd(success ? 'qte_success_ending' : 'qte_failure_ending');
+      }, 1500);
     }
 
     // 清理QTE状态

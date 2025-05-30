@@ -3,7 +3,7 @@
  * 提供全局游戏状态管理，包括场景进度、玩家数据、游戏统计等
  */
 
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
 import { GameState, GameStats, GameProgress, PlayerProfile, GameEffect } from '../types/game';
 
 // ==================== 初始状态定义 ====================
@@ -83,13 +83,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...action.payload };
 
     case 'SAVE_GAME_STATE':
-      const savedState = {
+      // 保存到localStorage但不改变state，避免无限循环
+      const stateToSave = {
         ...state,
         savedAt: new Date().toISOString()
       };
-      // 保存到localStorage
-      localStorage.setItem('gameState', JSON.stringify(savedState));
-      return savedState;
+      localStorage.setItem('gameState', JSON.stringify(stateToSave));
+      return state; // 返回原state，不触发重新渲染
 
     case 'APPLY_EFFECTS': {
       const effects = action.payload;
@@ -264,21 +264,23 @@ interface GameProviderProps {
 export function GameProvider({ children }: GameProviderProps) {
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
-  // 自动保存功能
+  // 自动保存功能 - 使用ref避免依赖gameState
   useEffect(() => {
     const autoSaveInterval = gameState.player.preferences.autoSaveInterval * 60 * 1000; // 转换为毫秒
-    const timer = setInterval(() => {
-      dispatch({ type: 'SAVE_GAME_STATE' });
-    }, autoSaveInterval);
+    if (autoSaveInterval > 0) {
+      const timer = setInterval(() => {
+        dispatch({ type: 'SAVE_GAME_STATE' });
+      }, autoSaveInterval);
 
-    return () => clearInterval(timer);
+      return () => clearInterval(timer);
+    }
   }, [gameState.player.preferences.autoSaveInterval]);
 
-  // 游戏时间追踪
+  // 游戏时间追踪 - 减少更新频率避免无限循环
   useEffect(() => {
     const timer = setInterval(() => {
-      dispatch({ type: 'UPDATE_PLAY_TIME', payload: 1 });
-    }, 1000);
+      dispatch({ type: 'UPDATE_PLAY_TIME', payload: 10 }); // 改为每10秒更新一次
+    }, 10000); // 10秒间隔
 
     return () => clearInterval(timer);
   }, []);
@@ -296,14 +298,14 @@ export function GameProvider({ children }: GameProviderProps) {
     }
   }, []);
 
-  // 便捷方法
-  const applyEffects = (effects: GameEffect) => {
+  // 便捷方法 - 使用useCallback稳定函数引用
+  const applyEffects = useCallback((effects: GameEffect) => {
     dispatch({ type: 'APPLY_EFFECTS', payload: effects });
-  };
+  }, []);
 
-  const setCurrentScenario = (scenarioId: string, nodeId?: string) => {
+  const setCurrentScenario = useCallback((scenarioId: string, nodeId?: string) => {
     dispatch({ type: 'SET_CURRENT_SCENARIO', payload: { scenarioId, nodeId } });
-  };
+  }, []);
 
   const completeScenario = (scenarioId: string, score?: number) => {
     dispatch({ type: 'COMPLETE_SCENARIO', payload: { scenarioId, score } });

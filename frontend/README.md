@@ -39,7 +39,7 @@ npm run build
 
 1. 确保`package.json`中的`homepage`字段已设置为你的GitHub Pages URL
    ```json
-   "homepage": "https://lianbing22.github.io/wg2025-1"
+   "homepage": "https://lianbing22.github.io/wg2026"
    ```
 
 2. 运行部署命令：

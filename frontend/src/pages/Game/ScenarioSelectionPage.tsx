@@ -4,32 +4,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { 
-  Card, 
-  Row, 
-  Col, 
-  Button, 
-  Tag, 
-  Input, 
-  Select, 
-  Space, 
-  Typography, 
-  Alert,
-  Spin,
-  Modal,
-  Progress,
-  Tooltip
-} from 'antd';
-import { 
-  SearchOutlined, 
-  PlayCircleOutlined,
-  ClockCircleOutlined,
-  TrophyOutlined,
-  LockOutlined
-} from '@ant-design/icons';
+import { Card, Button, Input, Select, Tag, Row, Col, Typography, Space, Spin, Alert, Progress, Modal, Tooltip } from 'antd';
+import { SearchOutlined, PlayCircleOutlined, ClockCircleOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { Scenario } from '../../types/game';
 import { scenarioService } from '../../services/scenarioService';
+import type { Scenario } from '../../types/game';
 import { useGame } from '../../contexts/GameContext';
 import GameStatsPanel from '../../components/game/GameStatsPanel';
 import './ScenarioSelectionPage.css';

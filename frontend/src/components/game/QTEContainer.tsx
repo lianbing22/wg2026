@@ -96,8 +96,12 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     
     const qteResult: QTEResult = {
       success: false,
-      accuracy: 0,
-      completionTime: duration
+      accuracy: Math.max(0, accuracy - 20),
+      completionTime: duration,
+      extraData: {
+        score: 0,
+        perfect: false
+      }
     };
 
     setResult(qteResult);
@@ -105,10 +109,10 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     setTimeout(() => {
       onComplete(false, qteResult);
     }, 1000);
-  }, [config.type, onComplete, isCompleted]);
+  }, [accuracy, onComplete, isCompleted]);
 
   // QTE成功处理
-  const handleQTESuccess = useCallback((_score: number, accuracy: number) => {
+  const handleQTESuccess = useCallback((_score: number, accuracyParam: number) => {
     if (isCompleted) return;
     
     setIsActive(false);
@@ -121,10 +125,21 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     const endTime = Date.now();
     const duration = endTime - startTimeRef.current;
     
+    // 计算得分
+    const timeLimit = config.timeLimit || 10; // 默认10秒
+    const timeBonus = Math.max(0, (timeLimit * 1000 - duration) / 100);
+    const accuracyBonus = accuracyParam * 2;
+    const score = Math.round(timeBonus + accuracyBonus);
+    const perfect = accuracyParam >= 95 && duration < timeLimit * 500;
+    
     const qteResult: QTEResult = {
       success: true,
-      accuracy,
-      completionTime: duration
+      accuracy: accuracyParam,
+      completionTime: duration,
+      extraData: {
+        score,
+        perfect
+      }
     };
 
     setResult(qteResult);
@@ -134,43 +149,49 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     }, 1000);
   }, [config.type, onComplete, isCompleted]);
 
+  // 处理键盘输入
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    if (!isActive || isCompleted) return;
+
+    const key = event.key.toUpperCase();
+    const expectedKey = keySequence[currentKeyIndex];
+
+    if (key === expectedKey.toUpperCase()) {
+      // 正确按键
+      const currentTime = Date.now() - startTimeRef.current;
+      keyPressTimesRef.current.push(currentTime);
+      setCurrentKeyIndex(prev => prev + 1);
+      
+      // 根据反应时间调整准确度
+      const reactionTime = currentTime - (keyPressTimesRef.current[keyPressTimesRef.current.length - 2] || 0);
+      if (reactionTime < 500) {
+        setAccuracy(prev => Math.min(100, prev + 2)); // 快速反应奖励
+      }
+      
+      // 检查是否完成序列
+      if (currentKeyIndex + 1 >= keySequence.length) {
+        handleQTESuccess(100, accuracy);
+      }
+    } else {
+      // 错误按键
+      const penalty = Math.min(15, 10 + Math.floor(currentKeyIndex / 2)); // 递增惩罚
+      setAccuracy(prev => {
+        const newAccuracy = Math.max(0, prev - penalty);
+        if (newAccuracy <= 30) {
+          setTimeout(() => handleQTETimeout(), 100);
+        }
+        return newAccuracy;
+      });
+    }
+  }, [isActive, isCompleted, keySequence, currentKeyIndex, accuracy, handleQTESuccess, handleQTETimeout]);
+
   // 键盘事件处理
   useEffect(() => {
     if (!isActive || config.type !== 'ClickSequence') return;
 
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const expectedKey = keySequence[currentKeyIndex];
-      const pressedKey = event.key.toLowerCase();
-      
-      keyPressTimesRef.current.push(Date.now());
-      
-      if (pressedKey === expectedKey.toLowerCase()) {
-        setCurrentKeyIndex(prev => {
-          const newIndex = prev + 1;
-          if (newIndex >= keySequence.length) {
-            // 序列完成
-            const avgTime = keyPressTimesRef.current.reduce((acc, time, index) => {
-              if (index === 0) return 0;
-              return acc + (time - keyPressTimesRef.current[index - 1]);
-            }, 0) / (keyPressTimesRef.current.length - 1);
-            
-            const score = Math.max(0, 100 - (avgTime / 100));
-            handleQTESuccess(score, 100);
-          }
-          return newIndex;
-        });
-      } else {
-        // 按错了键，降低准确度
-        setAccuracy(prev => Math.max(0, prev - 20));
-        if (accuracy <= 20) {
-          handleQTETimeout();
-        }
-      }
-    };
-
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isActive, config.type, keySequence, currentKeyIndex, accuracy, handleQTESuccess, handleQTETimeout]);
+  }, [isActive, config.type, handleKeyPress]);
 
   // 快速点击处理
   const handleRapidClick = useCallback(() => {
