@@ -15,7 +15,7 @@ export default function LoginPage() {
       if (response.success) {
         localStorage.setItem('token', 'fake-jwt-token'); // Store a mock token
         antdMessage.success('登录成功!');
-        navigate('/');
+        navigate('/dashboard');
       } else {
         antdMessage.error('登录失败，请检查您的凭据。');
       }
