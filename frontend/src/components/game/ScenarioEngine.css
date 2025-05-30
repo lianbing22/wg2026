@@ -1,0 +1,190 @@
+/* 物业管理模拟器 - 场景引擎样式 */
+
+.scenario-engine {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.scenario-content {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: none;
+  overflow: hidden;
+}
+
+.scenario-content .ant-card-head {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.scenario-header h3 {
+  margin: 0;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.scenario-image {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-text {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+}
+
+.scenario-text p {
+  margin: 0;
+  color: #333;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+.scenario-choices {
+  margin-top: 20px;
+}
+
+.scenario-choices .ant-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(24, 144, 255, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+
+.scenario-choices .ant-btn:hover {
+  background: rgba(24, 144, 255, 0.1);
+  border-color: #1890ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+}
+
+.scenario-choices .ant-btn:disabled {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.25);
+  transform: none;
+  box-shadow: none;
+}
+
+.scenario-ending {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.scenario-ending .ant-btn {
+  margin: 0 8px;
+}
+
+/* QTE 覆盖层样式 */
+.qte-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .scenario-engine {
+    padding: 10px;
+  }
+  
+  .scenario-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .scenario-text {
+    padding: 15px;
+  }
+  
+  .scenario-choices .ant-btn {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scenario-engine {
+    padding: 5px;
+  }
+  
+  .scenario-text {
+    padding: 12px;
+  }
+  
+  .scenario-text p {
+    font-size: 14px;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scenario-content {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.scenario-choices .ant-btn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.scenario-choices .ant-btn:nth-child(1) { animation-delay: 0.1s; }
+.scenario-choices .ant-btn:nth-child(2) { animation-delay: 0.2s; }
+.scenario-choices .ant-btn:nth-child(3) { animation-delay: 0.3s; }
+.scenario-choices .ant-btn:nth-child(4) { animation-delay: 0.4s; }
+
+/* 加载状态 */
+.scenario-content.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* 音效按钮样式 */
+.scenario-header .ant-btn[aria-label*="sound"] {
+  border: none;
+  background: transparent;
+  color: #666;
+}
+
+.scenario-header .ant-btn[aria-label*="sound"]:hover {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}

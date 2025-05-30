@@ -1,46 +1,65 @@
+// React components are used via JSX
+import { Outlet, useLocation } from 'react-router-dom';
+import { Layout, ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import { GameProvider } from './contexts/GameContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
-import AppRoutes from './routes';
-import { Layout, Menu } from 'antd';
-import { Link, useLocation } from 'react-router-dom'; // Import Link and useLocation
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 function App() {
-  const location = useLocation(); // Get current location for active menu item
+  const location = useLocation();
+  const isGamePage = location.pathname.startsWith('/game/');
+  const isLoginPage = location.pathname === '/login';
 
-  // Determine selected keys based on current path
-  const getSelectedKeys = () => {
-    if (location.pathname.startsWith('/properties')) {
-      return ['/properties'];
-    }
-    if (location.pathname === '/') {
-      return ['/'];
-    }
-    return [];
-  };
+  // 游戏页面使用全屏布局
+  if (isGamePage) {
+    return (
+      <ErrorBoundary>
+        <ConfigProvider locale={zhCN}>
+          <GameProvider>
+            <div className="game-layout">
+              <Outlet />
+            </div>
+          </GameProvider>
+        </ConfigProvider>
+      </ErrorBoundary>
+    );
+  }
 
+  // 登录页面使用简单布局
+  if (isLoginPage) {
+    return (
+      <ErrorBoundary>
+        <ConfigProvider locale={zhCN}>
+          <div className="login-layout">
+            <Outlet />
+          </div>
+        </ConfigProvider>
+      </ErrorBoundary>
+    );
+  }
+
+  // 其他页面使用标准布局
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="logo" style={{ color: 'white', marginRight: '24px', fontSize: '1.2em' }}>物业管理模拟器 MVP</div>
-        <Menu theme="dark" mode="horizontal" selectedKeys={getSelectedKeys()} style={{ flex: 1 }}>
-          <Menu.Item key="/">
-            <Link to="/">仪表盘</Link>
-          </Menu.Item>
-          <Menu.Item key="/properties">
-            <Link to="/properties">物业列表</Link>
-          </Menu.Item>
-          {/* Add more navigation items here */}
-        </Menu>
-      </Header>
-      <Content style={{ padding: '20px 50px' }}>
-        <AppRoutes />
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        物业管理模拟器 ©{new Date().getFullYear()} Created by Trae AI
-      </Footer>
-    </Layout>
-  );
+    <ErrorBoundary>
+      <ConfigProvider locale={zhCN}>
+        <GameProvider>
+          <Layout className="app-layout">
+            <Header className="app-header">
+              <div className="logo">
+                物业管理系统
+              </div>
+            </Header>
+            <Content className="app-content">
+              <Outlet />
+            </Content>
+          </Layout>
+        </GameProvider>
+      </ConfigProvider>
+    </ErrorBoundary>
+   );
 }
 
 export default App;

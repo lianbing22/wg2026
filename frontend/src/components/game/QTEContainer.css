@@ -1,0 +1,365 @@
+/* 物业管理模拟器 - QTE容器样式 */
+
+.qte-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.qte-container {
+  width: 90%;
+  max-width: 500px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: none;
+  overflow: hidden;
+  animation: slideIn 0.4s ease-out;
+}
+
+.qte-container .ant-card-head {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.qte-container .ant-card-head-title {
+  color: white;
+}
+
+.qte-container .ant-card-body {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+}
+
+.qte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: white;
+}
+
+.qte-timer {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.qte-content {
+  text-align: center;
+  padding: 20px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 按键序列样式 */
+.qte-key-sequence {
+  width: 100%;
+}
+
+.key-display {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.key {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  border: 2px solid;
+}
+
+.key.pending {
+  background: #f0f0f0;
+  border-color: #d9d9d9;
+  color: #999;
+}
+
+.key.current {
+  background: #1890ff;
+  border-color: #1890ff;
+  color: white;
+  animation: pulse 1s infinite;
+  box-shadow: 0 0 20px rgba(24, 144, 255, 0.5);
+}
+
+.key.completed {
+  background: #52c41a;
+  border-color: #52c41a;
+  color: white;
+  transform: scale(0.9);
+}
+
+/* 快速点击样式 */
+.qte-rapid-click {
+  width: 100%;
+}
+
+.click-counter {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  border-radius: 12px;
+  color: #333;
+}
+
+.qte-rapid-click .ant-btn {
+  width: 150px;
+  height: 60px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.qte-rapid-click .ant-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.qte-rapid-click .ant-btn:active {
+  transform: scale(0.95);
+}
+
+/* 定时点击样式 */
+.qte-timing {
+  width: 100%;
+}
+
+.timing-bar {
+  position: relative;
+  margin: 20px 0;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.target-zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(82, 196, 26, 0.3);
+  border: 2px solid #52c41a;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.qte-timing .ant-btn {
+  width: 150px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.qte-timing .ant-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+}
+
+/* 精确操作样式 */
+.qte-precision {
+  width: 100%;
+}
+
+/* 结果显示样式 */
+.qte-result {
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.qte-result h3 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  animation: bounceIn 0.6s ease-out;
+}
+
+.qte-accuracy {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: rgba(24, 144, 255, 0.1);
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(24, 144, 255, 0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(24, 144, 255, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(24, 144, 255, 0.5);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .qte-container {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .qte-content {
+    padding: 15px;
+    min-height: 150px;
+  }
+  
+  .key {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+  }
+  
+  .qte-rapid-click .ant-btn {
+    width: 120px;
+    height: 50px;
+    font-size: 16px;
+  }
+  
+  .qte-timing .ant-btn {
+    width: 120px;
+    height: 45px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qte-container {
+    width: 98%;
+    margin: 5px;
+  }
+  
+  .qte-content {
+    padding: 10px;
+  }
+  
+  .key {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 14px;
+  }
+  
+  .key-display {
+    gap: 8px;
+  }
+  
+  .qte-rapid-click .ant-btn,
+  .qte-timing .ant-btn {
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .qte-container {
+    background: #000;
+    border: 2px solid #fff;
+  }
+  
+  .qte-container .ant-card-body {
+    background: #fff;
+    color: #000;
+  }
+  
+  .key.current {
+    background: #000;
+    color: #fff;
+    border-color: #fff;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .qte-overlay,
+  .qte-container,
+  .key,
+  .qte-rapid-click .ant-btn,
+  .qte-timing .ant-btn {
+    animation: none;
+    transition: none;
+  }
+  
+  .key.current {
+    animation: none;
+  }
+}

@@ -1,0 +1,395 @@
+/* 游戏设置页面样式 */
+.game-settings-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.settings-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.settings-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: none;
+  overflow: hidden;
+}
+
+.settings-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+  margin: -24px -24px 24px -24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  font-size: 32px;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.settings-form {
+  padding: 0 8px;
+}
+
+/* 设置区块 */
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.section-icon {
+  font-size: 20px;
+  color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.section-header .ant-typography {
+  margin: 0;
+  color: #262626;
+}
+
+/* 表单项样式 */
+.ant-form-item {
+  margin-bottom: 20px;
+}
+
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #262626;
+  font-size: 14px;
+}
+
+/* 开关样式 */
+.ant-switch {
+  background: #bfbfbf;
+}
+
+.ant-switch-checked {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.ant-switch:hover:not(.ant-switch-disabled) {
+  background: #8c8c8c;
+}
+
+.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background: linear-gradient(135deg, #5a6fd8, #6a4190);
+}
+
+/* 滑块样式 */
+.ant-slider {
+  margin: 16px 0;
+}
+
+.ant-slider-track {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.ant-slider-handle {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.ant-slider-handle:hover,
+.ant-slider-handle:focus {
+  border-color: #5a6fd8;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+.ant-slider-mark-text {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+/* 选择器样式 */
+.ant-select {
+  border-radius: 8px;
+}
+
+.ant-select-selector {
+  border: 2px solid #f0f0f0 !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease;
+}
+
+.ant-select:hover .ant-select-selector {
+  border-color: #40a9ff !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* 下拉选项样式 */
+.ant-select-dropdown {
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.ant-select-item {
+  border-radius: 6px;
+  margin: 2px 4px;
+}
+
+.ant-select-item-option-selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* 分割线样式 */
+.ant-divider {
+  border-color: #e8e8e8;
+  margin: 32px 0;
+}
+
+/* 警告框样式 */
+.ant-alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.ant-alert-warning {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.1), rgba(250, 173, 20, 0.05));
+  border: 1px solid rgba(250, 173, 20, 0.3);
+}
+
+/* 操作按钮区域 */
+.settings-actions {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 按钮样式 */
+.ant-btn {
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.ant-btn-primary:disabled {
+  background: #f5f5f5;
+  color: #bfbfbf;
+  transform: none;
+  box-shadow: none;
+}
+
+.ant-btn-default {
+  border: 2px solid #f0f0f0;
+  background: white;
+}
+
+.ant-btn-default:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .game-settings-page {
+    padding: 10px;
+  }
+  
+  .settings-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .settings-actions {
+    justify-content: center;
+  }
+  
+  .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .ant-space .ant-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-container {
+    max-width: 100%;
+  }
+  
+  .settings-card {
+    margin: 0;
+    border-radius: 12px;
+  }
+  
+  .settings-header {
+    padding: 20px;
+    margin: -20px -20px 20px -20px;
+  }
+  
+  .settings-section {
+    margin-bottom: 24px;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .ant-select-selector {
+    border-width: 3px !important;
+  }
+  
+  .section-header {
+    border-bottom-width: 3px;
+  }
+  
+  .settings-actions {
+    border-top-width: 3px;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .ant-btn,
+  .ant-switch,
+  .ant-select-selector,
+  .back-button {
+    transition: none;
+  }
+  
+  .ant-btn:hover,
+  .back-button:hover {
+    transform: none;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .settings-card {
+    background: rgba(20, 20, 20, 0.95);
+    color: #ffffff;
+  }
+  
+  .section-header {
+    border-bottom-color: #404040;
+  }
+  
+  .settings-actions {
+    border-top-color: #404040;
+  }
+  
+  .ant-form-item-label > label {
+    color: #ffffff;
+  }
+  
+  .section-header .ant-typography {
+    color: #ffffff;
+  }
+}
+
+/* 自定义选择器选项样式 */
+.difficulty-option {
+  padding: 8px 0;
+}
+
+.difficulty-option .difficulty-name {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.difficulty-option .difficulty-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* 设置项动画 */
+.settings-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-section:nth-child(1) { animation-delay: 0.1s; }
+.settings-section:nth-child(2) { animation-delay: 0.2s; }
+.settings-section:nth-child(3) { animation-delay: 0.3s; }

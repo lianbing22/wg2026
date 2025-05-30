@@ -1,0 +1,331 @@
+/* 物业管理模拟器 - 游戏统计面板样式 */
+
+.game-stats-panel {
+  width: 100%;
+  max-width: 400px;
+}
+
+.game-stats-panel.small {
+  max-width: 300px;
+}
+
+.game-stats-panel.large {
+  max-width: 500px;
+}
+
+/* 卡片通用样式 */
+.game-stats-panel .ant-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.game-stats-panel .ant-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 玩家信息卡片 */
+.player-info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.player-info-card .ant-card-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.player-info-card .ant-card-head-title {
+  color: white;
+}
+
+.player-info-card .ant-statistic-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.player-info-card .ant-statistic-content {
+  color: white;
+}
+
+/* 核心统计卡片 */
+.core-stats-card {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.core-stats-card .ant-card-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.core-stats-card .ant-card-head-title {
+  color: white;
+}
+
+.core-stats-card .ant-statistic-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.core-stats-card .ant-statistic-content {
+  color: white;
+}
+
+/* 技能卡片 */
+.skills-card {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.skills-card .ant-card-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.skills-card .ant-card-head-title {
+  color: white;
+}
+
+.skill-item {
+  margin-bottom: 12px;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.skill-name {
+  font-weight: 500;
+  color: white;
+  font-size: 14px;
+}
+
+/* 关系卡片 */
+.relationships-card {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.relationships-card .ant-card-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.relationships-card .ant-card-head-title {
+  color: white;
+}
+
+.relationship-item {
+  margin-bottom: 12px;
+}
+
+.relationship-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.npc-name {
+  font-weight: 500;
+  color: white;
+  font-size: 14px;
+}
+
+/* 成就卡片 */
+.achievements-card {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.achievements-card .ant-card-head {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.achievement-tag {
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.achievement-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 警告卡片 */
+.warning-card {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+  border-left: 4px solid #e17055;
+}
+
+.warning-card .ant-card-body {
+  padding: 12px 16px;
+}
+
+/* 进度条自定义样式 */
+.game-stats-panel .ant-progress-bg {
+  border-radius: 10px;
+}
+
+.game-stats-panel .ant-progress-inner {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 统计数字样式 */
+.game-stats-panel .ant-statistic {
+  text-align: center;
+}
+
+.game-stats-panel .ant-statistic-content-value {
+  font-weight: 600;
+}
+
+/* 标签样式 */
+.game-stats-panel .ant-tag {
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .game-stats-panel {
+    max-width: 100%;
+  }
+  
+  .game-stats-panel .ant-card {
+    margin-bottom: 12px;
+  }
+  
+  .game-stats-panel .ant-col {
+    margin-bottom: 8px;
+  }
+  
+  .skill-name,
+  .npc-name {
+    font-size: 12px;
+  }
+  
+  .game-stats-panel .ant-statistic {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-stats-panel .ant-card-body {
+    padding: 12px;
+  }
+  
+  .game-stats-panel .ant-card-head {
+    padding: 0 12px;
+  }
+  
+  .skill-header,
+  .relationship-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .achievement-tag {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+}
+
+/* 小尺寸面板样式 */
+.game-stats-panel.small .ant-card {
+  margin-bottom: 8px;
+}
+
+.game-stats-panel.small .ant-card-body {
+  padding: 12px;
+}
+
+.game-stats-panel.small .ant-statistic {
+  text-align: left;
+}
+
+.game-stats-panel.small .skill-name,
+.game-stats-panel.small .npc-name {
+  font-size: 12px;
+}
+
+/* 大尺寸面板样式 */
+.game-stats-panel.large .ant-card {
+  margin-bottom: 20px;
+}
+
+.game-stats-panel.large .ant-card-body {
+  padding: 24px;
+}
+
+.game-stats-panel.large .skill-name,
+.game-stats-panel.large .npc-name {
+  font-size: 16px;
+}
+
+/* 动画效果 */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.game-stats-panel .ant-card {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.game-stats-panel .ant-card:nth-child(1) { animation-delay: 0.1s; }
+.game-stats-panel .ant-card:nth-child(2) { animation-delay: 0.2s; }
+.game-stats-panel .ant-card:nth-child(3) { animation-delay: 0.3s; }
+.game-stats-panel .ant-card:nth-child(4) { animation-delay: 0.4s; }
+.game-stats-panel .ant-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .game-stats-panel .ant-card {
+    background: #fff;
+    border: 2px solid #000;
+    color: #000;
+  }
+  
+  .player-info-card,
+  .core-stats-card,
+  .skills-card,
+  .relationships-card {
+    background: #fff;
+    color: #000;
+  }
+  
+  .player-info-card .ant-card-head-title,
+  .core-stats-card .ant-card-head-title,
+  .skills-card .ant-card-head-title,
+  .relationships-card .ant-card-head-title,
+  .skill-name,
+  .npc-name {
+    color: #000;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .game-stats-panel .ant-card,
+  .achievement-tag {
+    animation: none;
+    transition: none;
+  }
+  
+  .achievement-tag:hover {
+    transform: none;
+  }
+}

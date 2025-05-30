@@ -1,0 +1,376 @@
+/* 物业管理模拟器 - 场景选择页面样式 */
+
+.scenario-selection-page {
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.scenarios-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.scenarios-container .ant-card-head {
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 筛选区域 */
+.filters-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* 场景网格 */
+.scenarios-grid {
+  margin-top: 16px;
+}
+
+/* 场景卡片 */
+.scenario-card {
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.scenario-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.scenario-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.scenario-card.locked:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-card.completed {
+  border: 2px solid #52c41a;
+  background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+}
+
+.scenario-card.completed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 40px 40px 0;
+  border-color: transparent #52c41a transparent transparent;
+  z-index: 1;
+}
+
+/* 场景封面 */
+.scenario-cover {
+  height: 160px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scenario-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.lock-icon,
+.trophy-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.trophy-icon {
+  color: #faad14;
+}
+
+/* 场景标题 */
+.scenario-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.scenario-title span {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* 场景描述 */
+.scenario-description {
+  color: #666;
+}
+
+.scenario-meta {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  color: #999;
+}
+
+.scenario-tags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.scenario-tags .ant-tag {
+  margin: 0;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+/* 场景详情弹窗 */
+.scenario-details {
+  padding: 8px 0;
+}
+
+.skill-requirement {
+  margin-bottom: 8px;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.skill-header span {
+  font-size: 12px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state::before {
+  content: '🎭';
+  display: block;
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* 卡片动作按钮 */
+.scenario-card .ant-card-actions {
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.scenario-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.scenario-card .ant-card-actions .ant-btn {
+  border-radius: 20px;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .scenario-selection-page {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .scenario-selection-page {
+    padding: 12px;
+  }
+  
+  .filters-section {
+    padding: 12px;
+  }
+  
+  .scenario-cover {
+    height: 120px;
+  }
+  
+  .lock-icon,
+  .trophy-icon {
+    font-size: 24px;
+  }
+  
+  .scenario-card .ant-card-body {
+    padding: 16px;
+  }
+  
+  .scenario-title span {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scenario-selection-page {
+    padding: 8px;
+  }
+  
+  .filters-section {
+    padding: 8px;
+  }
+  
+  .scenario-cover {
+    height: 100px;
+  }
+  
+  .scenario-card .ant-card-body {
+    padding: 12px;
+  }
+  
+  .scenario-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .scenario-meta {
+    font-size: 12px;
+  }
+  
+  .scenario-tags .ant-tag {
+    font-size: 10px;
+    padding: 0 4px;
+  }
+}
+
+/* 难度标签颜色 */
+.ant-tag.ant-tag-green {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+  color: #389e0d;
+}
+
+.ant-tag.ant-tag-orange {
+  background: #fff7e6;
+  border-color: #ffd591;
+  color: #d46b08;
+}
+
+.ant-tag.ant-tag-red {
+  background: #fff2f0;
+  border-color: #ffb3b3;
+  color: #cf1322;
+}
+
+/* 加载状态 */
+.scenarios-grid .ant-spin-container {
+  min-height: 200px;
+}
+
+/* 筛选器样式 */
+.filters-section .ant-select,
+.filters-section .ant-input {
+  border-radius: 6px;
+}
+
+.filters-section .ant-select-selector {
+  border-radius: 6px;
+}
+
+/* 弹窗样式优化 */
+.ant-modal .scenario-details {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.ant-modal .scenario-details::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ant-modal .scenario-details::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.ant-modal .scenario-details::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.ant-modal .scenario-details::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scenario-card {
+  animation: cardSlideIn 0.3s ease-out;
+}
+
+.scenarios-grid .ant-col:nth-child(1) .scenario-card { animation-delay: 0.1s; }
+.scenarios-grid .ant-col:nth-child(2) .scenario-card { animation-delay: 0.2s; }
+.scenarios-grid .ant-col:nth-child(3) .scenario-card { animation-delay: 0.3s; }
+.scenarios-grid .ant-col:nth-child(4) .scenario-card { animation-delay: 0.4s; }
+.scenarios-grid .ant-col:nth-child(5) .scenario-card { animation-delay: 0.5s; }
+.scenarios-grid .ant-col:nth-child(6) .scenario-card { animation-delay: 0.6s; }
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .scenario-card {
+    border: 2px solid #000;
+    background: #fff;
+  }
+  
+  .scenario-cover {
+    background: #000;
+  }
+  
+  .scenarios-container {
+    background: #fff;
+    border: 2px solid #000;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .scenario-card,
+  .scenarios-grid .ant-col .scenario-card {
+    animation: none;
+    transition: none;
+  }
+  
+  .scenario-card:hover {
+    transform: none;
+  }
+}
