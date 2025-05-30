@@ -1,54 +1,78 @@
-# React + TypeScript + Vite
+# 物业管理模拟器前端
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+这是物业管理模拟器项目的前端部分，使用React、TypeScript和Vite构建。
 
-Currently, two official plugins are available:
+## 开发环境设置
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 前提条件
 
-## Expanding the ESLint configuration
+- Node.js (推荐v18或更高版本)
+- npm或yarn
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 安装依赖
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 启动开发服务器
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run dev
 ```
+
+开发服务器将在 http://localhost:5173/wg2026/ 启动
+
+## 构建项目
+
+```bash
+npm run build
+```
+
+构建后的文件将位于`dist`目录中。
+
+## 部署到GitHub Pages
+
+### 自动部署
+
+项目已配置为可以轻松部署到GitHub Pages：
+
+1. 确保`package.json`中的`homepage`字段已设置为你的GitHub Pages URL
+   ```json
+   "homepage": "https://lianbing22.github.io/wg2025-1"
+   ```
+
+2. 运行部署命令：
+   ```bash
+   npm run deploy
+   ```
+
+3. 这将自动构建项目并将`dist`目录推送到`gh-pages`分支
+
+4. 在GitHub仓库设置中，确保GitHub Pages的源设置为`gh-pages`分支
+
+### 路由注意事项
+
+- 项目使用`/wg2026/`作为基础路径
+- 所有路由都应该以`/wg2026/`开头
+- 已添加`404.html`文件处理客户端路由刷新问题
+
+## 项目结构
+
+- `src/` - 源代码
+  - `assets/` - 静态资源
+  - `components/` - 可复用组件
+  - `contexts/` - React上下文
+  - `pages/` - 页面组件
+  - `routes/` - 路由配置
+  - `services/` - API服务
+  - `styles/` - 全局样式
+  - `types/` - TypeScript类型定义
+
+## 技术栈
+
+- React
+- TypeScript
+- Vite
+- React Router
+- Ant Design

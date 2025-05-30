@@ -32,7 +32,11 @@ export const router = createBrowserRouter([
     </div>,
     children: [
       {
-        index: true,
+        path: "/",
+        element: <Navigate to="/login" replace />,
+      },
+      {
+        path: "/dashboard",
         element: (
           <ProtectedRoute>
             <DashboardPage />
