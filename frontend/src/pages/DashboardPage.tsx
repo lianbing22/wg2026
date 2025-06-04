@@ -53,7 +53,7 @@ export default function DashboardPage() {
           }}
           action={
             <Button
-              size="default"
+              size="middle"
               type="primary"
               icon={<PlayCircleOutlined />}
               onClick={() => navigate('/game/scenarios')}
