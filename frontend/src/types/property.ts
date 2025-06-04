@@ -1,3 +1,8 @@
+/**
+ * 定义物业、单元、租户和员工相关的类型
+ */
+
+/** 物业接口 */
 export interface Property {
   id: string;
   name: string;
@@ -15,6 +20,7 @@ export interface Property {
   leaseEndDate?: string; // ISO date string, if applicable
 }
 
+/** 单元接口 */
 export interface Unit {
   id: string;
   propertyId: string;
@@ -26,4 +32,27 @@ export interface Unit {
   areaSqMeters: number;
   tenantId?: string;
   leaseEndDate?: string;
+}
+
+/** 租户接口 */
+export interface Tenant {
+  id: string;
+  name: string;
+  contact: string;
+  unitId: string;
+  leaseStartDate: string;
+  leaseEndDate: string;
+  rentAmount: number;
+  paymentHistory: string[];
+}
+
+/** 员工接口 */
+export interface Staff {
+  id: string;
+  name: string;
+  role: 'manager' | 'maintenance' | 'security' | 'cleaner';
+  contact: string;
+  hireDate: string;
+  salary: number;
+  performanceReviews: string[];
 }

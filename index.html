@@ -9,45 +9,49 @@
     <script src="js/enhanced-game.js"></script>
     <style>
         :root {
-            --primary-color: #4A6FDC;
-            --secondary-color: #34B5B8;
-            --accent-color: #FF6B6B;
-            --success-color: #48BB78;
-            --warning-color: #F6AD55;
-            --danger-color: #E53E3E;
-            --dark-color: #2D3748;
-            --light-color: #F7F9FC;
-            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #000000; /* 苹果官方黑色 */
+            --secondary-color: #f5f5f7; /* 苹果官方灰色 */
+            --accent-color: #007aff; /* 苹果官方蓝色 */
+            --dark-color: #333333; /* 深灰色 */
+            --light-color: #ffffff; /* 白色 */
+            --success-color: #34c759; /* 苹果官方绿色 */
+            --warning-color: #ff9500; /* 苹果官方橙色 */
+            --danger-color: #ff3b30; /* 苹果官方红色 */
+            --box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 苹果官方字体 */
         }
-        
+
         body {
-            background: var(--gradient-bg);
+            background: var(--light-color);
+            color: var(--dark-color);
+            overflow-x: hidden;
             min-height: 100vh;
-            font-family: 'Noto Sans SC', sans-serif;
+            font-family: var(--font-family);
         }
-        
+
         .enhanced-header {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
+            color: var(--dark-color);
+            box-shadow: var(--box-shadow);
         }
-        
+
         .game-stats {
             display: flex;
             gap: 2rem;
             font-size: 0.9rem;
         }
-        
+
         .stat-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .main-dashboard {
             max-width: 1400px;
             margin: 2rem auto;
@@ -56,30 +60,30 @@
             grid-template-columns: 1fr 300px;
             gap: 2rem;
         }
-        
+
         .game-modes {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .mode-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--light-color);
             border-radius: 15px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--box-shadow);
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
-        
+
         .mode-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
-        
+
         .mode-card::before {
             content: '';
             position: absolute;
@@ -89,65 +93,66 @@
             height: 4px;
             background: var(--primary-color);
         }
-        
+
         .mode-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
+            color: var(--accent-color);
         }
-        
+
         .mode-title {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--dark-color);
         }
-        
+
         .mode-description {
             color: #666;
             margin-bottom: 1rem;
             line-height: 1.6;
         }
-        
+
         .mode-features {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .mode-features li {
             padding: 0.25rem 0;
             color: #555;
             font-size: 0.9rem;
         }
-        
+
         .mode-features li::before {
             content: '✓';
             color: var(--success-color);
             font-weight: bold;
             margin-right: 0.5rem;
         }
-        
+
         .sidebar {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
-        
+
         .sidebar-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--light-color);
             border-radius: 15px;
             padding: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
         }
-        
+
         .sidebar-title {
             font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--dark-color);
         }
-        
+
         .achievement-item {
             display: flex;
             align-items: center;
@@ -157,23 +162,24 @@
             margin-bottom: 0.5rem;
             background: #f8f9fa;
         }
-        
+
         .achievement-icon {
             font-size: 1.5rem;
+            color: var(--accent-color);
         }
-        
+
         .achievement-info h4 {
             margin: 0;
             font-size: 0.9rem;
             color: var(--dark-color);
         }
-        
+
         .achievement-info p {
             margin: 0;
             font-size: 0.8rem;
             color: #666;
         }
-        
+
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
@@ -183,74 +189,75 @@
             margin-bottom: 0.5rem;
             background: #f8f9fa;
         }
-        
+
         .player-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .rank {
             font-weight: bold;
             color: var(--primary-color);
         }
-        
+
         .score {
             font-weight: 600;
             color: var(--success-color);
         }
-        
+
         .quick-actions {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .action-btn {
             flex: 1;
             padding: 0.75rem;
             border: none;
             border-radius: 8px;
             background: var(--primary-color);
-            color: white;
+            color: var(--light-color);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .action-btn:hover {
             background: #3a5bc7;
             transform: translateY(-2px);
         }
-        
+
         .action-btn.secondary {
             background: var(--secondary-color);
         }
-        
+
         .action-btn.secondary:hover {
             background: #2a9a9d;
         }
-        
+
         .daily-challenge {
             background: linear-gradient(135deg, var(--accent-color), #ff5252);
-            color: white;
+            color: var(--light-color);
             text-align: center;
             padding: 1.5rem;
             border-radius: 15px;
             margin-bottom: 1rem;
+            box-shadow: var(--box-shadow);
         }
-        
+
         .challenge-title {
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-        
+
         .challenge-reward {
             font-size: 0.9rem;
             opacity: 0.9;
         }
-        
+
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -259,30 +266,30 @@
             overflow: hidden;
             margin-top: 0.5rem;
         }
-        
+
         .progress-fill {
             height: 100%;
-            background: white;
+            background: var(--light-color);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
-        
+
         @media (max-width: 768px) {
             .main-dashboard {
                 grid-template-columns: 1fr;
                 padding: 0 1rem;
             }
-            
+
             .game-modes {
                 grid-template-columns: 1fr;
             }
-            
+
             .enhanced-header {
                 padding: 1rem;
                 flex-direction: column;
                 gap: 1rem;
             }
-            
+
             .game-stats {
                 gap: 1rem;
                 font-size: 0.8rem;
@@ -324,7 +331,7 @@
                     <div class="progress-fill" style="width: 33%"></div>
                 </div>
             </div>
-            
+
             <!-- 游戏模式 -->
             <div class="game-modes">
                 <div class="mode-card" onclick="startStoryMode()">
@@ -338,7 +345,7 @@
                         <li>成就解锁</li>
                     </ul>
                 </div>
-                
+
                 <div class="mode-card" onclick="startChallengeMode()">
                     <span class="mode-icon">⚡</span>
                     <h3 class="mode-title">挑战模式</h3>
@@ -350,7 +357,7 @@
                         <li>特殊奖励</li>
                     </ul>
                 </div>
-                
+
                 <div class="mode-card" onclick="startSandboxMode()">
                     <span class="mode-icon">🏗️</span>
                     <h3 class="mode-title">自由模式</h3>
@@ -362,7 +369,7 @@
                         <li>实验功能</li>
                     </ul>
                 </div>
-                
+
                 <div class="mode-card" onclick="startTutorial()">
                     <span class="mode-icon">🎓</span>
                     <h3 class="mode-title">新手教程</h3>
@@ -376,7 +383,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- 侧边栏 -->
         <div class="sidebar">
             <!-- 最新成就 -->
@@ -404,7 +411,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 排行榜 -->
             <div class="sidebar-card">
                 <h3 class="sidebar-title">🥇 本周排行榜</h3>
@@ -437,7 +444,7 @@
                     <span class="score">7200</span>
                 </div>
             </div>
-            
+
             <!-- 快速操作 -->
             <div class="sidebar-card">
                 <h3 class="sidebar-title">⚡ 快速操作</h3>
@@ -462,7 +469,7 @@
             achievements: [],
             completedScenarios: []
         };
-        
+
         // 加载游戏数据
         function loadGameData() {
             const saved = localStorage.getItem('propertyManagerGameData');
@@ -471,32 +478,32 @@
             }
             updateUI();
         }
-        
+
         // 保存游戏数据
         function saveGameData() {
             localStorage.setItem('propertyManagerGameData', JSON.stringify(gameData));
         }
-        
+
         // 更新UI
         function updateUI() {
             document.getElementById('playerLevel').textContent = gameData.level;
             document.getElementById('playerExp').textContent = `${gameData.exp}/${gameData.level * 100}`;
             document.getElementById('playerCoins').textContent = gameData.coins;
         }
-        
+
         // 游戏模式函数
         function startStoryMode() {
             showModeSelection('story');
         }
-        
+
         function startChallengeMode() {
             showModeSelection('challenge');
         }
-        
+
         function startSandboxMode() {
             showModeSelection('sandbox');
         }
-        
+
         function startTutorial() {
             const tutorialData = {
                 steps: [
@@ -522,7 +529,7 @@
                     }
                 ]
             };
-            
+
             if (typeof gameSystem !== 'undefined' && gameSystem.tutorialSystem) {
                 gameSystem.tutorialSystem.startTutorial(tutorialData);
             } else {
@@ -530,7 +537,7 @@
                 alert('教程：欢迎来到物业管理模拟器！点击任意游戏模式开始体验。');
             }
         }
-        
+
         function showModeSelection(mode) {
             // 创建模式选择弹窗
             const modal = document.createElement('div');
@@ -546,7 +553,7 @@
                 align-items: center;
                 z-index: 1000;
             `;
-            
+
             const content = document.createElement('div');
             content.style.cssText = `
                 background: white;
@@ -556,7 +563,7 @@
                 width: 90%;
                 text-align: center;
             `;
-            
+
             content.innerHTML = `
                 <h2>选择${mode === 'story' ? '故事' : mode === 'challenge' ? '挑战' : '自由'}场景</h2>
                 <div style="display: grid; gap: 1rem; margin: 2rem 0;">
@@ -567,7 +574,7 @@
                 </div>
                 <button onclick="closeModal()" style="background: #ccc; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">取消</button>
             `;
-            
+
             // 添加样式
             const style = document.createElement('style');
             style.textContent = `
@@ -587,26 +594,26 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             modal.appendChild(content);
             document.body.appendChild(modal);
-            
+
             // 全局函数
             window.selectScenario = function(scenarioId) {
                 window.location.href = `scenario.html?id=${scenarioId}&mode=${mode}`;
             };
-            
+
             window.closeModal = function() {
                 document.body.removeChild(modal);
                 document.head.removeChild(style);
             };
         }
-        
+
         function continuePrevious() {
             const lastScenario = localStorage.getItem('lastScenario') || 'EMERGENCY_ELEVATOR_REPAIR';
             window.location.href = `scenario.html?id=${lastScenario}`;
         }
-        
+
         function showSettings() {
             const modal = createModal('游戏设置', `
                 <div style="text-align: left; margin: 1rem 0;">
@@ -637,34 +644,34 @@
                 </div>
             `);
         }
-        
+
         function saveSettings() {
             gameSystem.gameData.settings.soundEnabled = document.getElementById('soundEnabled').checked;
             gameSystem.gameData.settings.musicEnabled = document.getElementById('musicEnabled').checked;
             gameSystem.gameData.settings.autoSave = document.getElementById('autoSave').checked;
             gameSystem.gameData.settings.difficulty = document.getElementById('difficulty').value;
-            
+
             gameSystem.saveGameData();
             gameSystem.saveSystem.showNotification('设置已保存', 'success');
             closeModal();
         }
-        
+
         function showHelp() {
             const modal = createModal('游戏帮助', `
                 <div style="text-align: left; line-height: 1.6;">
                     <h3>🎮 游戏操作</h3>
                     <p><strong>Ctrl+S</strong> - 快速保存</p>
                     <p><strong>Ctrl+L</strong> - 快速加载</p>
-                    
+
                     <h3>🎯 游戏目标</h3>
                     <p>作为物业经理，你需要处理各种日常事务和突发事件，维护良好的租户关系，保持建筑物的正常运营。</p>
-                    
+
                     <h3>📊 评分系统</h3>
                     <p><strong>租户满意度</strong> - 影响续租率和口碑</p>
                     <p><strong>经理压力</strong> - 影响决策质量</p>
                     <p><strong>建筑状况</strong> - 影响安全和维护成本</p>
                     <p><strong>财务健康</strong> - 影响可用资源</p>
-                    
+
                     <h3>🏆 成就系统</h3>
                     <p>完成特定任务可以解锁成就，获得经验和金币奖励。</p>
                 </div>
@@ -673,7 +680,7 @@
                 </div>
             `);
         }
-        
+
         function showStats() {
             const stats = gameSystem.analytics.getStats();
             const modal = createModal('游戏统计', `
@@ -686,7 +693,7 @@
                         <div><strong>完成场景：</strong> ${gameSystem.gameData.completedScenarios.length}</div>
                         <div><strong>解锁成就：</strong> ${stats.achievements}</div>
                     </div>
-                    
+
                     <h3>🏆 已获得成就</h3>
                     <div style="max-height: 200px; overflow-y: auto;">
                         ${gameSystem.gameData.achievements.map(id => {
@@ -703,7 +710,7 @@
                 </div>
             `);
         }
-        
+
         function createModal(title, content) {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -718,7 +725,7 @@
                 align-items: center;
                 z-index: 1000;
             `;
-            
+
             const modalContent = document.createElement('div');
             modalContent.style.cssText = `
                 background: white;
@@ -729,22 +736,22 @@
                 max-height: 80vh;
                 overflow-y: auto;
             `;
-            
+
             modalContent.innerHTML = `
                 <h2 style="margin-top: 0; text-align: center;">${title}</h2>
                 ${content}
             `;
-            
+
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
-            
+
             window.closeModal = function() {
                 document.body.removeChild(modal);
             };
-            
+
             return modal;
         }
-        
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 等待增强游戏系统加载
@@ -758,14 +765,14 @@
                     // 使用基础的游戏数据加载
                     loadGameData();
                 }
-                
+
                 // 添加一些动画效果
                 const cards = document.querySelectorAll('.mode-card');
                 cards.forEach((card, index) => {
                     card.style.animationDelay = `${index * 0.1}s`;
                     card.style.animation = 'fadeInUp 0.6s ease forwards';
                 });
-                
+
                 // 添加键盘快捷键提示
                 const helpText = document.createElement('div');
                 helpText.style.cssText = `
@@ -781,17 +788,17 @@
                 `;
                 helpText.innerHTML = '快捷键: Ctrl+S 保存 | Ctrl+L 加载';
                 document.body.appendChild(helpText);
-                
+
                 // 3秒后隐藏提示
                 setTimeout(() => {
                     helpText.style.opacity = '0';
                     helpText.style.transition = 'opacity 0.5s';
                     setTimeout(() => helpText.remove(), 500);
                 }, 3000);
-                
+
             }, 100);
         });
-        
+
         // 添加CSS动画
         const animationStyle = document.createElement('style');
         animationStyle.textContent = `
@@ -805,7 +812,7 @@
                     transform: translateY(0);
                 }
             }
-            
+
             .mode-card {
                 opacity: 0;
             }

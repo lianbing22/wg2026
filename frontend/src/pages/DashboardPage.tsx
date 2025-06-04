@@ -31,23 +31,39 @@ export default function DashboardPage() {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Title level={2}>仪表盘</Title>
+    <div>
+      <Title level={4} style={{ color: '#fff' }}>仪表盘</Title>
       
       {/* 游戏状态提示 */}
       {gameState.player.name && (
         <Alert
-          message={`欢迎回来，${gameState.player.name}！`}
-          description={`当前等级：${gameState.player.level} | 经验值：${gameState.player.experience} | 收入：${gameState.stats.financialIncome}`}
+          message={<span style={{ color: '#fff' }}>{`欢迎回来，${gameState.player.name}！`}</span>}
+          description={<span style={{ color: '#fff' }}>{`当前等级：${gameState.player.level} | 经验值：${gameState.player.experience} | 收入：${gameState.stats.financialIncome}`}</span>}
           type="info"
           showIcon
-          style={{ marginBottom: '24px' }}
+          style={{
+            marginBottom: '24px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '15px',
+            boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+            backdropFilter: 'blur( 4px )',
+            WebkitBackdropFilter: 'blur( 4px )',
+            border: '1px solid rgba( 255, 255, 255, 0.18 )',
+            color: '#fff',
+          }}
           action={
-            <Button 
-              size="small" 
-              type="primary" 
+            <Button
+              size="default"
+              type="primary"
               icon={<PlayCircleOutlined />}
               onClick={() => navigate('/game/scenarios')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba( 255, 255, 255, 0.18 )',
+                color: '#fff',
+                backdropFilter: 'blur( 4px )',
+                WebkitBackdropFilter: 'blur( 4px )',
+              }}
             >
               继续游戏
             </Button>
@@ -56,46 +72,94 @@ export default function DashboardPage() {
       )}
       
       {/* 统计卡片 */}
-      <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+      <Row gutter={[24, 24]} style={{ marginBottom: '24px' }}>
+        <Col xs={24} sm={12} lg={8}>
+          <Card
+            className="dashboard-statistic-card"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+              backdropFilter: 'blur( 4px )',
+              WebkitBackdropFilter: 'blur( 4px )',
+              border: '1px solid rgba( 255, 255, 255, 0.18 )',
+              color: '#fff',
+            }}
+          >
             <Statistic
               title="总物业数量"
+              style={{ color: '#fff' }}
               value={stats.totalProperties}
               prefix={<HomeOutlined />}
-              valueStyle={{ color: '#3f8600' }}
+              valueStyle={{ color: '#fff' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={24} sm={12} lg={8}>
+          <Card
+            className="dashboard-statistic-card"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+              backdropFilter: 'blur( 4px )',
+              WebkitBackdropFilter: 'blur( 4px )',
+              border: '1px solid rgba( 255, 255, 255, 0.18 )',
+              color: '#fff',
+            }}
+          >
             <Statistic
               title="总收入"
+              style={{ color: '#fff' }}
               value={stats.totalRevenue}
               prefix={<DollarOutlined />}
               precision={0}
-              valueStyle={{ color: '#cf1322' }}
+              valueStyle={{ color: '#fff' }}
               suffix="元"
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={24} sm={12} lg={8}>
+          <Card
+            className="dashboard-statistic-card"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+              backdropFilter: 'blur( 4px )',
+              WebkitBackdropFilter: 'blur( 4px )',
+              border: '1px solid rgba( 255, 255, 255, 0.18 )',
+              color: '#fff',
+            }}
+          >
             <Statistic
               title="总租户数"
+              style={{ color: '#fff' }}
               value={stats.totalTenants}
               prefix={<UserOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#fff' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={24} sm={12} lg={8}>
+          <Card
+            className="dashboard-statistic-card"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+              backdropFilter: 'blur( 4px )',
+              WebkitBackdropFilter: 'blur( 4px )',
+              border: '1px solid rgba( 255, 255, 255, 0.18 )',
+              color: '#fff',
+            }}
+          >
             <Statistic
               title="维修请求"
+              style={{ color: '#fff' }}
               value={stats.maintenanceRequests}
               prefix={<ToolOutlined />}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#fff' }}
             />
           </Card>
         </Col>
@@ -103,24 +167,40 @@ export default function DashboardPage() {
 
       {/* 游戏模式入口 */}
       <Card 
-        title="物业管理模拟器" 
-        style={{ marginBottom: '24px' }}
+        title={<span style={{ color: '#fff' }}>物业管理模拟器</span>}
+        style={{
+          marginBottom: '24px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '15px',
+          boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+          backdropFilter: 'blur( 4px )',
+          WebkitBackdropFilter: 'blur( 4px )',
+          border: '1px solid rgba( 255, 255, 255, 0.18 )',
+          color: '#fff',
+        }}
         extra={
           <Button 
-            type="primary" 
-            icon={<TrophyOutlined />}
-            onClick={() => navigate('/game/character-creation')}
-          >
-            开始游戏
-          </Button>
+              type="primary" 
+              icon={<TrophyOutlined />}
+              onClick={() => navigate('/game/character-creation')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba( 255, 255, 255, 0.18 )',
+                color: '#fff',
+                backdropFilter: 'blur( 4px )',
+                WebkitBackdropFilter: 'blur( 4px )',
+              }}
+            >
+              开始游戏
+            </Button>
         }
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} md={12}>
             <div>
-              <Text strong>体验真实的物业管理挑战</Text>
+              <Text strong style={{ color: '#fff' }}>体验真实的物业管理挑战</Text>
               <br />
-              <Text type="secondary">
+              <Text type="secondary" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                 通过模拟场景学习物业管理技能，处理各种突发事件，提升管理能力。
               </Text>
             </div>
@@ -128,19 +208,19 @@ export default function DashboardPage() {
           <Col xs={24} md={12}>
             {gameState.player.name ? (
               <div>
-                <Text strong>游戏进度</Text>
+                <Text strong style={{ color: '#fff' }}>游戏进度</Text>
                 <br />
-                <Text>等级：{gameState.player.level}</Text>
+                <Text style={{ color: '#fff' }}>等级：{gameState.player.level}</Text>
                 <br />
-                <Text>经验值：{gameState.player.experience}</Text>
+                <Text style={{ color: '#fff' }}>经验值：{gameState.player.experience}</Text>
                 <br />
-                <Text>完成场景：{gameState.progress.completedScenarios.length}</Text>
+                <Text style={{ color: '#fff' }}>完成场景：{gameState.progress.completedScenarios.length}</Text>
               </div>
             ) : (
               <div>
-                <Text strong>开始你的物业管理之旅</Text>
+                <Text strong style={{ color: '#fff' }}>开始你的物业管理之旅</Text>
                 <br />
-                <Text type="secondary">
+                <Text type="secondary" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                   创建角色，体验丰富的场景内容。
                 </Text>
               </div>
@@ -150,7 +230,19 @@ export default function DashboardPage() {
       </Card>
 
       {/* 快速操作 */}
-      <Card title="快速操作" style={{ marginBottom: '24px' }}>
+      <Card 
+        title={<span style={{ color: '#fff' }}>快速操作</span>}
+        style={{
+          marginBottom: '24px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '15px',
+          boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+          backdropFilter: 'blur( 4px )',
+          WebkitBackdropFilter: 'blur( 4px )',
+          border: '1px solid rgba( 255, 255, 255, 0.18 )',
+          color: '#fff',
+        }}
+      >
         <Space wrap>
           <Button 
             type="primary" 
@@ -181,21 +273,52 @@ export default function DashboardPage() {
       </Card>
 
       {/* 最近活动 */}
-      <Card title="最近活动">
-        <div style={{ color: '#666' }}>
-          暂无最近活动数据
-        </div>
+      <Card 
+        title={<span style={{ color: '#fff' }}>最近活动</span>}
+        className="dashboard-card"
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '15px',
+          boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+          backdropFilter: 'blur( 4px )',
+          WebkitBackdropFilter: 'blur( 4px )',
+          border: '1px solid rgba( 255, 255, 255, 0.18 )',
+          color: '#fff',
+        }}
+      >
+        <div style={{ color: '#fff' }}>
+            暂无最近活动数据
+          </div>
       </Card>
       
       {/* 游戏功能快捷入口 */}
       <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
         <Col xs={24}>
-          <Card title="游戏功能" className="dashboard-card">
+          <Card 
+        title={<span style={{ color: '#fff' }}>游戏功能</span>}
+        className="dashboard-card"
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '15px',
+          boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+          backdropFilter: 'blur( 4px )',
+          WebkitBackdropFilter: 'blur( 4px )',
+          border: '1px solid rgba( 255, 255, 255, 0.18 )',
+          color: '#fff',
+        }}
+      >
             <Space size="middle" wrap>
-              <Button 
+              <Button
                 icon={<SettingOutlined />}
                 onClick={() => navigate('/game/settings')}
                 size="large"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba( 255, 255, 255, 0.18 )',
+                  color: '#fff',
+                  backdropFilter: 'blur( 4px )',
+                  WebkitBackdropFilter: 'blur( 4px )',
+                }}
               >
                 游戏设置
               </Button>
@@ -203,6 +326,13 @@ export default function DashboardPage() {
                 icon={<StarOutlined />}
                 onClick={() => navigate('/game/achievements')}
                 size="large"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba( 255, 255, 255, 0.18 )',
+                  color: '#fff',
+                  backdropFilter: 'blur( 4px )',
+                  WebkitBackdropFilter: 'blur( 4px )',
+                }}
               >
                 成就系统
               </Button>

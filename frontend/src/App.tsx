@@ -1,65 +1,32 @@
-// React components are used via JSX
-import { Outlet, useLocation } from 'react-router-dom';
-import { Layout, ConfigProvider } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
-import { GameProvider } from './contexts/GameContext';
-import ErrorBoundary from './components/ErrorBoundary';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/Auth/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import GameScenarioPage from './pages/Game/GameScenarioPage';
+import AchievementsPage from './pages/Game/AchievementsPage';
+import GameSettingsPage from './pages/Game/GameSettingsPage';
+import ScenarioSelectionPage from './pages/Game/ScenarioSelectionPage';
+import PropertyDetailPage from './pages/Property/PropertyDetailPage';
+import PropertyListPage from './pages/Property/PropertyListPage';
 import './App.css';
 
-const { Header, Content } = Layout;
-
-function App() {
-  const location = useLocation();
-  const isGamePage = location.pathname.startsWith('/game/');
-  const isLoginPage = location.pathname === '/login';
-
-  // 游戏页面使用全屏布局
-  if (isGamePage) {
-    return (
-      <ErrorBoundary>
-        <ConfigProvider locale={zhCN}>
-          <GameProvider>
-            <div className="game-layout">
-              <Outlet />
-            </div>
-          </GameProvider>
-        </ConfigProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  // 登录页面使用简单布局
-  if (isLoginPage) {
-    return (
-      <ErrorBoundary>
-        <ConfigProvider locale={zhCN}>
-          <div className="login-layout">
-            <Outlet />
-          </div>
-        </ConfigProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  // 其他页面使用标准布局
+const App: React.FC = () => {
   return (
-    <ErrorBoundary>
-      <ConfigProvider locale={zhCN}>
-        <GameProvider>
-          <Layout className="app-layout">
-            <Header className="app-header">
-              <div className="logo">
-                物业管理系统
-              </div>
-            </Header>
-            <Content className="app-content">
-              <Outlet />
-            </Content>
-          </Layout>
-        </GameProvider>
-      </ConfigProvider>
-    </ErrorBoundary>
-   );
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/game/scenario" element={<GameScenarioPage />} />
+          <Route path="/game/achievements" element={<AchievementsPage />} />
+          <Route path="/game/settings" element={<GameSettingsPage />} />
+          <Route path="/game/scenario-selection" element={<ScenarioSelectionPage />} />
+          <Route path="/property/detail" element={<PropertyDetailPage />} />
+          <Route path="/property/list" element={<PropertyListPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
