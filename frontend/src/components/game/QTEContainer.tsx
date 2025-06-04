@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Card, Button, Progress, Typography, Space, Alert } from 'antd';
+import { Card, Button, Progress, Typography, Space, Alert, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { QTEConfig, QTEResult } from '../../types/game';
 import './QTEContainer.css';
@@ -29,17 +29,36 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
   const [clickCount, setClickCount] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
   
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const keyPressTimesRef = useRef<number[]>([]);
 
+  // 记录QTE事件
+  const logQTEEvent = useCallback((eventType: string, details: any) => {
+    console.log(`QTE Event [${config.type}]: ${eventType}`, details);
+  }, [config.type]);
+
   // 初始化QTE
   useEffect(() => {
+    logQTEEvent('初始化', { config });
     startQTE();
+    
+    // 添加键盘监听器
+    if (config.type === 'ClickSequence') {
+      window.addEventListener('keydown', handleKeyPress);
+    }
+    
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      
+      // 移除键盘监听器
+      if (config.type === 'ClickSequence') {
+        window.removeEventListener('keydown', handleKeyPress);
       }
     };
   }, []);
@@ -48,12 +67,14 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
   const startQTE = useCallback(() => {
     setIsActive(true);
     startTimeRef.current = Date.now();
+    logQTEEvent('开始', { timeLimit: config.timeLimit });
     
     // 根据QTE类型初始化
     switch (config.type) {
       case 'ClickSequence':
         if (config.parameters?.sequence) {
           setKeySequence(config.parameters.sequence.map(item => item.id || ''));
+          logQTEEvent('序列初始化', { sequence: config.parameters.sequence });
         }
         break;
       case 'ButtonMash':
@@ -65,7 +86,14 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
       case 'PrecisionClick':
         // 精确QTE的特殊逻辑
         break;
+      default:
+        logQTEEvent('未知QTE类型', { type: config.type });
     }
+
+    // 显示初始反馈
+    setFeedbackMessage(`开始${config.title || "快速事件"}！`);
+    setShowFeedback(true);
+    setTimeout(() => setShowFeedback(false), 1500);
 
     // 启动计时器
     timerRef.current = setInterval(() => {
@@ -86,6 +114,7 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     
     setIsActive(false);
     setIsCompleted(true);
+    logQTEEvent('超时', { accuracy });
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -106,60 +135,88 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
 
     setResult(qteResult);
     
+    // 显示失败反馈
+    setFeedbackMessage("时间耗尽！");
+    setShowFeedback(true);
+    message.error("QTE失败：时间耗尽！");
+    
     setTimeout(() => {
       onComplete(false, qteResult);
-    }, 1000);
+    }, 1500);
   }, [accuracy, onComplete, isCompleted]);
 
-  // QTE成功处理
-  const handleQTESuccess = useCallback((_score: number, accuracyParam: number) => {
+  // 统一QTE成功处理逻辑
+  const handleQTESuccess = useCallback((score: number, accuracyParam: number) => {
     if (isCompleted) return;
-    
+
     setIsActive(false);
     setIsCompleted(true);
-    
+    logQTEEvent('成功', { score, accuracy: accuracyParam });
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
 
     const endTime = Date.now();
     const duration = endTime - startTimeRef.current;
-    
+
     // 计算得分
     const timeLimit = config.timeLimit || 10; // 默认10秒
     const timeBonus = Math.max(0, (timeLimit * 1000 - duration) / 100);
     const accuracyBonus = accuracyParam * 2;
-    const score = Math.round(timeBonus + accuracyBonus);
+    const finalScore = Math.round(score + timeBonus + accuracyBonus);
     const perfect = accuracyParam >= 95 && duration < timeLimit * 500;
-    
+
     const qteResult: QTEResult = {
       success: true,
       accuracy: accuracyParam,
       completionTime: duration,
       extraData: {
-        score,
+        score: finalScore,
         perfect
       }
     };
 
     setResult(qteResult);
     
+    // 显示成功反馈
+    const feedbackText = perfect ? 
+      "完美！" : 
+      (accuracyParam >= 80 ? "太棒了！" : "成功！");
+    
+    setFeedbackMessage(`${feedbackText} 得分：${finalScore}`);
+    setShowFeedback(true);
+    message.success(`QTE成功：${feedbackText} 得分：${finalScore}`);
+
     setTimeout(() => {
       onComplete(true, qteResult);
-    }, 1000);
-  }, [config.type, onComplete, isCompleted]);
+    }, 1500);
+  }, [config.timeLimit, onComplete, isCompleted]);
 
   // 处理键盘输入
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!isActive || isCompleted) return;
 
     const key = event.key.toUpperCase();
-    const expectedKey = keySequence[currentKeyIndex];
+    const expectedKey = keySequence[currentKeyIndex]?.toUpperCase();
+    
+    if (!expectedKey) {
+      logQTEEvent('键序列错误', { expected: 'none', actual: key });
+      return;
+    }
 
-    if (key === expectedKey.toUpperCase()) {
+    logQTEEvent('键盘输入', { expected: expectedKey, actual: key });
+
+    if (key === expectedKey) {
       // 正确按键
       const currentTime = Date.now() - startTimeRef.current;
       keyPressTimesRef.current.push(currentTime);
+      
+      // 显示反馈
+      setFeedbackMessage("√");
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 300);
+      
       setCurrentKeyIndex(prev => prev + 1);
       
       // 根据反应时间调整准确度
@@ -174,149 +231,186 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
       }
     } else {
       // 错误按键
-      const penalty = Math.min(15, 10 + Math.floor(currentKeyIndex / 2)); // 递增惩罚
-      setAccuracy(prev => {
-        const newAccuracy = Math.max(0, prev - penalty);
-        if (newAccuracy <= 30) {
-          setTimeout(() => handleQTETimeout(), 100);
-        }
-        return newAccuracy;
-      });
-    }
-  }, [isActive, isCompleted, keySequence, currentKeyIndex, accuracy, handleQTESuccess, handleQTETimeout]);
-
-  // 键盘事件处理
-  useEffect(() => {
-    if (!isActive || config.type !== 'ClickSequence') return;
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isActive, config.type, handleKeyPress]);
-
-  // 快速点击处理
-  const handleRapidClick = useCallback(() => {
-    if (!isActive || config.type !== 'ButtonMash') return;
-    
-    setClickCount(prev => {
-      const newCount = prev + 1;
-      const targetClicks = config.parameters?.targetClicks || 10;
-      if (newCount >= targetClicks) {
-        const accuracy = Math.min(100, (newCount / targetClicks) * 100);
-        handleQTESuccess(accuracy, accuracy);
+      setAccuracy(prev => Math.max(0, prev - 10)); // 错误惩罚
+      
+      // 显示错误反馈
+      setFeedbackMessage("✗");
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 300);
+      
+      // 如果准确度过低，直接失败
+      if (accuracy < 30) {
+        handleQTEFailure();
       }
-      return newCount;
-    });
-  }, [isActive, config.type, config.parameters?.targetClicks, handleQTESuccess]);
-
-  // 定时点击处理
-  const handleTimingClick = useCallback(() => {
-    if (!isActive || config.type !== 'timing') return;
-    
-    const currentTime = ((config.timeLimit || 0) - (timeLeft || 0)) / (config.timeLimit || 1);
-    const targetTime = 0.5; // 默认50%时间点
-    const tolerance = (config.parameters?.precision || 10) / 100; // 默认10%容错
-    
-    const difference = Math.abs(currentTime - targetTime);
-    
-    if (difference <= tolerance) {
-      const accuracy = Math.max(0, 100 - (difference / tolerance) * 100);
-      handleQTESuccess(accuracy, accuracy);
-    } else {
-      handleQTETimeout();
     }
-  }, [isActive, config.type, config.timeLimit, timeLeft, config.parameters?.precision, handleQTESuccess, handleQTETimeout]);
+  }, [isActive, isCompleted, keySequence, currentKeyIndex, accuracy, handleQTESuccess]);
 
-  // 渲染不同类型的QTE
+  // QTE失败处理
+  const handleQTEFailure = useCallback(() => {
+    if (isCompleted) return;
+    
+    setIsActive(false);
+    setIsCompleted(true);
+    logQTEEvent('失败', { accuracy });
+    
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    const endTime = Date.now();
+    const duration = endTime - startTimeRef.current;
+    
+    const qteResult: QTEResult = {
+      success: false,
+      accuracy: Math.max(0, accuracy),
+      completionTime: duration,
+      extraData: {
+        score: Math.round(accuracy / 4), // 即使失败也给一点安慰分
+        perfect: false
+      }
+    };
+    
+    setResult(qteResult);
+    
+    // 显示失败反馈
+    setFeedbackMessage("失败！");
+    setShowFeedback(true);
+    message.error("QTE失败！");
+    
+    setTimeout(() => {
+      onComplete(false, qteResult);
+    }, 1500);
+  }, [accuracy, onComplete, isCompleted]);
+
+  // 处理按钮点击 (ButtonMash类型)
+  const handleButtonClick = useCallback(() => {
+    if (!isActive || isCompleted || config.type !== 'ButtonMash') return;
+    
+    const newClickCount = clickCount + 1;
+    setClickCount(newClickCount);
+    logQTEEvent('按钮点击', { clickCount: newClickCount });
+    
+    // 显示点击反馈
+    setFeedbackMessage(`${newClickCount}`);
+    setShowFeedback(true);
+    setTimeout(() => setShowFeedback(false), 200);
+    
+    // 计算目标点击次数
+    const targetClicks = config.parameters?.targetClicks || 20;
+    
+    // 如果达到目标，成功
+    if (newClickCount >= targetClicks) {
+      // 计算得分基于速度和点击量
+      const timeElapsed = Date.now() - startTimeRef.current;
+      const avgClickSpeed = newClickCount / (timeElapsed / 1000);
+      const clickScore = Math.min(100, (newClickCount / targetClicks) * 100);
+      const speedBonus = Math.min(50, avgClickSpeed * 5);
+      
+      handleQTESuccess(clickScore, Math.min(100, clickScore + speedBonus));
+    }
+  }, [isActive, isCompleted, config.type, config.parameters, clickCount, handleQTESuccess]);
+
+  // 渲染QTE内容
   const renderQTEContent = () => {
+    if (result) {
+      return renderResult();
+    }
+
+    // 添加反馈信息显示
+    const feedbackElement = showFeedback ? (
+      <div className="qte-feedback" style={{ 
+        position: 'absolute', 
+        top: '50%', 
+        left: '50%', 
+        transform: 'translate(-50%, -50%)',
+        fontSize: '2rem',
+        fontWeight: 'bold',
+        color: feedbackMessage === "✗" ? 'red' : feedbackMessage === "√" ? 'green' : 'white',
+        textShadow: '0 0 10px rgba(0,0,0,0.7)',
+        zIndex: 10
+      }}>
+        {feedbackMessage}
+      </div>
+    ) : null;
+
     switch (config.type) {
       case 'ClickSequence':
         return (
-          <div className="qte-key-sequence">
-            <Title level={4}>按键序列</Title>
-            <div className="key-display">
+          <div className="qte-sequence-container">
+            {feedbackElement}
+            <Title level={4}>按下显示的按键序列</Title>
+            <div className="key-sequence">
               {keySequence.map((key, index) => (
-                <span 
-                  key={index} 
-                  className={`key ${index < currentKeyIndex ? 'completed' : index === currentKeyIndex ? 'current' : 'pending'}`}
+                <Button
+                  key={index}
+                  type={index < currentKeyIndex ? "primary" : index === currentKeyIndex ? "default" : "dashed"}
+                  className={`sequence-key ${index < currentKeyIndex ? 'completed' : index === currentKeyIndex ? 'current' : ''}`}
                 >
-                  {key.toUpperCase()}
-                </span>
+                  {key}
+                </Button>
               ))}
             </div>
-            <Text>按照顺序按下对应的键</Text>
+            <div className="qte-progress">
+              <Progress 
+                percent={(currentKeyIndex / keySequence.length) * 100} 
+                status="active" 
+                showInfo={false}
+              />
+            </div>
           </div>
         );
         
       case 'ButtonMash':
         return (
-          <div className="qte-rapid-click">
-            <Title level={4}>快速点击</Title>
-            <div className="click-counter">
-              <Text style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                {clickCount} / {config.parameters?.targetClicks || 10}
-              </Text>
-            </div>
+          <div className="qte-mash-container">
+            {feedbackElement}
+            <Title level={4}>{config.title || "快速点击！"}</Title>
             <Button 
               type="primary" 
               size="large"
-              onClick={handleRapidClick}
-              disabled={!isActive}
+              className="mash-button"
+              onClick={handleButtonClick}
             >
-              点击！
+              点击这里！
             </Button>
+            <div className="qte-progress">
+              <Progress 
+                percent={(clickCount / (config.parameters?.targetClicks || 20)) * 100} 
+                status="active" 
+              />
+              <Text>{clickCount} / {config.parameters?.targetClicks || 20}</Text>
+            </div>
           </div>
         );
         
       case 'timing':
-        const targetTime = 0.5 * 100; // 默认50%时间点
-        const currentProgress = (((config.timeLimit || 0) - (timeLeft || 0)) / (config.timeLimit || 1)) * 100;
-        
         return (
-          <div className="qte-timing">
-            <Title level={4}>精确时机</Title>
-            <div className="timing-bar">
-              <Progress 
-                percent={currentProgress}
-                showInfo={false}
-                strokeColor={{
-                  '0%': '#87d068',
-                  '100%': '#ff4d4f',
-                }}
-              />
-              <div 
-                className="target-zone"
-                style={{
-                  left: `${targetTime - ((config.parameters?.precision || 10) / 100) * 100}%`,
-                  width: `${((config.parameters?.precision || 10) / 100) * 200}%`
-                }}
-              />
-            </div>
-            <Button 
-              type="primary" 
-              size="large"
-              onClick={handleTimingClick}
-              disabled={!isActive}
-            >
-              现在点击！
-            </Button>
+          <div className="qte-timing-container">
+            {feedbackElement}
+            <Title level={4}>{config.title || "把握时机！"}</Title>
+            {/* 实现定时QTE UI */}
           </div>
         );
         
       case 'PrecisionClick':
         return (
-          <div className="qte-precision">
-            <Title level={4}>精确操作</Title>
-            <Text>等待实现...</Text>
+          <div className="qte-precision-container">
+            {feedbackElement}
+            <Title level={4}>{config.title || "精确点击！"}</Title>
+            {/* 实现精确点击QTE UI */}
           </div>
         );
         
       default:
         return (
-          <Alert
-            message="未知的QTE类型"
-            description={`不支持的QTE类型: ${config.type}`}
-            type="error"
-          />
+          <div className="qte-unknown-container">
+            {feedbackElement}
+            <Alert
+              message="未知QTE类型"
+              description={`QTE类型 "${config.type}" 不受支持`}
+              type="error"
+            />
+          </div>
         );
     }
   };
@@ -325,66 +419,77 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
   const renderResult = () => {
     if (!result) return null;
     
+    const { success, accuracy, extraData } = result;
+    
     return (
       <div className="qte-result">
-        <Title level={3} style={{ color: result.success ? '#52c41a' : '#ff4d4f' }}>
-          {result.success ? '成功！' : '失败！'}
+        <Title level={3} className={success ? 'success-title' : 'failure-title'}>
+          {success ? (extraData?.perfect ? '完美！' : '成功！') : '失败！'}
         </Title>
-        <Space direction="vertical">
-          <Text>准确度: {Math.round(result.accuracy)}%</Text>
-          <Text>用时: {(result.completionTime / 1000).toFixed(2)}秒</Text>
+        
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          <div>
+            <Text>准确度: </Text>
+            <Progress 
+              percent={accuracy} 
+              status={success ? 'success' : 'exception'} 
+            />
+          </div>
+          
+          {extraData?.score !== undefined && (
+            <div>
+              <Text>得分: </Text>
+              <Title level={4}>{extraData.score}</Title>
+            </div>
+          )}
+          
+          {!success && (
+            <Alert
+              message="下次再试！"
+              description="继续努力，你能做到的！"
+              type="info"
+            />
+          )}
         </Space>
       </div>
     );
   };
 
-  const progressPercent = ((timeLeft || 0) / (config.timeLimit || 1)) * 100;
-
   return (
-    <div className="qte-overlay">
+    <div className="qte-container-overlay">
       <Card 
-        className="qte-container"
         title={
           <div className="qte-header">
-            <span>{config.title || 'QTE事件'}</span>
+            <span>{config.title || "快速时间事件"}</span>
             {onExit && (
               <Button 
-                type="text" 
                 icon={<CloseOutlined />} 
+                type="text"
                 onClick={onExit}
-                disabled={isActive}
+                className="qte-exit-button"
               />
             )}
           </div>
         }
+        className="qte-card"
       >
-        {/* 时间进度条 */}
         <div className="qte-timer">
           <Progress 
-            percent={progressPercent}
-            status={progressPercent < 20 ? 'exception' : 'normal'}
-            strokeColor={{
-              '0%': '#ff4d4f',
-              '50%': '#faad14',
-              '100%': '#52c41a',
-            }}
+            percent={((timeLeft || 0) / (config.timeLimit || 10)) * 100} 
+            status={(timeLeft || 0) < (config.timeLimit || 10) * 0.3 ? 'exception' : 'active'}
+            showInfo={false}
+            strokeColor={
+              (timeLeft || 0) < (config.timeLimit || 10) * 0.3 
+                ? '#ff4d4f' 
+                : (timeLeft || 0) < (config.timeLimit || 10) * 0.6 
+                  ? '#faad14' 
+                  : '#52c41a'
+            }
           />
-          <Text style={{ marginTop: '8px', display: 'block', textAlign: 'center' }}>
-            剩余时间: {(timeLeft || 0).toFixed(1)}秒
-          </Text>
+          <Text>{Math.ceil(timeLeft || 0)}秒</Text>
         </div>
-
-        {/* QTE内容 */}
-        <div className="qte-content">
-          {result ? renderResult() : renderQTEContent()}
-        </div>
-
-        {/* 准确度显示 */}
-        {config.type === 'ClickSequence' && isActive && (
-          <div className="qte-accuracy">
-            <Text>准确度: {accuracy}%</Text>
-          </div>
-        )}
+        
+        {renderQTEContent()}
       </Card>
     </div>
   );

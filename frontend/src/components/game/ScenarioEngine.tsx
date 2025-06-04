@@ -49,9 +49,37 @@ export default function ScenarioEngine({
   // 应用节点的自动效果 - 使用节点ID避免无限循环
   useEffect(() => {
     if (currentNode?.autoEffects) {
-      applyEffects(currentNode.autoEffects);
+      console.log('Applying auto effects for node:', currentNodeId, currentNode.autoEffects);
+      try {
+        // 记录应用前的状态
+        const beforeStats = JSON.stringify(gameState.stats);
+        
+        // 应用效果
+        applyEffects(currentNode.autoEffects);
+        
+        // 记录应用后的状态
+        setTimeout(() => {
+          const afterStats = JSON.stringify(gameState.stats);
+          console.log('Auto effects applied successfully:', {
+            nodeId: currentNodeId,
+            effects: currentNode.autoEffects,
+            beforeStats,
+            afterStats,
+            changes: Object.keys(currentNode.autoEffects || {}).map(key => ({
+              stat: key,
+              value: (currentNode.autoEffects as any)[key]
+            }))
+          });
+        }, 100); // 等待状态更新
+      } catch (error) {
+        console.error('Error applying auto effects:', {
+          nodeId: currentNodeId,
+          effects: currentNode.autoEffects,
+          error
+        });
+      }
     }
-  }, [currentNodeId, applyEffects]); // 只依赖节点ID，避免currentNode对象引用变化
+  }, [currentNodeId, applyEffects, gameState.stats]); // 添加gameState.stats以监控状态变化
 
   // 播放背景音乐和音效
   useEffect(() => {
@@ -77,18 +105,21 @@ export default function ScenarioEngine({
     try {
       // 检查选择条件
       if (choice.condition && !checkCondition(choice.condition)) {
+        console.log('条件不满足:', choice.condition);
         setIsLoading(false);
         return;
       }
 
       // 检查选择要求
       if (choice.requirements && !checkRequirements(choice.requirements)) {
+        console.log('要求不满足:', choice.requirements);
         setIsLoading(false);
         return;
       }
 
       // 如果有QTE，先触发QTE
       if (choice.qte) {
+        console.log('触发QTE事件:', choice.qte);
         setQTEConfig(choice.qte);
         setChoiceEffects(choice.effects || null);
         setNextNodeAfterQTE(choice.nextNode || null);
@@ -99,7 +130,23 @@ export default function ScenarioEngine({
 
       // 应用选择效果
       if (choice.effects) {
-        applyEffects(choice.effects);
+        console.log('应用选择效果:', choice.effects);
+        try {
+          const beforeStats = JSON.stringify(gameState.stats);
+          applyEffects(choice.effects);
+          
+          // 记录应用后的状态
+          setTimeout(() => {
+            const afterStats = JSON.stringify(gameState.stats);
+            console.log('选择效果应用成功:', {
+              effects: choice.effects,
+              beforeStats,
+              afterStats
+            });
+          }, 100);
+        } catch (error) {
+          console.error('应用选择效果出错:', error);
+        }
       }
 
       // 延迟一下以显示效果
@@ -107,9 +154,11 @@ export default function ScenarioEngine({
 
       // 跳转到下一个节点
       if (choice.nextNode) {
+        console.log('跳转到下一节点:', choice.nextNode);
         setCurrentNodeId(choice.nextNode);
       } else {
         // 没有下一个节点，场景结束
+        console.log('场景结束，无下一节点');
         handleScenarioEnd('choice_ending');
       }
     } catch (error) {
@@ -117,7 +166,7 @@ export default function ScenarioEngine({
     } finally {
       setIsLoading(false);
     }
-  }, [applyEffects]);
+  }, [applyEffects, gameState.stats]);
 
   // 检查条件
   const checkCondition = (condition: any): boolean => {

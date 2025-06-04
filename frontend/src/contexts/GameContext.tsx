@@ -3,7 +3,7 @@
  * 提供全局游戏状态管理，包括场景进度、玩家数据、游戏统计等
  */
 
-import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { GameState, GameStats, GameProgress, PlayerProfile, GameEffect } from '../types/game';
 
 // ==================== 初始状态定义 ====================
@@ -80,6 +80,7 @@ type GameAction =
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'LOAD_GAME_STATE':
+      console.log('加载游戏状态', action.payload);
       return { ...action.payload };
 
     case 'SAVE_GAME_STATE':
@@ -89,31 +90,46 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         savedAt: new Date().toISOString()
       };
       localStorage.setItem('gameState', JSON.stringify(stateToSave));
+      console.log('保存游戏状态', stateToSave);
       return state; // 返回原state，不触发重新渲染
 
     case 'APPLY_EFFECTS': {
       const effects = action.payload;
       const newStats = { ...state.stats };
+      const changes: Record<string, { before: number; after: number }> = {};
+      
+      // 记录应用前的状态，用于日志
+      const beforeState = JSON.parse(JSON.stringify(state.stats));
       
       // 应用数值效果
       if (effects.tenantSatisfaction !== undefined) {
+        const before = newStats.tenantSatisfaction;
         newStats.tenantSatisfaction = Math.max(0, Math.min(100, 
           newStats.tenantSatisfaction + effects.tenantSatisfaction));
+        changes.tenantSatisfaction = { before, after: newStats.tenantSatisfaction };
       }
       if (effects.managerStress !== undefined) {
+        const before = newStats.managerStress;
         newStats.managerStress = Math.max(0, Math.min(100, 
           newStats.managerStress + effects.managerStress));
+        changes.managerStress = { before, after: newStats.managerStress };
       }
       if (effects.financialIncome !== undefined) {
+        const before = newStats.financialIncome;
         newStats.financialIncome += effects.financialIncome;
+        changes.financialIncome = { before, after: newStats.financialIncome };
       }
       if (effects.propertyReputation !== undefined) {
+        const before = newStats.propertyReputation;
         newStats.propertyReputation = Math.max(0, Math.min(100, 
           newStats.propertyReputation + effects.propertyReputation));
+        changes.propertyReputation = { before, after: newStats.propertyReputation };
       }
       if (effects.staffMorale !== undefined) {
+        const before = newStats.staffMorale;
         newStats.staffMorale = Math.max(0, Math.min(100, 
           newStats.staffMorale + effects.staffMorale));
+        changes.staffMorale = { before, after: newStats.staffMorale };
       }
 
       // 应用NPC关系效果
@@ -121,9 +137,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         if (key.startsWith('relationship_')) {
           const npcId = key.replace('relationship_', '');
           const currentRelation = newStats.npcRelationships[npcId] || 0;
+          const before = currentRelation;
           newStats.npcRelationships[npcId] = Math.max(-100, Math.min(100, 
             currentRelation + (effects[key as keyof GameEffect] as number)));
+          changes[`relationship_${npcId}`] = { before, after: newStats.npcRelationships[npcId] };
         }
+      });
+
+      // 记录应用效果的详细日志
+      console.log('应用游戏效果', {
+        effects,
+        changes,
+        statsBefore: beforeState,
+        statsAfter: newStats
       });
 
       return {
@@ -133,6 +159,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'SET_CURRENT_SCENARIO':
+      console.log('设置当前场景', action.payload);
       return {
         ...state,
         progress: {
@@ -149,6 +176,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         bestScore: 0,
         lastPlayed: new Date().toISOString()
       };
+
+      console.log('完成场景', {
+        scenarioId,
+        score,
+        previousStats: currentStats
+      });
 
       return {
         ...state,
@@ -170,6 +203,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'UPDATE_PLAYER_PROFILE':
+      console.log('更新玩家资料', action.payload);
       return {
         ...state,
         player: {
@@ -179,6 +213,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'UPDATE_STATS':
+      console.log('更新游戏统计', action.payload);
       return {
         ...state,
         stats: {
@@ -188,6 +223,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'SET_STORY_FLAG':
+      console.log('设置剧情标志', action.payload);
       return {
         ...state,
         progress: {
@@ -201,8 +237,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'ADD_ACHIEVEMENT':
       if (state.player.achievements.includes(action.payload)) {
+        console.log('成就已解锁，跳过', action.payload);
         return state;
       }
+      console.log('添加新成就', action.payload);
       return {
         ...state,
         player: {
@@ -212,16 +250,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'UPDATE_PLAY_TIME':
+      // 游戏时间更新无需详细日志，避免日志过多
       return {
         ...state,
         playTime: state.playTime + action.payload
       };
 
     case 'RESET_GAME':
+      console.log('重置游戏');
       localStorage.removeItem('gameState');
       return { ...initialGameState };
 
     default:
+      console.warn('未知的action类型', (action as any).type);
       return state;
   }
 }
@@ -263,73 +304,96 @@ interface GameProviderProps {
 
 export function GameProvider({ children }: GameProviderProps) {
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
+  const playTimeIntervalRef = useRef<number | null>(null);
 
-  // 自动保存功能 - 使用ref避免依赖gameState
-  useEffect(() => {
-    const autoSaveInterval = gameState.player.preferences.autoSaveInterval * 60 * 1000; // 转换为毫秒
-    if (autoSaveInterval > 0) {
-      const timer = setInterval(() => {
-        dispatch({ type: 'SAVE_GAME_STATE' });
-      }, autoSaveInterval);
-
-      return () => clearInterval(timer);
-    }
-  }, [gameState.player.preferences.autoSaveInterval]);
-
-  // 游戏时间追踪 - 减少更新频率避免无限循环
-  useEffect(() => {
-    const timer = setInterval(() => {
-      dispatch({ type: 'UPDATE_PLAY_TIME', payload: 10 }); // 改为每10秒更新一次
-    }, 10000); // 10秒间隔
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // 初始化时加载保存的游戏状态
+  // 尝试从localStorage加载游戏状态
   useEffect(() => {
     const savedState = localStorage.getItem('gameState');
     if (savedState) {
       try {
         const parsedState = JSON.parse(savedState);
+        console.log('从本地存储加载游戏状态', parsedState);
         dispatch({ type: 'LOAD_GAME_STATE', payload: parsedState });
       } catch (error) {
-        console.error('Failed to load saved game state:', error);
+        console.error('无法解析保存的游戏状态', error);
       }
     }
   }, []);
 
-  // 便捷方法 - 使用useCallback稳定函数引用
+  // 开始记录游戏时间
+  useEffect(() => {
+    if (!playTimeIntervalRef.current) {
+      console.log('开始记录游戏时间');
+      playTimeIntervalRef.current = window.setInterval(() => {
+        dispatch({ type: 'UPDATE_PLAY_TIME', payload: 1 });
+      }, 1000);
+    }
+
+    return () => {
+      if (playTimeIntervalRef.current) {
+        console.log('停止记录游戏时间');
+        clearInterval(playTimeIntervalRef.current);
+        playTimeIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  // 定期自动保存游戏状态
+  useEffect(() => {
+    const saveInterval = gameState.player.preferences.autoSaveInterval || 5;
+    console.log(`设置自动保存间隔: ${saveInterval}分钟`);
+    
+    const autoSaveTimer = setInterval(() => {
+      console.log('执行自动保存');
+      dispatch({ type: 'SAVE_GAME_STATE' });
+    }, saveInterval * 60 * 1000); // 转换为毫秒
+    
+    return () => {
+      clearInterval(autoSaveTimer);
+    };
+  }, [gameState.player.preferences.autoSaveInterval]);
+
+  // 应用游戏效果的辅助函数
   const applyEffects = useCallback((effects: GameEffect) => {
     dispatch({ type: 'APPLY_EFFECTS', payload: effects });
   }, []);
 
+  // 设置当前场景
   const setCurrentScenario = useCallback((scenarioId: string, nodeId?: string) => {
     dispatch({ type: 'SET_CURRENT_SCENARIO', payload: { scenarioId, nodeId } });
   }, []);
 
-  const completeScenario = (scenarioId: string, score?: number) => {
+  // 完成场景
+  const completeScenario = useCallback((scenarioId: string, score?: number) => {
     dispatch({ type: 'COMPLETE_SCENARIO', payload: { scenarioId, score } });
-  };
+  }, []);
 
-  const saveGame = () => {
+  // 保存游戏状态
+  const saveGame = useCallback(() => {
+    console.log('手动保存游戏');
     dispatch({ type: 'SAVE_GAME_STATE' });
-  };
+  }, []);
 
-  const loadGame = () => {
+  // 加载游戏状态
+  const loadGame = useCallback(() => {
     const savedState = localStorage.getItem('gameState');
     if (savedState) {
       try {
         const parsedState = JSON.parse(savedState);
+        console.log('手动加载游戏状态', parsedState);
         dispatch({ type: 'LOAD_GAME_STATE', payload: parsedState });
+        return true;
       } catch (error) {
-        console.error('Failed to load game state:', error);
+        console.error('加载游戏状态失败', error);
       }
     }
-  };
+    return false;
+  }, []);
 
-  const resetGame = () => {
+  // 重置游戏
+  const resetGame = useCallback(() => {
     dispatch({ type: 'RESET_GAME' });
-  };
+  }, []);
 
   const createNewGame = (character: {
     name: string;

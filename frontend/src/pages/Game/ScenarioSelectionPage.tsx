@@ -3,9 +3,9 @@
  * 让玩家浏览和选择不同的游戏场景
  */
 
-import { useState, useEffect } from 'react';
-import { Card, Button, Input, Select, Tag, Row, Col, Typography, Space, Spin, Alert, Progress, Modal, Tooltip } from 'antd';
-import { SearchOutlined, PlayCircleOutlined, ClockCircleOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
+import { useState, useEffect, useMemo } from 'react';
+import { Card, Button, Input, Select, Tag, Row, Col, Typography, Space, Spin, Alert, Progress, Modal, Tooltip, notification, Empty } from 'antd';
+import { SearchOutlined, PlayCircleOutlined, ClockCircleOutlined, TrophyOutlined, LockOutlined, FilterOutlined, TagsOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { scenarioService } from '../../services/scenarioService';
 import type { Scenario } from '../../types/game';
@@ -23,12 +23,15 @@ export default function ScenarioSelectionPage() {
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [filteredScenarios, setFilteredScenarios] = useState<Scenario[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [allTags, setAllTags] = useState<string[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // 加载场景数据
   useEffect(() => {
@@ -38,12 +41,19 @@ export default function ScenarioSelectionPage() {
   // 应用筛选条件
   useEffect(() => {
     applyFilters();
-  }, [scenarios, searchQuery, selectedDifficulty, selectedTags]);
+  }, [scenarios, searchQuery, selectedDifficulty, selectedTags, selectedStatus, gameState.progress.completedScenarios]);
 
   const loadScenarios = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const allScenarios = await scenarioService.getAllScenarios();
+      
+      if (allScenarios.length === 0) {
+        setLoadError('未找到场景数据');
+      }
+      
+      console.log('已加载场景:', allScenarios.length);
       setScenarios(allScenarios);
       
       // 提取所有标签
@@ -51,48 +61,138 @@ export default function ScenarioSelectionPage() {
       allScenarios.forEach(scenario => {
         scenario.tags?.forEach(tag => tags.add(tag));
       });
-      setAllTags(Array.from(tags));
+      setAllTags(Array.from(tags).sort());
+      
+      // 应用初始筛选
+      applyFilters(allScenarios);
     } catch (error) {
-      console.error('Failed to load scenarios:', error);
+      console.error('加载场景失败:', error);
+      setLoadError('加载场景数据时出错');
+      notification.error({
+        message: '加载场景失败',
+        description: '无法加载场景数据，请稍后再试'
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...scenarios];
+  const refreshScenarios = async () => {
+    setIsRefreshing(true);
+    await loadScenarios();
+    setIsRefreshing(false);
+    notification.success({
+      message: '刷新成功',
+      description: '场景数据已更新'
+    });
+  };
 
-    // 搜索过滤
+  // 加强的筛选函数
+  const applyFilters = (scenariosToFilter = scenarios) => {
+    let filtered = [...scenariosToFilter];
+    const completedScenarioIds = gameState.progress.completedScenarios || [];
+    
+    console.log('应用筛选条件:', { 
+      searchQuery, 
+      difficulty: selectedDifficulty, 
+      tags: selectedTags,
+      status: selectedStatus,
+      totalScenarios: filtered.length
+    });
+
+    // 搜索过滤 - 优先匹配标题，其次是描述和标签
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(scenario =>
-        scenario.title.toLowerCase().includes(query) ||
-        (scenario.description && scenario.description.toLowerCase().includes(query)) ||
-        (scenario.tags && scenario.tags.some(tag => tag.toLowerCase().includes(query)))
-      );
+      const query = searchQuery.toLowerCase().trim();
+      
+      // 分拆搜索条件
+      const terms = query.split(/\s+/).filter(term => term.length > 0);
+      
+      if (terms.length > 0) {
+        // 基于匹配程度排序
+        filtered = filtered.map(scenario => {
+          let score = 0;
+          
+          // 标题匹配得分最高
+          if (scenario.title.toLowerCase().includes(query)) {
+            score += 100;
+          }
+          
+          // 单词精确匹配
+          terms.forEach(term => {
+            // 标题中每个词匹配
+            if (scenario.title.toLowerCase().includes(term)) {
+              score += 10;
+            }
+            
+            // 描述中每个词匹配
+            if (scenario.description && scenario.description.toLowerCase().includes(term)) {
+              score += 5;
+            }
+            
+            // 标签中每个词匹配
+            if (scenario.tags && scenario.tags.some(tag => tag.toLowerCase().includes(term))) {
+              score += 8;
+            }
+          });
+          
+          return { scenario, score };
+        })
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.scenario);
+        
+        console.log(`搜索结果: 找到 ${filtered.length} 个匹配场景`);
+      }
     }
 
     // 难度过滤
     if (selectedDifficulty !== 'all') {
       const difficultyNum = parseInt(selectedDifficulty);
       filtered = filtered.filter(scenario => scenario.difficulty === difficultyNum);
+      console.log(`难度筛选 [${selectedDifficulty}]: 剩余 ${filtered.length} 个场景`);
     }
 
     // 标签过滤
     if (selectedTags.length > 0) {
       filtered = filtered.filter(scenario =>
-        scenario.tags && selectedTags.some(tag => scenario.tags!.includes(tag))
+        scenario.tags && selectedTags.every(tag => scenario.tags!.includes(tag))
       );
+      console.log(`标签筛选 [${selectedTags.join(', ')}]: 剩余 ${filtered.length} 个场景`);
+    }
+    
+    // 状态过滤（完成/未完成）
+    if (selectedStatus !== 'all') {
+      if (selectedStatus === 'completed') {
+        filtered = filtered.filter(scenario => completedScenarioIds.includes(scenario.id));
+      } else if (selectedStatus === 'notCompleted') {
+        filtered = filtered.filter(scenario => !completedScenarioIds.includes(scenario.id));
+      } else if (selectedStatus === 'available') {
+        filtered = filtered.filter(scenario => {
+          const { canPlay } = checkScenarioRequirements(scenario);
+          return canPlay && !completedScenarioIds.includes(scenario.id);
+        });
+      }
+      console.log(`状态筛选 [${selectedStatus}]: 剩余 ${filtered.length} 个场景`);
     }
 
     setFilteredScenarios(filtered);
   };
 
+  // 场景统计信息
+  const scenarioStats = useMemo(() => {
+    const total = scenarios.length;
+    const completed = gameState.progress.completedScenarios.length;
+    const available = scenarios.filter(s => checkScenarioRequirements(s).canPlay).length;
+    const locked = total - available;
+    
+    return { total, completed, available, locked };
+  }, [scenarios, gameState.progress.completedScenarios]);
+
   const getDifficultyColor = (difficulty: number | undefined): string => {
     switch (difficulty) {
       case 1: return 'green';
-      case 2: return 'orange';
-      case 3: return 'red';
+      case 2: return 'cyan';
+      case 3: return 'orange';
       case 4: return 'volcano';
       case 5: return 'magenta';
       default: return 'default';
@@ -124,10 +224,22 @@ export default function ScenarioSelectionPage() {
       navigate(`/game/scenario/${selectedScenario.id}`);
     }
   };
+  
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setSelectedDifficulty('all');
+    setSelectedTags([]);
+    setSelectedStatus('all');
+    notification.info({
+      message: '已清除所有筛选条件',
+      description: '显示全部场景'
+    });
+  };
 
   const renderScenarioCard = (scenario: Scenario) => {
     const { canPlay, missingRequirements } = checkScenarioRequirements(scenario);
     const isCompleted = gameState.progress.completedScenarios.includes(scenario.id);
+    const scenarioStats = gameState.progress.scenarioStats[scenario.id];
 
     return (
       <Card
@@ -152,7 +264,7 @@ export default function ScenarioSelectionPage() {
               handleScenarioClick(scenario);
             }}
           >
-            开始
+            {isCompleted ? '重玩' : '开始'}
           </Button>
         ] : [
           <Tooltip title="不满足要求">
@@ -181,15 +293,38 @@ export default function ScenarioSelectionPage() {
                 <Space size="small">
                   <ClockCircleOutlined />
                   <Text type="secondary">{scenario.estimatedTime}分钟</Text>
+                  
+                  {scenarioStats && (
+                    <Tooltip title={`已完成 ${scenarioStats.completedCount} 次`}>
+                      <span>
+                        <TrophyOutlined style={{ color: '#faad14' }} />
+                        <Text type="secondary" style={{ marginLeft: 4 }}>
+                          {scenarioStats.bestScore}
+                        </Text>
+                      </span>
+                    </Tooltip>
+                  )}
                 </Space>
               </div>
               
               <div className="scenario-tags">
                 {scenario.tags?.slice(0, 3).map(tag => (
-                  <Tag key={tag}>{tag}</Tag>
+                  <Tag 
+                    key={tag} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!selectedTags.includes(tag)) {
+                        setSelectedTags([...selectedTags, tag]);
+                      }
+                    }}
+                  >
+                    {tag}
+                  </Tag>
                 )) || []}
                 {scenario.tags && scenario.tags.length > 3 && (
-                  <Tag>+{scenario.tags.length - 3}</Tag>
+                  <Tooltip title={scenario.tags.slice(3).join(', ')}>
+                    <Tag>+{scenario.tags.length - 3}</Tag>
+                  </Tooltip>
                 )}
               </div>
               
@@ -366,78 +501,166 @@ export default function ScenarioSelectionPage() {
 
   return (
     <div className="scenario-selection-page">
-      <Row gutter={[24, 24]}>
-        {/* 左侧：场景列表 */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} lg={18}>
-          <Card title="选择场景" className="scenarios-container">
-            {/* 搜索和筛选 */}
-            <div className="filters-section">
+          <div className="scenarios-container">
+            <div className="scenarios-header">
+              <Title level={2}>选择场景</Title>
+              <div className="scenario-stats">
+                <Space size="large">
+                  <Tooltip title="所有场景">
+                    <span>
+                      <Text>总场景: </Text>
+                      <Text strong>{scenarioStats.total}</Text>
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="已完成场景">
+                    <span>
+                      <Text>已完成: </Text>
+                      <Text strong style={{ color: '#52c41a' }}>{scenarioStats.completed}</Text>
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="可进行场景">
+                    <span>
+                      <Text>可进行: </Text>
+                      <Text strong style={{ color: '#1890ff' }}>{scenarioStats.available}</Text>
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="锁定场景">
+                    <span>
+                      <Text>锁定: </Text>
+                      <Text strong style={{ color: '#ff4d4f' }}>{scenarioStats.locked}</Text>
+                    </span>
+                  </Tooltip>
+                </Space>
+              </div>
+            </div>
+
+            <div className="scenarios-filters">
               <Row gutter={[16, 16]}>
-                <Col xs={24} sm={12} md={8}>
+                <Col xs={24} sm={12} md={8} lg={6}>
                   <Search
                     placeholder="搜索场景..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onSearch={(value) => setSearchQuery(value)}
                     prefix={<SearchOutlined />}
+                    allowClear
                   />
                 </Col>
-                <Col xs={24} sm={12} md={6}>
+                
+                <Col xs={24} sm={12} md={8} lg={6}>
                   <Select
-                    value={selectedDifficulty}
-                    onChange={setSelectedDifficulty}
                     style={{ width: '100%' }}
                     placeholder="选择难度"
+                    value={selectedDifficulty}
+                    onChange={(value) => setSelectedDifficulty(value)}
+                    suffixIcon={<FilterOutlined />}
+                    allowClear
                   >
-                    <Option value="all">全部难度</Option>
-                    <Option value="easy">简单</Option>
-                    <Option value="medium">中等</Option>
-                    <Option value="hard">困难</Option>
+                    <Option value="all">所有难度</Option>
+                    <Option value="1">简单</Option>
+                    <Option value="2">中等</Option>
+                    <Option value="3">困难</Option>
+                    <Option value="4">极难</Option>
+                    <Option value="5">地狱</Option>
                   </Select>
                 </Col>
-                <Col xs={24} md={10}>
+                
+                <Col xs={24} sm={12} md={8} lg={6}>
                   <Select
                     mode="multiple"
-                    value={selectedTags}
-                    onChange={setSelectedTags}
                     style={{ width: '100%' }}
                     placeholder="选择标签"
+                    value={selectedTags}
+                    onChange={(values) => setSelectedTags(values)}
+                    suffixIcon={<TagsOutlined />}
                     maxTagCount={2}
+                    allowClear
                   >
                     {allTags.map(tag => (
                       <Option key={tag} value={tag}>{tag}</Option>
                     ))}
                   </Select>
                 </Col>
+                
+                <Col xs={24} sm={12} md={8} lg={6}>
+                  <Select
+                    style={{ width: '100%' }}
+                    placeholder="筛选状态"
+                    value={selectedStatus}
+                    onChange={(value) => setSelectedStatus(value)}
+                    allowClear
+                  >
+                    <Option value="all">所有场景</Option>
+                    <Option value="completed">已完成</Option>
+                    <Option value="notCompleted">未完成</Option>
+                    <Option value="available">可进行</Option>
+                  </Select>
+                </Col>
+                
+                <Col xs={24}>
+                  <div className="filter-actions">
+                    <Space>
+                      <Button onClick={handleClearFilters} disabled={searchQuery === '' && selectedDifficulty === 'all' && selectedTags.length === 0 && selectedStatus === 'all'}>
+                        清除筛选
+                      </Button>
+                      <Button icon={<ReloadOutlined spin={isRefreshing} />} onClick={refreshScenarios} disabled={isRefreshing}>
+                        刷新场景
+                      </Button>
+                      <Text type="secondary">
+                        {filteredScenarios.length > 0 ? 
+                          `找到 ${filteredScenarios.length} 个匹配场景` : 
+                          '没有匹配的场景'}
+                      </Text>
+                    </Space>
+                  </div>
+                </Col>
               </Row>
             </div>
 
-            {/* 场景列表 */}
-            <Spin spinning={loading}>
-              <Row gutter={[16, 16]} className="scenarios-grid">
-                {filteredScenarios.map(scenario => (
-                  <Col xs={24} sm={12} lg={8} key={scenario.id}>
-                    {renderScenarioCard(scenario)}
-                  </Col>
-                ))}
-              </Row>
-              
-              {!loading && filteredScenarios.length === 0 && (
-                <div className="empty-state">
-                  <Text type="secondary">没有找到符合条件的场景</Text>
+            <div className="scenarios-list">
+              {loading ? (
+                <div className="scenarios-loading">
+                  <Spin size="large" />
+                  <Text>加载场景中...</Text>
                 </div>
+              ) : loadError ? (
+                <Alert
+                  type="error"
+                  message="加载错误"
+                  description={loadError}
+                  action={
+                    <Button size="small" onClick={refreshScenarios}>
+                      重试
+                    </Button>
+                  }
+                />
+              ) : filteredScenarios.length === 0 ? (
+                <Empty
+                  description="没有找到匹配的场景"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              ) : (
+                <Row gutter={[16, 16]}>
+                  {filteredScenarios.map(scenario => (
+                    <Col xs={24} sm={12} md={8} key={scenario.id}>
+                      {renderScenarioCard(scenario)}
+                    </Col>
+                  ))}
+                </Row>
               )}
-            </Spin>
-          </Card>
+            </div>
+          </div>
         </Col>
-
-        {/* 右侧：游戏统计 */}
+        
         <Col xs={24} lg={6}>
-          <GameStatsPanel size="small" />
+          <GameStatsPanel size="small" detailed={false} />
         </Col>
       </Row>
 
-      {/* 场景详情弹窗 */}
-      {renderScenarioDetails()}
+      {/* 场景详情模态框 */}
+      {selectedScenario && renderScenarioDetails()}
     </div>
   );
 }
