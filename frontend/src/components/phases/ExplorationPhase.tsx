@@ -35,7 +35,7 @@ import {
   ToolOutlined,
   StarOutlined,
   ThunderboltOutlined,
-  ShieldOutlined,
+  SafetyOutlined,
   SwordOutlined,
   GiftOutlined,
   ClockCircleOutlined,
@@ -362,7 +362,7 @@ const EquipmentManager: React.FC<EquipmentManagerProps> = ({
     const icons = {
       tool: <ToolOutlined />,
       instrument: <CompassOutlined />,
-      armor: <ShieldOutlined />,
+      armor: <SafetyOutlined />,
       weapon: <SwordOutlined />
     };
     return icons[type] || <ToolOutlined />;
