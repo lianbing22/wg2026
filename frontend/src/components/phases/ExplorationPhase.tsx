@@ -248,84 +248,78 @@ const MOCK_SKILL_TREE: SkillTree = {
 const MOCK_MISSIONS: ExplorationMission[] = [
   {
     id: 'mission_001',
-    title: '古老建筑勘探',
-    description: '探索城市中的古老建筑，寻找有价值的建筑技术和材料',
-    type: 'exploration',
-    difficulty: 'easy',
+    name: '古老建筑勘探',
+    type: 'resource_hunt',
+    difficulty: 3,
     duration: 2,
     requirements: {
-      player_level: 3,
-      equipment: ['basic_tools'],
-      skills: ['basic_construction']
+      min_skill_level: 3,
+      required_equipment: ['basic_tools'],
+      team_size: 1,
+      investment_cost: 500
+    },
+    risks: {
+      failure_probability: 0.2,
+      potential_losses: 200,
+      reputation_risk: 0.1
     },
     rewards: {
-      experience: 100,
-      money: 1000,
-      items: ['ancient_blueprint'],
-      skill_points: 1
+      base_reward: 1000,
+      bonus_rewards: ['ancient_blueprint'],
+      experience_gain: 100,
+      reputation_gain: 5
     },
-    risks: [
-      {
-        type: 'structural_damage',
-        probability: 0.2,
-        consequence: 'equipment_damage'
-      }
-    ],
     status: 'available'
   },
   {
     id: 'mission_002',
-    title: '豪华区域调研',
-    description: '深入豪华住宅区，学习高端物业管理经验',
-    type: 'research',
-    difficulty: 'medium',
+    name: '豪华区域调研',
+    type: 'market_research',
+    difficulty: 5,
     duration: 4,
     requirements: {
-      player_level: 8,
-      equipment: ['measurement_tools'],
-      skills: ['tenant_relations', 'negotiation']
+      min_skill_level: 8,
+      required_equipment: ['measurement_tools'],
+      team_size: 2,
+      investment_cost: 1500
+    },
+    risks: {
+      failure_probability: 0.15,
+      potential_losses: 500,
+      reputation_risk: 0.2
     },
     rewards: {
-      experience: 300,
-      money: 3000,
-      items: ['luxury_management_guide'],
-      skill_points: 2
+      base_reward: 3000,
+      bonus_rewards: ['luxury_management_guide'],
+      experience_gain: 300,
+      reputation_gain: 10
     },
-    risks: [
-      {
-        type: 'reputation_risk',
-        probability: 0.15,
-        consequence: 'reputation_loss'
-      }
-    ],
     status: 'available'
   },
   {
     id: 'mission_003',
-    title: '传奇大师寻访',
-    description: '寻找传说中的建筑大师，获得终极建筑秘籍',
-    type: 'legendary',
-    difficulty: 'legendary',
+    name: '传奇大师寻访',
+    type: 'talent_scout',
+    difficulty: 10,
     duration: 8,
     requirements: {
-      player_level: 20,
-      equipment: ['legendary_tools'],
-      skills: ['construction_mastery', 'leadership']
+      min_skill_level: 20,
+      required_equipment: ['legendary_tools'],
+      team_size: 3,
+      investment_cost: 5000
+    },
+    risks: {
+      failure_probability: 0.4,
+      potential_losses: 2000,
+      reputation_risk: 0.3
     },
     rewards: {
-      experience: 1000,
-      money: 10000,
-      items: ['master_techniques'],
-      skill_points: 5
+      base_reward: 10000,
+      bonus_rewards: ['master_techniques'],
+      experience_gain: 1000,
+      reputation_gain: 25
     },
-    risks: [
-      {
-        type: 'extreme_challenge',
-        probability: 0.4,
-        consequence: 'mission_failure'
-      }
-    ],
-    status: 'locked'
+    status: 'available'
   }
 ];
 
