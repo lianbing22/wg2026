@@ -36,7 +36,7 @@ import {
   StarOutlined,
   ThunderboltOutlined,
   SafetyOutlined,
-  SwordOutlined,
+  AimOutlined,
   GiftOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
@@ -357,7 +357,7 @@ const EquipmentManager: React.FC<EquipmentManagerProps> = ({
       tool: <ToolOutlined />,
       instrument: <CompassOutlined />,
       armor: <SafetyOutlined />,
-      weapon: <SwordOutlined />
+      weapon: <AimOutlined />
     };
     return icons[type] || <ToolOutlined />;
   };
@@ -634,7 +634,7 @@ const MissionBoard: React.FC<MissionBoardProps> = ({
       exploration: <CompassOutlined />,
       research: <RocketOutlined />,
       legendary: <CrownOutlined />,
-      combat: <SwordOutlined />
+      combat: <AimOutlined />
     };
     return icons[type] || <CompassOutlined />;
   };
