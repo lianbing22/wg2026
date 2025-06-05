@@ -1,0 +1,266 @@
+/**
+ * 物业管理模拟器 - 数值变化动画组件样式
+ */
+
+.animated-value {
+  position: relative;
+  display: inline-block;
+  min-width: 60px;
+  text-align: center;
+}
+
+.value-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+}
+
+/* 主数值样式 */
+.main-value {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
+  z-index: 2;
+}
+
+.main-value.animating {
+  transform: scale(1.05);
+}
+
+/* 数值类型颜色 */
+.value-default {
+  color: var(--text-primary);
+}
+
+.value-success {
+  color: var(--success-color);
+}
+
+.value-warning {
+  color: var(--warning-color);
+}
+
+.value-error {
+  color: var(--error-color);
+}
+
+.value-info {
+  color: var(--info-color);
+}
+
+/* 变化指示器 */
+.change-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: slideInFade 0.3s var(--ease-out) forwards;
+  position: relative;
+  z-index: 3;
+}
+
+.change-arrow {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.change-value {
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  box-shadow: var(--shadow-xs);
+}
+
+/* 变化颜色 */
+.change-positive {
+  color: var(--success-color);
+}
+
+.change-positive .change-value {
+  background: var(--success-light);
+  color: var(--success-color);
+}
+
+.change-negative {
+  color: var(--error-color);
+}
+
+.change-negative .change-value {
+  background: var(--error-light);
+  color: var(--error-color);
+}
+
+/* 数值变化动画 */
+.animated-value.value-changed .main-value {
+  animation: valueChange 0.6s var(--ease-out);
+}
+
+@keyframes valueChange {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.15);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 粒子效果 */
+.particles-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.particles-container.up .particle {
+  animation: particleUp 0.8s var(--ease-out) forwards;
+}
+
+.particles-container.down .particle {
+  animation: particleDown 0.8s var(--ease-out) forwards;
+}
+
+/* 粒子颜色 */
+.particle.change-positive {
+  background: var(--success-color);
+  box-shadow: 0 0 6px var(--success-color);
+}
+
+.particle.change-negative {
+  background: var(--error-color);
+  box-shadow: 0 0 6px var(--error-color);
+}
+
+/* 粒子位置 */
+.particle-1 { transform: translate(-20px, -20px); }
+.particle-2 { transform: translate(20px, -20px); }
+.particle-3 { transform: translate(-30px, 0px); }
+.particle-4 { transform: translate(30px, 0px); }
+.particle-5 { transform: translate(-15px, 20px); }
+.particle-6 { transform: translate(15px, 20px); }
+
+/* 粒子动画延迟 */
+.particle-1 { animation-delay: 0ms; }
+.particle-2 { animation-delay: 50ms; }
+.particle-3 { animation-delay: 100ms; }
+.particle-4 { animation-delay: 150ms; }
+.particle-5 { animation-delay: 200ms; }
+.particle-6 { animation-delay: 250ms; }
+
+@keyframes particleUp {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(0);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--start-x, 0), calc(var(--start-y, 0) - 40px)) scale(0.5);
+  }
+}
+
+@keyframes particleDown {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(0);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--start-x, 0), calc(var(--start-y, 0) + 40px)) scale(0.5);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-value {
+    font-size: var(--font-size-base);
+  }
+  
+  .change-indicator {
+    font-size: var(--font-size-xs);
+  }
+  
+  .change-value {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+  
+  .particle {
+    width: 3px;
+    height: 3px;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .animated-value,
+  .main-value,
+  .change-indicator,
+  .particle {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .main-value.animating {
+    transform: none;
+  }
+  
+  .particles-container {
+    display: none;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .change-value {
+    background: var(--bg-primary);
+    border: 1px solid currentColor;
+  }
+  
+  .particle {
+    box-shadow: none;
+    border: 1px solid currentColor;
+  }
+}

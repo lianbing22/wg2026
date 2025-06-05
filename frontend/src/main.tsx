@@ -1,7 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
+import { ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
 import { router } from './routes/index.tsx'
+import { GameProvider } from './contexts/GameContext'
+import { optimizeUX } from './utils/ux-optimizer'
+import './styles/design-tokens.css'
 import './index.css'
 
 // 处理GitHub Pages的重定向
@@ -16,8 +21,15 @@ import './index.css'
   }
 })();
 
+// 初始化用户体验优化
+optimizeUX();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <GameProvider>
+      <ConfigProvider locale={zhCN}>
+        <RouterProvider router={router} />
+      </ConfigProvider>
+    </GameProvider>
   </StrictMode>,
 )

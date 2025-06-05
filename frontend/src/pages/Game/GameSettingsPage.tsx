@@ -109,11 +109,51 @@ export default function GameSettingsPage() {
   };
 
   const handleSave = () => {
-    // 这里应该更新游戏状态中的设置
-    // 由于当前的GameContext结构限制，我们暂时只保存到localStorage
-    localStorage.setItem('gameSettings', JSON.stringify(settings));
-    setHasChanges(false);
-    message.success('设置已保存');
+    try {
+      // 保存到localStorage
+      localStorage.setItem('gameSettings', JSON.stringify(settings));
+      
+      // 如果有游戏状态，也更新游戏状态中的设置
+      if (gameState && dispatch) {
+        // 这里可以添加一个新的action来更新游戏设置
+        // dispatch({ type: 'UPDATE_SETTINGS', payload: settings });
+        
+        // 暂时通过更新玩家偏好来保存部分设置
+        const updatedPreferences = {
+          ...gameState.player.preferences,
+          soundEnabled: settings.soundEnabled,
+          musicEnabled: settings.musicEnabled,
+          volume: settings.volume,
+          difficulty: settings.difficulty,
+          autoSaveInterval: settings.autoSaveInterval,
+          theme: settings.theme,
+          language: settings.language,
+          showTutorials: settings.showTutorials,
+          fastAnimations: settings.fastAnimations,
+          confirmActions: settings.confirmActions
+        };
+        
+        dispatch({
+          type: 'UPDATE_PLAYER_PROFILE',
+          payload: {
+            ...gameState.player,
+            preferences: updatedPreferences
+          }
+        });
+      }
+      
+      setHasChanges(false);
+      message.success('设置已保存');
+      
+      // 应用一些即时生效的设置
+      if (settings.theme) {
+        document.documentElement.setAttribute('data-theme', settings.theme);
+      }
+      
+    } catch (error) {
+      console.error('保存设置失败:', error);
+      message.error('保存设置失败，请重试');
+    }
   };
 
   const handleReset = () => {

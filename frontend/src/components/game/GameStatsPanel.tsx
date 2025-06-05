@@ -3,7 +3,7 @@
  * 显示玩家的各项统计数据、技能等级、关系状态等
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Progress, Row, Col, Statistic, Tag, Tooltip, Space, Avatar, notification } from 'antd';
 import { 
   TrophyOutlined, 
@@ -17,6 +17,7 @@ import {
   SyncOutlined
 } from '@ant-design/icons';
 import { useGame } from '../../contexts/GameContext';
+import AnimatedValue from './AnimatedValue';
 import './GameStatsPanel.css';
 
 interface GameStatsPanelProps {
@@ -38,8 +39,17 @@ export default function GameStatsPanel({
 }: GameStatsPanelProps) {
   const { gameState } = useGame();
   const [localGameState, setLocalGameState] = useState(gameState);
+  const [previousStats, setPreviousStats] = useState(gameState.stats);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [isStale, setIsStale] = useState(false);
+
+  // 更新前一个状态
+  useEffect(() => {
+    setPreviousStats(prevStats => {
+      if (!prevStats) return gameState.stats;
+      return prevStats;
+    });
+  }, [gameState.stats]);
 
   // 检测游戏状态变化并更新本地状态
   useEffect(() => {
@@ -80,18 +90,38 @@ export default function GameStatsPanel({
       const significantChanges = [];
       
       // 检查财务变化
-      if (Math.abs(localGameState.stats.financialIncome - gameState.stats.financialIncome) > 1000) {
-        significantChanges.push(`资金: ${localGameState.stats.financialIncome} → ${gameState.stats.financialIncome}`);
+      if (Math.abs(localGameState.stats.income - gameState.stats.income) > 1000) {
+        significantChanges.push(`收入: ${localGameState.stats.income} → ${gameState.stats.income}`);
       }
       
       // 检查声誉变化
-      if (Math.abs(localGameState.stats.propertyReputation - gameState.stats.propertyReputation) >= 5) {
-        significantChanges.push(`声誉: ${localGameState.stats.propertyReputation} → ${gameState.stats.propertyReputation}`);
+      if (Math.abs(localGameState.stats.reputation - gameState.stats.reputation) >= 5) {
+        significantChanges.push(`声誉: ${localGameState.stats.reputation} → ${gameState.stats.reputation}`);
       }
       
       // 检查满意度变化
-      if (Math.abs(localGameState.stats.tenantSatisfaction - gameState.stats.tenantSatisfaction) >= 5) {
-        significantChanges.push(`满意度: ${localGameState.stats.tenantSatisfaction} → ${gameState.stats.tenantSatisfaction}`);
+      if (Math.abs(localGameState.stats.satisfaction - gameState.stats.satisfaction) >= 10) {
+        significantChanges.push(`满意度: ${localGameState.stats.satisfaction} → ${gameState.stats.satisfaction}`);
+      }
+      
+      // 检查压力变化
+      if (Math.abs(localGameState.stats.stress - gameState.stats.stress) >= 10) {
+        significantChanges.push(`压力: ${localGameState.stats.stress} → ${gameState.stats.stress}`);
+      }
+      
+      // 如果有显著变化，显示通知
+      if (significantChanges.length > 0 && detailed) {
+        notification.info({
+          message: '状态更新',
+          description: significantChanges.join('\n'),
+          duration: 3,
+          placement: 'topRight'
+        });
+      }
+      
+      // 检查满意度变化
+      if (Math.abs(localGameState.stats.satisfaction - gameState.stats.satisfaction) >= 5) {
+        significantChanges.push(`满意度: ${localGameState.stats.satisfaction} → ${gameState.stats.satisfaction}`);
       }
       
       // 显示通知
@@ -123,9 +153,18 @@ export default function GameStatsPanel({
       Math.max(Object.keys(localGameState.player.skills).length, 1);
     const relationshipAverage = Object.values(localGameState.stats.npcRelationships).reduce((sum, rel) => sum + rel, 0) / 
       Math.max(Object.keys(localGameState.stats.npcRelationships).length, 1);
-    const financialScore = Math.min(100, (localGameState.stats.financialIncome / 10000) * 100); // 假设10000为满分
+    const financialScore = Math.min(100, (localGameState.stats.income / 10000) * 100); // 假设10000为满分
+    const reputationScore = localGameState.stats.reputation;
+    const satisfactionScore = localGameState.stats.satisfaction;
     
-    return Math.round((skillAverage + relationshipAverage + financialScore) / 3);
+    // 综合评分：技能30%，关系20%，财务20%，声誉15%，满意度15%
+    return Math.round(
+      (skillAverage * 0.3) + 
+      (relationshipAverage * 0.2) + 
+      (financialScore * 0.2) + 
+      (reputationScore * 0.15) + 
+      (satisfactionScore * 0.15)
+    );
   };
 
   // 获取技能等级描述
@@ -155,6 +194,14 @@ export default function GameStatsPanel({
     if (level >= 20) return '#fa8c16';
     if (level >= 0) return '#d9d9d9';
     return '#ff4d4f';
+  };
+
+  // 根据数值获取类型
+  const getStatType = (value: number): 'success' | 'warning' | 'error' | 'default' => {
+    if (value >= 80) return 'success';
+    if (value >= 60) return 'warning';
+    if (value >= 40) return 'warning';
+    return 'error';
   };
 
   const overallRating = calculateOverallRating();
@@ -221,8 +268,17 @@ export default function GameStatsPanel({
         <Row gutter={[16, 16]}>
           <Col span={8}>
             <Statistic
-              title="资金"
-              value={localGameState.stats.financialIncome}
+              title="收入"
+              value={
+                <AnimatedValue
+                  value={localGameState.stats.income}
+                  previousValue={previousStats?.income}
+                  formatter={(val) => `${val.toLocaleString()}`}
+                  type={localGameState.stats.income >= 0 ? 'success' : 'error'}
+                  showChangeIndicator={true}
+                  showChangeValue={true}
+                />
+              }
               prefix={<DollarOutlined />}
               precision={0}
               valueStyle={{ color: '#3f8600' }}
@@ -231,10 +287,18 @@ export default function GameStatsPanel({
           <Col span={8}>
             <Statistic
               title="声誉"
-              value={localGameState.stats.propertyReputation}
-              suffix="/ 100"
+              value={
+                <AnimatedValue
+                  value={localGameState.stats.reputation}
+                  previousValue={previousStats?.reputation}
+                  formatter={(val) => `${val} / 100`}
+                  type={getStatType(localGameState.stats.reputation)}
+                  showChangeIndicator={true}
+                  showChangeValue={true}
+                />
+              }
               prefix={<HeartOutlined />}
-              valueStyle={{ color: localGameState.stats.propertyReputation >= 70 ? '#3f8600' : '#faad14' }}
+              valueStyle={{ color: localGameState.stats.reputation >= 70 ? '#3f8600' : '#faad14' }}
             />
           </Col>
           <Col span={8}>
@@ -251,41 +315,65 @@ export default function GameStatsPanel({
           <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
             <Col span={8}>
               <Statistic
-                title="压力值"
-                value={localGameState.stats.managerStress}
-                suffix="/ 100"
-                valueStyle={{ color: localGameState.stats.managerStress >= 70 ? '#cf1322' : localGameState.stats.managerStress >= 40 ? '#faad14' : '#3f8600' }}
-              />
+              title="压力值"
+              value={
+                <AnimatedValue
+                  value={localGameState.stats.stress}
+                  previousValue={previousStats?.stress}
+                  formatter={(val) => `${val} / 100`}
+                  type={getStatType(100 - localGameState.stats.stress)}
+                  showChangeIndicator={true}
+                  showChangeValue={true}
+                />
+              }
+              valueStyle={{ color: localGameState.stats.stress >= 70 ? '#cf1322' : localGameState.stats.stress >= 40 ? '#faad14' : '#3f8600' }}
+            />
               <Progress 
-                percent={localGameState.stats.managerStress} 
+                percent={localGameState.stats.stress} 
                 size="small" 
-                status={localGameState.stats.managerStress >= 70 ? 'exception' : 'normal'}
-                strokeColor={localGameState.stats.managerStress >= 70 ? '#ff4d4f' : '#52c41a'}
+                status={localGameState.stats.stress >= 70 ? 'exception' : 'normal'}
+                strokeColor={localGameState.stats.stress >= 70 ? '#ff4d4f' : '#52c41a'}
               />
             </Col>
             <Col span={8}>
               <Statistic
-                title="能量值"
-                value={100 - localGameState.stats.managerStress} // 用压力反推能量
-                suffix="/ 100"
+                title="士气值"
+                value={
+                  <AnimatedValue
+                    value={localGameState.stats.morale}
+                    previousValue={previousStats?.morale}
+                    formatter={(val) => `${val} / 100`}
+                    type={getStatType(localGameState.stats.morale)}
+                    showChangeIndicator={true}
+                    showChangeValue={true}
+                  />
+                }
                 prefix={<ThunderboltOutlined />}
-                valueStyle={{ color: (100 - localGameState.stats.managerStress) >= 70 ? '#3f8600' : (100 - localGameState.stats.managerStress) >= 30 ? '#faad14' : '#cf1322' }}
+                valueStyle={{ color: localGameState.stats.morale >= 70 ? '#3f8600' : localGameState.stats.morale >= 30 ? '#faad14' : '#cf1322' }}
               />
               <Progress 
-                percent={100 - localGameState.stats.managerStress} 
+                percent={localGameState.stats.morale} 
                 size="small" 
-                status={(100 - localGameState.stats.managerStress) <= 30 ? 'exception' : 'normal'}
+                status={localGameState.stats.morale <= 30 ? 'exception' : 'normal'}
               />
             </Col>
             <Col span={8}>
               <Statistic
-                title="满意度"
-                value={localGameState.stats.tenantSatisfaction}
-                suffix="/ 100"
-                valueStyle={{ color: localGameState.stats.tenantSatisfaction >= 70 ? '#3f8600' : '#faad14' }}
-              />
+              title="满意度"
+              value={
+                <AnimatedValue
+                  value={localGameState.stats.satisfaction}
+                  previousValue={previousStats?.satisfaction}
+                  formatter={(val) => `${val} / 100`}
+                  type={getStatType(localGameState.stats.satisfaction)}
+                  showChangeIndicator={true}
+                  showChangeValue={true}
+                />
+              }
+              valueStyle={{ color: localGameState.stats.satisfaction >= 70 ? '#3f8600' : '#faad14' }}
+            />
               <Progress 
-                percent={localGameState.stats.tenantSatisfaction} 
+                percent={localGameState.stats.satisfaction} 
                 size="small" 
                 strokeColor="#52c41a"
               />

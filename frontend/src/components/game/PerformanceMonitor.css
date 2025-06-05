@@ -1,0 +1,240 @@
+/* 性能监控组件样式 */
+.performance-monitor {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 280px;
+  z-index: 1000;
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  transition: all var(--motion-duration-mid) var(--motion-ease-out);
+}
+
+.performance-monitor:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+}
+
+.performance-monitor-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.performance-toggle-btn {
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.performance-toggle-btn:hover {
+  background: var(--color-bg-container-hover);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+/* 指标网格布局 */
+.performance-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.metric-item {
+  text-align: center;
+  padding: var(--spacing-xs);
+  background: var(--color-bg-layout);
+  border-radius: var(--border-radius-base);
+  border: 1px solid var(--color-border-secondary);
+  transition: all var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.metric-item:hover {
+  background: var(--color-bg-container-hover);
+  border-color: var(--color-primary-border);
+  transform: translateY(-1px);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.metric-icon {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 详细信息 */
+.performance-details {
+  background: var(--color-bg-layout);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border-secondary);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+/* 性能建议 */
+.performance-suggestions {
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+}
+
+.suggestions-list {
+  margin: var(--spacing-xs) 0 0 0;
+  padding-left: var(--spacing-md);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.suggestions-list li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+}
+
+.suggestions-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .performance-monitor {
+    width: 240px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .performance-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .metric-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .performance-monitor {
+    width: calc(100vw - 20px);
+    left: 10px;
+    right: 10px;
+  }
+  
+  .performance-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 暗色主题适配 */
+[data-theme='dark'] .performance-monitor {
+  background: rgba(20, 20, 20, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .metric-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .metric-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary);
+}
+
+[data-theme='dark'] .performance-details {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .detail-row {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 动画效果 */
+@keyframes metricPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.metric-item.warning {
+  animation: metricPulse 2s ease-in-out infinite;
+}
+
+.metric-item.error {
+  animation: metricPulse 1s ease-in-out infinite;
+  border-color: var(--color-error);
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .performance-monitor {
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  .metric-item {
+    border-width: 2px;
+  }
+  
+  .metric-value {
+    font-weight: 700;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .performance-monitor,
+  .performance-toggle-btn,
+  .metric-item {
+    transition: none;
+  }
+  
+  .metric-item.warning,
+  .metric-item.error {
+    animation: none;
+  }
+  
+  .performance-monitor:hover {
+    transform: none;
+  }
+  
+  .metric-item:hover {
+    transform: none;
+  }
+}

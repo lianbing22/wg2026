@@ -10,14 +10,10 @@ import GameScenarioPage from '../pages/Game/GameScenarioPage';
 import CharacterCreationPage from '../pages/Game/CharacterCreationPage';
 import GameSettingsPage from '../pages/Game/GameSettingsPage';
 import AchievementsPage from '../pages/Game/AchievementsPage';
+import { isAuthenticated } from '../services/authService';
 
-// 简单的认证检查
-const isAuthenticated = () => {
-  return localStorage.getItem('token') !== null;
-};
-
-// 受保护的路由组件
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// 保护路由组件
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated() ? <>{children}</> : <Navigate to="/login" replace />;
 };
 

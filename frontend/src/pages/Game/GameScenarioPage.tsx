@@ -11,13 +11,15 @@ import {
   PauseCircleOutlined, 
   SettingOutlined,
   SaveOutlined,
-  HomeOutlined
+  HomeOutlined,
+  DashboardOutlined
 } from '@ant-design/icons';
 import { Scenario, ScenarioNode } from '../../types/game';
 import { scenarioService } from '../../services/scenarioService';
 import { useGame } from '../../contexts/GameContext';
 import ScenarioEngine from '../../components/game/ScenarioEngine';
 import GameStatsPanel from '../../components/game/GameStatsPanel';
+import PerformanceMonitor, { performanceTracker } from '../../components/game/PerformanceMonitor';
 import './GameScenarioPage.css';
 
 const { Title, Text } = Typography;
@@ -35,6 +37,7 @@ export default function GameScenarioPage() {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [gameStartTime] = useState(Date.now());
   const [scenarioProgress, setScenarioProgress] = useState(0);
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
 
   // 加载场景数据
   useEffect(() => {
@@ -57,6 +60,7 @@ export default function GameScenarioPage() {
 
   const loadScenario = async (id: string) => {
     try {
+      const startTime = performance.now();
       setLoading(true);
       setError(null);
       
@@ -82,6 +86,10 @@ export default function GameScenarioPage() {
       }
 
       const nodes = await scenarioService.getScenarioNodes(id);
+      
+      // 记录加载时间
+      const loadTime = performance.now() - startTime;
+      performanceTracker.measureLoadTime(loadTime);
       
       setScenario(scenarioData);
       setScenarioNodes(nodes);
@@ -178,6 +186,10 @@ export default function GameScenarioPage() {
 
   const handleBackToHome = () => {
     navigate('/');
+  };
+
+  const togglePerformanceMonitor = () => {
+    setShowPerformanceMonitor(!showPerformanceMonitor);
   };
 
   // 计算场景进度（简单估算）
@@ -297,6 +309,14 @@ export default function GameScenarioPage() {
             >
               设置
             </Button>
+            <Button 
+              icon={<DashboardOutlined />} 
+              onClick={togglePerformanceMonitor}
+              type={showPerformanceMonitor ? 'primary' : 'text'}
+              style={{ color: 'white' }}
+            >
+              性能监控
+            </Button>
           </Space>
         </div>
       </div>
@@ -386,6 +406,12 @@ export default function GameScenarioPage() {
         <p>确定要退出当前场景吗？</p>
         <p style={{ color: '#ff4d4f' }}>注意：未保存的进度将会丢失！</p>
       </Modal>
+
+      {/* 性能监控组件 */}
+      <PerformanceMonitor 
+        visible={showPerformanceMonitor}
+        onToggle={togglePerformanceMonitor}
+      />
     </div>
   );
 }

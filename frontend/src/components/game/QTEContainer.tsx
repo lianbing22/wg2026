@@ -212,10 +212,10 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
       const currentTime = Date.now() - startTimeRef.current;
       keyPressTimesRef.current.push(currentTime);
       
-      // 显示反馈
+      // 显示反馈 - 优化延迟
       setFeedbackMessage("√");
       setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 300);
+      setTimeout(() => setShowFeedback(false), 100);
       
       setCurrentKeyIndex(prev => prev + 1);
       
@@ -233,10 +233,10 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
       // 错误按键
       setAccuracy(prev => Math.max(0, prev - 10)); // 错误惩罚
       
-      // 显示错误反馈
+      // 显示错误反馈 - 优化延迟
       setFeedbackMessage("✗");
       setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 300);
+      setTimeout(() => setShowFeedback(false), 100);
       
       // 如果准确度过低，直接失败
       if (accuracy < 30) {
@@ -290,10 +290,10 @@ export default function QTEContainer({ config, onComplete, onExit }: QTEContaine
     setClickCount(newClickCount);
     logQTEEvent('按钮点击', { clickCount: newClickCount });
     
-    // 显示点击反馈
+    // 显示点击反馈 - 优化延迟
     setFeedbackMessage(`${newClickCount}`);
     setShowFeedback(true);
-    setTimeout(() => setShowFeedback(false), 200);
+    setTimeout(() => setShowFeedback(false), 80);
     
     // 计算目标点击次数
     const targetClicks = config.parameters?.targetClicks || 20;

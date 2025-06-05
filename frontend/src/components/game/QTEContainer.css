@@ -382,6 +382,37 @@
   }
 }
 
+/* QTE反馈样式 */
+.qte-feedback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: #52c41a;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1000;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: feedbackPulse 0.1s ease-out;
+}
+
+@keyframes feedbackPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
 /* 减少动画模式支持 */
 @media (prefers-reduced-motion: reduce) {
   .qte-overlay,

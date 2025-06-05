@@ -1,0 +1,276 @@
+/**
+ * 物业管理模拟器 - 设计令牌
+ * 统一的设计系统变量定义
+ */
+
+:root {
+  /* ==================== 颜色系统 ==================== */
+  
+  /* 主色调 */
+  --primary-color: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-active: #096dd9;
+  --primary-light: #e6f7ff;
+  --primary-dark: #0050b3;
+  
+  /* 功能色 */
+  --success-color: #52c41a;
+  --success-hover: #73d13d;
+  --success-active: #389e0d;
+  --success-light: #f6ffed;
+  
+  --warning-color: #faad14;
+  --warning-hover: #ffc53d;
+  --warning-active: #d48806;
+  --warning-light: #fffbe6;
+  
+  --error-color: #ff4d4f;
+  --error-hover: #ff7875;
+  --error-active: #d9363e;
+  --error-light: #fff2f0;
+  
+  --info-color: #1890ff;
+  --info-hover: #40a9ff;
+  --info-active: #096dd9;
+  --info-light: #e6f7ff;
+  
+  /* 中性色 */
+  --text-primary: rgba(0, 0, 0, 0.85);
+  --text-secondary: rgba(0, 0, 0, 0.65);
+  --text-tertiary: rgba(0, 0, 0, 0.45);
+  --text-disabled: rgba(0, 0, 0, 0.25);
+  --text-inverse: rgba(255, 255, 255, 0.85);
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f5f5f5;
+  --bg-disabled: #f5f5f5;
+  --bg-overlay: rgba(0, 0, 0, 0.45);
+  
+  --border-primary: #d9d9d9;
+  --border-secondary: #f0f0f0;
+  --border-hover: #40a9ff;
+  --border-focus: #1890ff;
+  
+  /* 游戏专用色 */
+  --game-bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --game-bg-secondary: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(30, 30, 30, 0.8));
+  --game-accent: #ffd700;
+  --game-danger: #ff6b6b;
+  --game-safe: #51cf66;
+  
+  /* QTE专用色 */
+  --qte-success: #52c41a;
+  --qte-failure: #ff4d4f;
+  --qte-neutral: #faad14;
+  --qte-perfect: #ffd700;
+  
+  /* ==================== 字体系统 ==================== */
+  
+  /* 字体族 */
+  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-family-code: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  --font-family-game: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  
+  /* 字体大小 */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --font-size-5xl: 48px;
+  
+  /* 行高 */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* 字重 */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* ==================== 间距系统 ==================== */
+  
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  
+  /* 语义化间距 */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-4);
+  --spacing-lg: var(--spacing-6);
+  --spacing-xl: var(--spacing-8);
+  --spacing-2xl: var(--spacing-12);
+  
+  /* ==================== 尺寸系统 ==================== */
+  
+  /* 组件高度 */
+  --height-xs: 24px;
+  --height-sm: 32px;
+  --height-md: 40px;
+  --height-lg: 48px;
+  --height-xl: 56px;
+  
+  /* 容器宽度 */
+  --container-xs: 480px;
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* ==================== 圆角系统 ==================== */
+  
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-base: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+  
+  /* ==================== 阴影系统 ==================== */
+  
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* 游戏专用阴影 */
+  --shadow-game: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow-qte: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* ==================== 动画系统 ==================== */
+  
+  /* 缓动函数 */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* 动画时长 */
+  --duration-fast: 0.1s;
+  --duration-normal: 0.2s;
+  --duration-slow: 0.3s;
+  --duration-slower: 0.5s;
+  
+  /* ==================== 层级系统 ==================== */
+  
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  --z-qte: 9999;
+  
+  /* ==================== 断点系统 ==================== */
+  
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ==================== 暗色主题 ==================== */
+
+[data-theme='dark'] {
+  /* 重写暗色主题的颜色变量 */
+  --text-primary: rgba(255, 255, 255, 0.85);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+  --text-disabled: rgba(255, 255, 255, 0.25);
+  --text-inverse: rgba(0, 0, 0, 0.85);
+  
+  --bg-primary: #141414;
+  --bg-secondary: #1f1f1f;
+  --bg-tertiary: #262626;
+  --bg-disabled: #262626;
+  --bg-overlay: rgba(255, 255, 255, 0.45);
+  
+  --border-primary: #434343;
+  --border-secondary: #303030;
+}
+
+/* ==================== 工具类 ==================== */
+
+/* 文本工具类 */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-disabled { color: var(--text-disabled); }
+.text-inverse { color: var(--text-inverse); }
+
+/* 背景工具类 */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+
+/* 间距工具类 */
+.p-0 { padding: var(--spacing-0); }
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-3 { padding: var(--spacing-3); }
+.p-4 { padding: var(--spacing-4); }
+.p-5 { padding: var(--spacing-5); }
+.p-6 { padding: var(--spacing-6); }
+.p-8 { padding: var(--spacing-8); }
+
+.m-0 { margin: var(--spacing-0); }
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-3 { margin: var(--spacing-3); }
+.m-4 { margin: var(--spacing-4); }
+.m-5 { margin: var(--spacing-5); }
+.m-6 { margin: var(--spacing-6); }
+.m-8 { margin: var(--spacing-8); }
+
+/* 圆角工具类 */
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-base); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* 阴影工具类 */
+.shadow-xs { box-shadow: var(--shadow-xs); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-base); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-game { box-shadow: var(--shadow-game); }
+.shadow-qte { box-shadow: var(--shadow-qte); }
+
+/* 动画工具类 */
+.transition-fast { transition: all var(--duration-fast) var(--ease-out); }
+.transition-normal { transition: all var(--duration-normal) var(--ease-out); }
+.transition-slow { transition: all var(--duration-slow) var(--ease-out); }
